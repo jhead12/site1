@@ -280,6 +280,23 @@ exports.createSchemaCustomization = async ({ actions }) => {
       footer: LayoutFooter
     }
 
+    interface BlogPage implements Node {
+      id: ID!
+      title: String
+      description: String
+      image: HomepageImage
+      content: [HomepageBlock]
+    }
+
+    interface BlogHero implements Node & HomepageBlock {
+      id: ID!
+      blocktype: String
+      heading: String
+      text: String
+      image: HomepageImage
+    }
+
+
     interface AboutPage implements Node {
       id: ID!
       title: String
