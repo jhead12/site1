@@ -6,7 +6,7 @@ require("dotenv").config({
 
 module.exports = {
   siteMetadata: {
-    siteUrl: "https://gatsbycontentfulhomepage.gatsbyjs.io/",
+    siteUrl: "https://www.jeldonmusic.com",
     title: "Matrixblend",
     author: `j-eldon`,
     description: "A music producer selling beats, tutorials, and album project promotions",
@@ -28,7 +28,7 @@ module.exports = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        name: "Gatsby Starter Contentful Homepage",
+        name: "Jeldon Music | Beats | Tutorials",
         short_name: "Gatsby",
         start_url: "/",
         // These can be imported once ESM support lands
