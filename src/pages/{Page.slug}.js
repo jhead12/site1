@@ -1,8 +1,8 @@
 import * as React from "react"
 import { graphql } from "gatsby"
-import Layout from "../../components/layout"
-import { Container, Box, Heading } from "../../components/ui"
-import SEOHead from "../../components/head"
+import Layout from "../components/layout"
+import { Container, Box, Heading } from "../components/ui"
+import SEOHead from "../components/head"
 
 export default function Page(props) {
   const { page } = props.data
