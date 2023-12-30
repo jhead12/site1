@@ -82,11 +82,24 @@ exports.createSchemaCustomization = async ({ actions }) => {
       blocktype: String
     }
 
+    interface BeatsBlock implements Node {
+      id: ID!
+      blocktype: String
+    }
+
+
     interface HomepageLink implements Node {
       id: ID!
       href: String
       text: String
     }
+
+    interface BeatsLink implements Node {
+      id: ID!
+      href: String
+      text: String
+    }
+
 
     interface HeaderNavItem implements Node {
       id: ID!
@@ -116,6 +129,13 @@ exports.createSchemaCustomization = async ({ actions }) => {
       url: String
     }
 
+    interface BeatsImage implements Node {
+      id: ID!
+      alt: String
+      gatsbyImageData: GatsbyImageData @imagePassthroughArgs
+      url: String
+    }
+
     interface HomepageHero implements Node & HomepageBlock {
       id: ID!
       blocktype: String
@@ -127,6 +147,19 @@ exports.createSchemaCustomization = async ({ actions }) => {
       links: [HomepageLink]
     }
 
+
+    
+    interface BeatsHero implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      heading: String!
+      kicker: String
+      subhead: String
+      image: BeatsImage
+      text: String
+      links: [BeatsLink]
+    }
+
     interface HomepageFeature implements Node & HomepageBlock {
       id: ID!
       blocktype: String
@@ -136,7 +169,15 @@ exports.createSchemaCustomization = async ({ actions }) => {
       image: HomepageImage
       links: [HomepageLink]
     }
-
+    interface BeatsFeature implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      heading: String
+      kicker: String
+      text: String
+      image: BeatsImage
+      links: [BeatsLink]
+    }
     interface HomepageFeatureList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
@@ -144,6 +185,15 @@ exports.createSchemaCustomization = async ({ actions }) => {
       heading: String
       text: String
       content: [HomepageFeature]
+    }
+
+    interface BeatsFeatureList implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      kicker: String
+      heading: String
+      text: String
+      content: [BeatsFeature]
     }
 
     interface HomepageCta implements Node & HomepageBlock {
@@ -156,7 +206,23 @@ exports.createSchemaCustomization = async ({ actions }) => {
       links: [HomepageLink]
     }
 
+    interface BeatsCta implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      kicker: String
+      heading: String
+      text: String
+      image: BeatsImage
+      links: [BeatsLink]
+    }
+
     interface HomepageLogo implements Node {
+      id: ID!
+      image: HomepageImage
+      alt: String
+    }
+
+    interface BeatsLogo implements Node {
       id: ID!
       image: HomepageImage
       alt: String
@@ -168,6 +234,12 @@ exports.createSchemaCustomization = async ({ actions }) => {
       text: String
       logos: [HomepageLogo]
     }
+    interface BeatsLogoList implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      text: String
+      logos: [BeatsLogo]
+    }
 
     interface HomepageTestimonial implements Node {
       id: ID!
@@ -176,6 +248,14 @@ exports.createSchemaCustomization = async ({ actions }) => {
       avatar: HomepageImage
     }
 
+    interface BeatsTestimonial implements Node {
+      id: ID!
+      quote: String
+      source: String
+      avatar: BeatsImage
+    }
+
+
     interface HomepageTestimonialList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
@@ -183,6 +263,15 @@ exports.createSchemaCustomization = async ({ actions }) => {
       heading: String
       content: [HomepageTestimonial]
     }
+
+    interface BeatsTestimonialList implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      kicker: String
+      heading: String
+      content: [HomepageTestimonial]
+    }
+
 
     interface HomepageBenefit implements Node {
       id: ID!
@@ -199,12 +288,36 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: [HomepageBenefit]
     }
 
+    interface BeatsBenefit implements Node {
+      id: ID!
+      heading: String
+      text: String
+      image: BeatsImage
+    }
+
+    interface BeatsBenefitList implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      heading: String
+      text: String
+      content: [BeatsBenefit]
+    }
+
     interface HomepageStat implements Node {
       id: ID!
       value: String
       label: String
       heading: String
     }
+
+
+    interface BeatsStat implements Node {
+      id: ID!
+      value: String
+      label: String
+      heading: String
+    }
+
 
     interface HomepageStatList implements Node & HomepageBlock {
       id: ID!
@@ -217,6 +330,19 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: [HomepageStat]
       links: [HomepageLink]
     }
+
+    interface BeatsStatList implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      kicker: String
+      heading: String
+      text: String
+      image: BeatsImage
+      icon: BeatsImage
+      content: [BeatsStat]
+      links: [BeatsLink]
+    }
+
 
     interface HomepageProduct implements Node {
       id: ID!
@@ -234,6 +360,32 @@ exports.createSchemaCustomization = async ({ actions }) => {
       text: String
       content: [HomepageProduct]
     }
+
+    interface BeatsProduct implements Node {
+      id: ID!
+      heading: String
+      text: String
+      image: BeatsImage
+      links: [BeatsLink]
+    }
+
+    interface BeatsProductList implements Node & BeatsBlock {
+      id: ID!
+      blocktype: String
+      heading: String
+      kicker: String
+      text: String
+      content: [BeatsProduct]
+    }
+
+    interface Beats implements Node {
+      id: ID!
+      title: String
+      description: String
+      image: BeatsImage
+      content: [BeatsBlock]
+    }
+
 
     interface Homepage implements Node {
       id: ID!
@@ -293,7 +445,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       blocktype: String
       heading: String
       text: String
-      image: HomepageImage
+      image: BeatsImage
     }
 
 
@@ -425,6 +577,15 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: [HomepageFeature] @link(from: "content___NODE")
     }
 
+    type ContentfulBeatsFeatureList implements Node & BeatsBlock & BeatsFeatureList
+    @dontInfer {
+    blocktype: String @blocktype
+    kicker: String
+    heading: String
+    text: String
+    content: [BeatsFeature] @link(from: "content___NODE")
+  }
+
     type ContentfulHomepageCta implements Node & HomepageBlock & HomepageCta
       @dontInfer {
       blocktype: String @blocktype
@@ -434,6 +595,17 @@ exports.createSchemaCustomization = async ({ actions }) => {
       image: HomepageImage @link(from: "image___NODE")
       links: [HomepageLink] @link(from: "links___NODE")
     }
+
+    type ContentfulHomepageCta implements Node & HomepageBlock & HomepageCta
+    @dontInfer {
+    blocktype: String @blocktype
+    kicker: String
+    heading: String
+    text: String
+    image: HomepageImage @link(from: "image___NODE")
+    links: [HomepageLink] @link(from: "links___NODE")
+  }
+
 
     type ContentfulHomepageLogo implements Node & HomepageLogo @dontInfer {
       id: ID!
@@ -525,6 +697,198 @@ exports.createSchemaCustomization = async ({ actions }) => {
       description: String
       image: HomepageImage @link(from: "image___NODE")
       content: [HomepageBlock] @link(from: "content___NODE")
+    }
+  `)
+
+  // CMS-specific types for Beats
+  actions.createTypes(/* GraphQL */ `
+  type ContentfulHomepageLink implements Node & HomepageLink @dontInfer {
+    id: ID!
+    href: String
+    text: String
+  }
+
+
+    type ContentfulNavItem implements Node & NavItem & HeaderNavItem
+      @dontInfer {
+      id: ID!
+      navItemType: String @navItemType(name: "Link")
+      href: String
+      text: String
+      icon: HomepageImage @link(from: "icon___NODE")
+      description: String
+    }
+
+    type ContentfulNavItemGroup implements Node & NavItemGroup & HeaderNavItem
+      @dontInfer {
+      id: ID!
+      navItemType: String @navItemType(name: "Group")
+      name: String
+      navItems: [NavItem] @link(from: "navItems___NODE")
+    }
+
+    type ContentfulAsset implements Node & BeatsImage {
+      id: ID!
+      alt: String @proxy(from: "title")
+      gatsbyImageData: GatsbyImageData
+      url: String @imageUrl
+      file: JSON
+      title: String
+    }
+
+    type ContentfulHomepageHero implements Node & HomepageHero & HomepageBlock
+      @dontInfer {
+      id: ID!
+      blocktype: String @blocktype
+      heading: String!
+      kicker: String
+      subhead: String
+      image: HomepageImage @link(from: "image___NODE")
+      text: String
+      links: [HomepageLink] @link(from: "links___NODE")
+    }
+
+    type ContentfulHomepafeFeature implements Node & HomepageBlock & HomepageFeature
+      @dontInfer {
+      blocktype: String @blocktype
+      heading: String
+      kicker: String
+      text: String
+      image: HomepageImage @link(from: "image___NODE")
+      links: [HomepageLink] @link(from: "links___NODE")
+    }
+
+    type ContentfulHomepageFeatureList implements Node & HomepageBlock & HomepageFeatureList
+      @dontInfer {
+      blocktype: String @blocktype
+      kicker: String
+      heading: String
+      text: String
+      content: [HomepageFeature] @link(from: "content___NODE")
+    }
+
+    type ContentfulBeatsCta implements Node & BeatsBlock & BeatsCta
+      @dontInfer {
+      blocktype: String @blocktype
+      kicker: String
+      heading: String
+      text: String
+      image: BeatsImage @link(from: "image___NODE")
+      links: [BeatsLink] @link(from: "links___NODE")
+    }
+
+    type ContentfulHomepageLogo implements Node & HomepageLogo @dontInfer {
+      id: ID!
+      image: HomepageImage @link(from: "image___NODE")
+      alt: String
+    }
+
+    type ContentfulHomepageLogoList implements Node & HomepageBlock & HomepageLogoList
+      @dontInfer {
+      blocktype: String @blocktype
+      text: String
+      logos: [HomepageLogo] @link(from: "logos___NODE")
+    }
+
+    type ContentfulHomepageTestimonial implements Node & HomepageTestimonial
+      @dontInfer {
+      id: ID!
+      quote: String
+      source: String
+      avatar: HomepageImage @link(from: "avatar___NODE")
+    }
+
+    type ContentfulHomepageTestimonialList implements Node & HomepageBlock & HomepageTestimonialList
+      @dontInfer {
+      id: ID!
+      blocktype: String @blocktype
+      kicker: String
+      heading: String
+      content: [HomepageTestimonial] @link(from: "content___NODE")
+    }
+
+    type ContentfulHomepageBenefit implements Node & HomepageBenefit
+      @dontInfer {
+      id: ID!
+      heading: String
+      text: String
+      image: HomepageImage @link(from: "image___NODE")
+    }
+
+    type ContentfulHomepageBenefitList implements Node & HomepageBlock & HomepageBenefitList
+      @dontInfer {
+      id: ID!
+      blocktype: String @blocktype
+      heading: String
+      text: String
+      content: [HomepageBenefit] @link(from: "content___NODE")
+    }
+
+    type ContentfulHomepageStat implements Node & HomepageStat @dontInfer {
+      id: ID!
+      value: String
+      label: String
+      heading: String
+    }
+
+    type ContentfulBeatsStat implements Node & BeatsStat @dontInfer {
+      id: ID!
+      value: String
+      label: String
+      heading: String
+    }
+
+    type ContentfulHomepageStatList implements Node & HomepageBlock & HomepageStatList
+      @dontInfer {
+      id: ID!
+      blocktype: String @blocktype
+      kicker: String
+      heading: String
+      text: String
+      image: HomepageImage @link(from: "image___NODE")
+      icon: HomepageImage @link(from: "icon___NODE")
+      content: [HomepageStat] @link(from: "content___NODE")
+      links: [HomepageLink] @link(from: "links___NODE")
+    }
+
+
+    type ContentfulBeatsStatList implements Node & BeatsBlock & BeatsStatList
+    @dontInfer {
+    id: ID!
+    blocktype: String @blocktype
+    kicker: String
+    heading: String
+    text: String
+    image: BeatsImage @link(from: "image___NODE")
+    icon: BeatsImage @link(from: "icon___NODE")
+    content: [BeatsStat] @link(from: "content___NODE")
+    links: [BeatsLink] @link(from: "links___NODE")
+  }
+
+
+    type ContentfulBeatsProduct implements Node & BeatsProduct
+      @dontInfer {
+      heading: String
+      text: String
+      image: BeatsImage @link(from: "image___NODE")
+      links: [BeatsLink] @link(from: "links___NODE")
+    }
+
+    type ContentfulBeatsProductList implements Node & BeatsProductList & BeatsBlock
+      @dontInfer {
+      blocktype: String @blocktype
+      heading: String
+      kicker: String
+      text: String
+      content: [BeatsProduct] @link(from: "content___NODE")
+    }
+
+    type ContentfulBeats implements Node & Beats @dontInfer {
+      id: ID!
+      title: String
+      description: String
+      image: BeatsImage @link(from: "image___NODE")
+      content: [BeatsBlock] @link(from: "content___NODE")
     }
   `)
 
