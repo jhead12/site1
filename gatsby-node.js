@@ -224,7 +224,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
     interface BeatsLogo implements Node {
       id: ID!
-      image: HomepageImage
+      image: BeatsImage
       alt: String
     }
 
@@ -269,7 +269,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       blocktype: String
       kicker: String
       heading: String
-      content: [HomepageTestimonial]
+      content: [BeatsTestimonial]
     }
 
 
@@ -558,6 +558,18 @@ exports.createSchemaCustomization = async ({ actions }) => {
       links: [HomepageLink] @link(from: "links___NODE")
     }
 
+    type ContentfulBeatsHero implements Node & BeatsHero & BeatsBlock
+    @dontInfer {
+    id: ID!
+    blocktype: String @blocktype
+    heading: String!
+    kicker: String
+    subhead: String
+    image: BeatsImage @link(from: "image___NODE")
+    text: String
+    links: [BeatsLink] @link(from: "links___NODE")
+  }
+
     type ContentfulHomepageFeature implements Node & HomepageBlock & HomepageFeature
       @dontInfer {
       blocktype: String @blocktype
@@ -652,6 +664,14 @@ exports.createSchemaCustomization = async ({ actions }) => {
       heading: String
       text: String
       content: [HomepageBenefit] @link(from: "content___NODE")
+    }
+    type ContentfulBeatsBenefitList implements Node & BeatsBlock & BeatsBenefitList
+      @dontInfer {
+      id: ID!
+      blocktype: String @blocktype
+      heading: String
+      text: String
+      content: [BeatsBenefit] @link(from: "content___NODE")
     }
 
     type ContentfulHomepageStat implements Node & HomepageStat @dontInfer {
@@ -748,6 +768,19 @@ exports.createSchemaCustomization = async ({ actions }) => {
       links: [HomepageLink] @link(from: "links___NODE")
     }
 
+    type ContentfulBeatsHero implements Node & BeatsHero & BeatsBlock
+    @dontInfer {
+    id: ID!
+    blocktype: String @blocktype
+    heading: String!
+    kicker: String
+    subhead: String
+    image: BeatsImage @link(from: "image___NODE")
+    text: String
+    links: [BeatsLink] @link(from: "links___NODE")
+  }
+
+
     type ContentfulHomepafeFeature implements Node & HomepageBlock & HomepageFeature
       @dontInfer {
       blocktype: String @blocktype
@@ -777,6 +810,8 @@ exports.createSchemaCustomization = async ({ actions }) => {
       links: [BeatsLink] @link(from: "links___NODE")
     }
 
+    
+
     type ContentfulHomepageLogo implements Node & HomepageLogo @dontInfer {
       id: ID!
       image: HomepageImage @link(from: "image___NODE")
@@ -790,6 +825,14 @@ exports.createSchemaCustomization = async ({ actions }) => {
       logos: [HomepageLogo] @link(from: "logos___NODE")
     }
 
+    type ContentfulBeatsLogoList implements Node & BeatsBlock & BeatsLogoList
+    @dontInfer {
+    blocktype: String @blocktype
+    text: String
+    logos: [BeatsLogo] @link(from: "logos___NODE")
+  }
+
+
     type ContentfulHomepageTestimonial implements Node & HomepageTestimonial
       @dontInfer {
       id: ID!
@@ -798,14 +841,32 @@ exports.createSchemaCustomization = async ({ actions }) => {
       avatar: HomepageImage @link(from: "avatar___NODE")
     }
 
-    type ContentfulHomepageTestimonialList implements Node & HomepageBlock & HomepageTestimonialList
+    type ContentfulBeatsTestimonial implements Node & BeatsTestimonial
+    @dontInfer {
+    id: ID!
+    quote: String
+    source: String
+    avatar: BeatsImage @link(from: "avatar___NODE")
+  }
+
+
+    type ContentfulBeatsTestimonialList implements Node & BeatsBlock & BeatsTestimonialList
       @dontInfer {
       id: ID!
       blocktype: String @blocktype
       kicker: String
       heading: String
-      content: [HomepageTestimonial] @link(from: "content___NODE")
+      content: [BeatsTestimonial] @link(from: "content___NODE")
     }
+
+    type ContentfulHomepageTestimonialList implements Node & HomepageBlock & HomepageTestimonialList
+    @dontInfer {
+    id: ID!
+    blocktype: String @blocktype
+    kicker: String
+    heading: String
+    content: [HomepageTestimonial] @link(from: "content___NODE")
+  }
 
     type ContentfulHomepageBenefit implements Node & HomepageBenefit
       @dontInfer {
