@@ -7,9 +7,9 @@ require("dotenv").config({
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.jeldonmusic.com",
-    title: "Matrixblend",
+    title: "",
     author: `j-eldon`,
-    description: "A music producer selling beats, tutorials, and album project promotions",
+    description: " beats, tutorials",
   },
   plugins: [
     {
@@ -29,7 +29,7 @@ module.exports = {
       resolve: "gatsby-plugin-manifest",
       options: {
         name: "Jeldon Music | Beats | Tutorials",
-        short_name: "Gatsby",
+        short_name: "jeldon",
         start_url: "/",
         // These can be imported once ESM support lands
         background_color: "#ffe491",

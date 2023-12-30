@@ -1,5 +1,5 @@
 {
-  "name": "gatsby-starter-contentful-homepage",
+  "name": "jeldon-music",
   "version": "1.0.0",
   "engines": {
     "node": ">=18.0.0"
@@ -21,7 +21,6 @@
     "@vanilla-extract/babel-plugin": "^1.2.0",
     "@vanilla-extract/css": "^1.9.0",
     "@vanilla-extract/css-utils": "^0.1.2",
-    "@vanilla-extract/webpack-plugin": "^2.1.12",
     "gatsby": "^5.0.0",
     "gatsby-plugin-image": "^3.0.0",
     "gatsby-plugin-manifest": "^5.0.0",

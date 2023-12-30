@@ -16,8 +16,10 @@ import SEOHead from "../components/head"
 
 function PostCard({ slug, image, title, excerpt, author, category, ...props }) {
   return (
+    <SEOHead title="Blog">
     <BlockLink {...props} to={`/blog/${slug}`}>
       {image && (
+       
         <>
           <GatsbyImage alt={image.alt} image={image.gatsbyImageData} />
           <Space size={3} />
@@ -34,6 +36,8 @@ function PostCard({ slug, image, title, excerpt, author, category, ...props }) {
         </Text>
       )}
     </BlockLink>
+    </SEOHead>
+    
   )
 }
 
@@ -85,6 +89,22 @@ export default function BlogIndex({ posts }) {
     </Layout>
   )
 }
-export const Head = () => {
-  return <SEOHead title="Blog" />
-}
+
+// export const query = graphql`
+//   query ($id: String!) {
+//     blogPost(id: { eq: $id }) {
+//       id
+//       slug
+//       title
+//       html
+//       excerpt
+//       date
+//       image {
+//         id
+//         url
+//         gatsbyImageData
+//         alt
+//       }
+//     }
+//   }
+// `
