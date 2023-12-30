@@ -4,7 +4,7 @@ export default function Head({ title, description, image }) {
   return (
     <>
       <meta charSet="utf-8" />
-      <title>{title}</title>
+      <title>{"Matrixblend: Jeldon Music"}</title>
       {description && (
         <meta
           name="description"
