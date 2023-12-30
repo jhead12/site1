@@ -6,11 +6,11 @@ import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 
 export default function Beats(props) {
-  const { beat } = props.data
+  const { beatpage } = props.data
 
   return (
     <Layout>
-      {beat.blocks.map((block) => {
+      {beatpage.blocks.map((block) => {
         const { id, blocktype, ...componentProps } = block
         const Component = sections[blocktype] || Fallback
         return <Component key={id} {...componentProps} />
@@ -19,8 +19,8 @@ export default function Beats(props) {
   )
 }
 export const Head = (props) => {
-  const { beat } = props.data
-  return <SEOHead {...beat} />
+  const { beatpage } = props.data
+  return <SEOHead {...beatpage} />
 }
 export const query = graphql`
   {
