@@ -76,6 +76,7 @@ inquirer
       // use `accessToken` and `CONTENTFUL_ACCESS_TOKEN` both variations
       // will work.
       accessToken =
+        // Wordpress
         CONTENTFUL_ACCESS_TOKEN ||
         CONTENTFUL_DELIVERY_ACCESS_TOKEN ||
         argv.accessToken ||

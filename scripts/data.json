@@ -219,16 +219,7 @@
             "validations": [
               {
                 "linkContentType": [
-                  "homepageBanner",
-                  "homepageBenefitList",
-                  "homepageCta",
-                  "homepageFeature",
-                  "homepageFeatureList",
-                  "homepageHero",
-                  "homepageLogoList",
-                  "homepageProductList",
-                  "homepageStatList",
-                  "homepageTestimonialList"
+              
                 ]
               }
             ],
