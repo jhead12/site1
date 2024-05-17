@@ -1,4 +1,3 @@
-// support for .env, .env.development, and .env.production
 require("dotenv").config()
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
@@ -21,6 +20,12 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
+    {
+      resolve: `gatsby-source-wordpress`,
+      options: {
+        url: process.env.WPGRAPHQL_URL,
+      },
+    },
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",
     "gatsby-transformer-sharp",
@@ -31,7 +36,6 @@ module.exports = {
         name: "Jeldon Music | Beats | Tutorials",
         short_name: "jeldon",
         start_url: "/",
-        // These can be imported once ESM support lands
         background_color: "#ffe491",
         theme_color: "#004ca3",
         icon: "src/favicon.png",

@@ -1,17 +1,32 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
 const { getGatsbyImageResolver } = require("gatsby-plugin-image/graphql-utils")
 
+// exports.createSchemaCustomization = async ({ actions }) => {
+//   actions.createFieldExtension({
+//     name: "blocktype",
+//     extend(options) {
+//       return {
+//         resolve(source) {
+//           return source.internal.type.replace("Contentful", "")
+//         },
+//       }
+//     },
+//   })
+
 exports.createSchemaCustomization = async ({ actions }) => {
   actions.createFieldExtension({
     name: "blocktype",
     extend(options) {
       return {
         resolve(source) {
-          return source.internal.type.replace("Contentful", "")
+          if (source.internal.type.startsWith("Contentful")) {
+            return source.internal.type.replace("Contentful", "")
+          }
+          return source.internal.type.replace("Wp", "")
         },
       }
     },
-  })
+  });
 
   actions.createFieldExtension({
     name: "imagePassthroughArgs",
@@ -146,6 +161,15 @@ exports.createSchemaCustomization = async ({ actions }) => {
       text: String
       links: [HomepageLink]
     }
+    interface BlogFeature implements Node & HomepageBlock {
+      id: ID!
+      blocktype: String
+      title: String
+      excerpt: String
+      uri: String
+      date: Date
+    }
+  
 
 
     
@@ -169,6 +193,8 @@ exports.createSchemaCustomization = async ({ actions }) => {
       image: HomepageImage
       links: [HomepageLink]
     }
+
+  
     interface BeatsFeature implements Node & BeatsBlock {
       id: ID!
       blocktype: String
@@ -727,7 +753,14 @@ exports.createSchemaCustomization = async ({ actions }) => {
     href: String
     text: String
   }
-
+  type ContentfulBlogFeature implements Node & BlogFeature & HomepageBlock {
+    id: ID!
+    blocktype: String 
+    title: String
+    excerpt: String
+    uri: String
+    date: Date
+  }
 
     type ContentfulNavItem implements Node & NavItem & HeaderNavItem
       @dontInfer {
@@ -1052,6 +1085,19 @@ exports.createSchemaCustomization = async ({ actions }) => {
       html: String! @richText
     }
   `)
+
+  // Define the WordPress-specific types
+  actions.createTypes(/* GraphQL */ `
+    type WpPost implements Node & BlogFeature & HomepageBlock @dontInfer {
+      id: ID!
+      blocktype: String @blocktype
+      title: String
+      excerpt: String
+      uri: String
+      date: Date
+    }
+  `);
+
 }
 
 exports.createPages = ({ actions }) => {

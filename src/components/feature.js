@@ -14,6 +14,7 @@ import {
 
 export default function Feature(props) {
   return (
+    
     <Section padding={4} background="muted">
       <Container>
         <Flex gap={4} variant="responsive">

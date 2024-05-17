@@ -6,7 +6,7 @@ import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 
 export default function Homepage(props) {
-  const { homepage } = props.data
+  const { homepage, allWpPost } = props.data
 
   return (
     <Layout>
@@ -15,6 +15,8 @@ export default function Homepage(props) {
         const Component = sections[blocktype] || Fallback
         return <Component key={id} {...componentProps} />
       })}
+      <sections.BlogFeature data={{ allWpPost }} />
+
     </Layout>
   )
 }
@@ -43,6 +45,22 @@ export const query = graphql`
         ...HomepageBenefitListContent
         ...HomepageStatListContent
         ...HomepageProductListContent
+        
+           }
+    }
+    allWpPost(sort: { fields: date, order: DESC }, limit: 5) {
+      nodes {
+        id
+        title
+        excerpt
+        uri
+        date(formatString: "MMMM DD, YYYY")
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
       }
     }
   }
