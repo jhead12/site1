@@ -48,7 +48,7 @@ export const query = graphql`
         
            }
     }
-    allWpPost(sort: { fields: date, order: DESC }, limit: 5) {
+    allWpPost(sort: { date: DESC}, limit: 5) {
       nodes {
         id
         title
