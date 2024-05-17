@@ -10,6 +10,7 @@ import {
   Kicker,
   Text
 } from "./ui"
+import "./blogimg.css"
 
 export default function BlogFeature(props) {
   const {allWpPost } = props.data
@@ -27,7 +28,7 @@ export default function BlogFeature(props) {
                   <img
                     src={post.featuredImage.node.sourceUrl}
                     alt={post.featuredImage.node.altText || post.title}
-                    style={{ width: '100%', height: 'auto' }}
+                    className="blog-feature-image"
                   />
                 </Link>
               )}
