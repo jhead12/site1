@@ -7,6 +7,7 @@ import {
   Facebook,
   Youtube,
   GitHub,
+  Headphones,
 } from "react-feather"
 import {
   Container,
@@ -51,6 +52,11 @@ const socialMedia = {
     url: "https://twitch.tv",
     name: "Twitch",
     icon: <Twitch />,
+  },
+  SOUNDCLOUD: {
+    url: "https://soundcloud.com",
+    name: "SoundCloud",
+    icon: <Headphones />,
   },
 }
 

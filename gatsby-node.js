@@ -436,6 +436,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       GITHUB
       DISCORD
       TWITCH
+      SOUNDCLOUD
     }
 
     interface SocialLink implements Node {
