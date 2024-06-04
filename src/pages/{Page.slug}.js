@@ -11,10 +11,10 @@ export default function Page(props) {
     <Layout>
       <Box paddingY={5}>
         <Container width="narrow">
-          <Heading as="h1">{page.title}</Heading>
+          <Heading as="h1">{props.title}</Heading>
           <div
             dangerouslySetInnerHTML={{
-              __html: page.html,
+              __html: props.html,
             }}
           />
         </Container>
