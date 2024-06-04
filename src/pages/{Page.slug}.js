@@ -27,17 +27,18 @@ export const Head = (props) => {
   return <SEOHead {...page} />
 }
 export const query = graphql`
-  query PageContent($id: String!) {
-    page(id: { eq: $id }) {
-      id
-      title
-      slug
-      description
-      image {
+query {
+  wpPage{
+    id
+    link
+    title
+    slug
+    featuredImage {
+      node {
         id
-        url
       }
-      html
     }
+    
   }
+}
 `

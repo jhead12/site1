@@ -1097,9 +1097,44 @@ exports.createSchemaCustomization = async ({ actions }) => {
       uri: String
       date: Date
     }
-  `);
+  `)
 
 }
+exports.createPages = async ({ graphql, actions }) => {
+  const { createPage } = actions;
+
+  const result = await graphql(`
+    {
+      allWpPage {
+        nodes {
+          id
+          slug
+          title
+          content
+        }
+      }
+    }
+  `);
+
+  if (result.errors) {
+    throw result.errors;
+  }
+
+  const pages = result.data.allWpPage.nodes;
+
+  pages.forEach(page => {
+    createPage({
+      path: `/${page.slug}/`,
+      component: require.resolve("./src/templates/page-template.js"),
+      context: {
+        id: page.id,
+      },
+    });
+  });
+};
+
+
+
 
 exports.createPages = ({ actions }) => {
   const { createSlice } = actions

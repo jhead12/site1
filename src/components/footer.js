@@ -28,6 +28,11 @@ const socialMedia = {
     name: "Twitter",
     icon: <Twitter />,
   },
+  SOUNDCLOUD: {
+    url: "https://soundcloud.com",
+    name: "SoundCloud",
+    icon: <Headphones />,
+  },
   INSTAGRAM: {
     url: "https://instagram.com",
     name: "Instagram",
@@ -53,11 +58,7 @@ const socialMedia = {
     name: "Twitch",
     icon: <Twitch />,
   },
-  SOUNDCLOUD: {
-    url: "https://soundcloud.com",
-    name: "SoundCloud",
-    icon: <Headphones />,
-  },
+ 
 }
 
 const getSocialURL = ({ service, username }) => {

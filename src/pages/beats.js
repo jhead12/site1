@@ -3,74 +3,43 @@ import { graphql } from "gatsby"
 import Layout from "../components/layout"
 import * as sections from "../components/sections"
 import Fallback from "../components/fallback"
+import { Container, Box, Heading } from "../components/ui"
+
 import SEOHead from "../components/head"
 
 export default function Beats(props) {
-  const { beatpage } = props.data
+ 
 
   return (
     <Layout>
-    {beatpage ? (
-      beatpage.blocks.map((block) => {
-        const { id, blocktype, ...componentProps } = block
-        const Component = sections[blocktype] || Fallback
-        return <Component key={id} {...componentProps} />
-      })
-    ) : (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "100px",
-        }}
-      >
-        <h1>Whoops! There should be About page content here.</h1>
-        <div style={{ maxWidth: "700px" }}>
-          <p>
-            You're seeing this message because no <code>beatpage</code>{" "}
-            blocks were found in the about page query result. This is likely
-            because you are using a free Contentful space where restrictions
-            on the number of content types apply.
-          </p>
-          <p>
-            Take a look at the repository <code>README</code> Quick Start
-            section for a note on how to provision your Contentful space with
-            the <code>beatpage</code> content types included once you have a
-            paid plan.
-          </p>
-        </div>
-      </div>
-    )}
+    <Box paddingY={5}>
+      <Container width="narrow">
+        <Heading as="h1">{wpPage.title}</Heading>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: wpPage.content,
+          }}
+        />
+      </Container>
+    </Box>
   </Layout>
-  )
-}
+  )}
+
+
 export const Head = (props) => {
-  const { beatpage } = props.data
-  return <SEOHead {...beatpage} />
-}
-export const query = graphql`
-  {
-    beats {
+  const { wpPage } = props.data;
+  return <SEOHead {...wpPage} />;
+};
+
+export const wpPage = graphql`
+  query PageTemplate($id: String!) {
+    wpPage(id: { eq: $id }) {
       id
       title
-      description
-      image {
-        id
-        url
-      }
-      blocks: content {
-        id  
-        blocktype
-        ...BeatsHeroContent
-        ...BeatsFeatureListContent
-        ...BeatsCtaContent
-        ...BeatsLogoListContent
-        ...BeatsTestimonialListContent
-        ...BeatsStatListContent
-        ...BeatsProductListContent
-      }
+      content
+      slug
+
     }
   }
-`
+`;
+   

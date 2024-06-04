@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@contentful/rich-text-html-renderer": "^15.11.1",
+    "@contentful/rich-text-react-renderer": "^15.20.0",
+    "@contentful/rich-text-types": "^16.4.0",
     "@fontsource/dm-mono": "^4.5.9",
     "@fontsource/dm-sans": "^4.5.8",
     "@vanilla-extract/babel-plugin": "^1.2.0",
@@ -26,7 +28,7 @@
     "gatsby-plugin-manifest": "^5.0.0",
     "gatsby-plugin-sharp": "^5.0.0",
     "gatsby-plugin-vanilla-extract": "^4.0.1",
-    "gatsby-source-contentful": "^8.0.0",
+    "gatsby-source-contentful": "^8.13.2",
     "gatsby-source-filesystem": "^5.0.0",
     "gatsby-source-wordpress": "^7.13.4",
     "gatsby-transformer-sharp": "^5.0.0",

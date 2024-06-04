@@ -63,7 +63,7 @@ export const containers: Record<Containers, string> = styleVariants({
 
 export const flex = style({
   display: "flex",
-  alignItems: "center",
+  // alignItems: "center",
 })
 
 export type FlexVariants =
