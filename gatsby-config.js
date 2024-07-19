@@ -6,7 +6,7 @@ require("dotenv").config({
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.jeldonmusic.com",
-    title: "",
+    title: "Jeldon Music| Beats | Tutuorials | Mix",
     author: `j-eldon`,
     description: " beats, tutorials",
   },
