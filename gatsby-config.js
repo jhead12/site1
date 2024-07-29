@@ -18,6 +18,7 @@ module.exports = {
         spaceId: process.env.CONTENTFUL_SPACE_ID,
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
         host: process.env.CONTENTFUL_HOST,
+       
       },
     },
     {
@@ -30,6 +31,16 @@ module.exports = {
     "gatsby-plugin-image",
     "gatsby-transformer-sharp",
     "gatsby-plugin-vanilla-extract",
+
+    {
+      resolve: "gatsby-source-shopify",
+      options: {
+        password: process.env.SHOPIFY_APP_PASSWORD,
+        storeUrl: process.env.GATSBY_MYSHOPIFY_URL,
+        salesChannel: process.env.SHOPIFY_APP_ID, // Optional but recommended
+      }
+    },
+ 
     {
       resolve: "gatsby-plugin-manifest",
       options: {

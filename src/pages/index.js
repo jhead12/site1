@@ -4,9 +4,10 @@ import Layout from "../components/layout"
 import * as sections from "../components/sections"
 import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
+import BlogFeature from "../components/BlogFeature"
 
 export default function Homepage(props) {
-  const { homepage, allWpPost } = props.data
+  const { homepage, allWpPost, AllShop } = props.data
 
   return (
     <Layout>
@@ -15,15 +16,18 @@ export default function Homepage(props) {
         const Component = sections[blocktype] || Fallback
         return <Component key={id} {...componentProps} />
       })}
-      <sections.BlogFeature data={{ allWpPost }} />
+      <BlogFeature data={{ allWpPost }} />
 
+      {/* <sections.ShopFeature data={{ AllShop.section.top}} */}
     </Layout>
   )
 }
+
 export const Head = (props) => {
   const { homepage } = props.data
   return <SEOHead {...homepage} />
 }
+
 export const query = graphql`
   {
     homepage {
@@ -45,10 +49,9 @@ export const query = graphql`
         ...HomepageBenefitListContent
         ...HomepageStatListContent
         ...HomepageProductListContent
-        
-           }
+      }
     }
-    allWpPost(sort: { date: DESC}, limit: 5) {
+    allWpPost(sort: { date: DESC }, limit: 5) {
       nodes {
         id
         title
