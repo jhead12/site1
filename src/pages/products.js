@@ -44,16 +44,6 @@ export const query = graphql`
         }
       }
     }
-    allSection {
-      top {
-        id
-        title
-        description
-        image {
-          url
-          alt
-        }
-      }
-    }
+   
   }
 `
