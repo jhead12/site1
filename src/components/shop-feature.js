@@ -20,9 +20,7 @@ export default function ShopFeature(props) {
         {products.map(({ node }) => (
           <CardBlock key={node.id} style={{ width: '18rem', margin: '1rem' }}>
             <Card>
-              {node.images && node.images.length > 0 && (
-                <img src={node.images[0].originalSrc} alt={node.images[0].altText} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-              )}
+                <img src={node.featuredImage.originalSrc} alt={node.featuredImage.altText} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
               <CardTitle>{node.title}</CardTitle>
               <CardText>{node.description}</CardText>
               <Button variant="primary" as={Link} to={`/products/${node.handle}`}>
