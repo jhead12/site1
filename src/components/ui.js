@@ -246,3 +246,21 @@ export function VisuallyHidden(props) {
 export function BlockLink(props) {
   return <Link className={styles.blockLink} {...props} />
 }
+
+
+// New Card components
+export function Card({ children, ...props }) {
+  return <Base cx={[styles.card]} {...props}>{children}</Base>
+}
+
+export function CardBlock({ children, ...props }) {
+  return <Base cx={[styles.cardBlock]} {...props}>{children}</Base>
+}
+
+export function CardTitle({ children, ...props }) {
+  return <Base as="h5" cx={[styles.cardTitle]} {...props}>{children}</Base>
+}
+
+export function CardText({ children, ...props }) {
+  return <Base cx={[styles.cardText]} {...props}>{children}</Base>
+}

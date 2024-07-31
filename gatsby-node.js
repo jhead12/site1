@@ -169,10 +169,19 @@ exports.createSchemaCustomization = async ({ actions }) => {
       uri: String
       date: Date
     }
-  
+       interface ShopFeature implements Node & HomepageBlock {
+      id: ID!
+      blocktype: String
+      title: String
+      shopifyId: String
+      uri: String
+      tags: String
+      date: Date
+    }
 
 
-    
+
+
     interface BeatsHero implements Node & BeatsBlock {
       id: ID!
       blocktype: String
@@ -194,7 +203,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       links: [HomepageLink]
     }
 
-  
+
     interface BeatsFeature implements Node & BeatsBlock {
       id: ID!
       blocktype: String
@@ -1098,6 +1107,9 @@ exports.createSchemaCustomization = async ({ actions }) => {
       date: Date
     }
   `)
+
+  // Define Shopify specific types
+
 
 }
 exports.createPages = async ({ graphql, actions }) => {

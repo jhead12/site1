@@ -6,7 +6,7 @@ import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 
 export default function Homepage(props) {
-  const { homepage, allWpPost, AllShop } = props.data
+  const { homepage, allWpPost, allShopifyProduct } = props.data
 
   return (
     <Layout>
@@ -17,7 +17,8 @@ export default function Homepage(props) {
       })}
       <sections.BlogFeature data={{ allWpPost }} />
 
-      {/* <sections.ShopFeature data={{ AllShop.section.top}} */}
+      <sections.ShopFeature data={{ allShopifyProduct }} />
+
 
     </Layout>
   )
@@ -27,7 +28,7 @@ export const Head = (props) => {
   return <SEOHead {...homepage} />
 }
 export const query = graphql`
-  {
+ {
     homepage {
       id
       title
@@ -47,10 +48,9 @@ export const query = graphql`
         ...HomepageBenefitListContent
         ...HomepageStatListContent
         ...HomepageProductListContent
-        
-           }
+      }
     }
-    allWpPost(sort: { date: DESC}, limit: 5) {
+    allWpPost(sort: { date: DESC }, limit: 5) {
       nodes {
         id
         title
@@ -65,5 +65,39 @@ export const query = graphql`
         }
       }
     }
+  allShopifyProduct {
+    edges {
+      node {
+        productType
+        tags
+        status
+        title
+        featuredMedia {
+          id
+        }
+        seo {
+          title
+          description
+        }
+        description
+        featuredImage {
+          src
+          originalSrc
+          altText
+        }
+        handle
+        onlineStoreUrl
+        tracksInventory
+        priceRangeV2 {
+          maxVariantPrice {
+            amount
+          }
+          minVariantPrice {
+            amount
+          }
+        }
+      }
+    }
   }
+}
 `
