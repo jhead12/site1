@@ -5,16 +5,16 @@ import { Container, Box, Heading } from "../components/ui"
 import SEOHead from "../components/head"
 
 export default function Page(props) {
-  const { page } = props.data
+  const { Page } = props.data
 
   return (
     <Layout>
       <Box paddingY={5}>
         <Container width="narrow">
-          <Heading as="h1">{props.title}</Heading>
+          <Heading as="h1">{Page.title}</Heading>
           <div
             dangerouslySetInnerHTML={{
-              __html: props.html,
+              __html: Page.html,
             }}
           />
         </Container>

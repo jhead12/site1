@@ -18,7 +18,7 @@ export default function ShopFeature(props) {
     <Section padding={4} background="dark">
       <Flex wrap="wrap" justifyContent="center">
         {products.map(({ node }) => (
-          <CardBlock key={node.id} style={{ width: '18rem', margin: '1rem' }}>
+          <CardBlock key={node.shopfiyId} style={{ width: '18rem', margin: '1rem' }}>
             <Card>
                 <img src={node.featuredImage.originalSrc} alt={node.featuredImage.altText} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
               <CardTitle>{node.title}</CardTitle>

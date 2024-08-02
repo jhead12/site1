@@ -626,6 +626,42 @@ export const visuallyHidden = style({
   width: "1px",
 })
 
+export const card = style({
+  border: `1px solid ${theme.colors.border}`,
+  borderRadius: theme.radii.small,
+  boxShadow: theme.shadows.md,
+  overflow: "hidden",
+  margin: theme.space[3],
+  background: theme.colors.background,
+})
+
+export const cardImage = style({
+  width: "100%",
+  height: "auto",
+})
+
+export const cardTitle = style({
+  fontSize: theme.fontSizes[3],
+  fontWeight: theme.fontWeights.bold,
+  margin: `${theme.space[2]} 0`,
+})
+
+export const cardText = style({
+  fontSize: theme.fontSizes[2],
+  color: theme.colors.text,
+  marginBottom: theme.space[3],
+})
+
+export const cardBody = style({
+  padding: theme.space[3],
+})
+
+export const cardFooter = style({
+  padding: `${theme.space[2]} ${theme.space[3]}`,
+  background: theme.colors.muted,
+  borderTop: `1px solid ${theme.colors.border}`,
+})
+
 
 // for debugging only
 export const debug = style({

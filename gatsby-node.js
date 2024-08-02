@@ -180,6 +180,29 @@ exports.createSchemaCustomization = async ({ actions }) => {
       tags: String
       date: Date
     }
+      type ShopifyProduct implements Node {
+      id: ID!
+      shopifyId: String
+      handle: String
+      title: String
+      description: String
+      images: [ShopifyImage]
+      priceRangeV2: ShopifyPriceRange
+    }
+
+    type ShopifyImage {
+      originalSrc: String
+      altText: String
+    }
+
+    type ShopifyPriceRange {
+      minVariantPrice: ShopifyMoneyV2
+      maxVariantPrice: ShopifyMoneyV2
+    }
+
+    type ShopifyMoneyV2 {
+      amount: String
+    }
 
 
 
@@ -1114,64 +1137,22 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
 
 }
+
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  const result = await graphql(`
-    {
-      allWpPage {
-        nodes {
-          id
-          slug
-          title
-          content
-        }
-      }
-    }
-  `);
+  
 
-  if (result.errors) {
-    throw result.errors;
-  }
-
-  const pages = result.data.allWpPage.nodes;
-
-  pages.forEach(page => {
-    createPage({
-      path: `/${page.slug}/`,
-      component: require.resolve("./src/templates/page-template.js"),
-      context: {
-        id: page.id,
-      },
-    });
-  });
-};
-
-
-exports.createPages = ({ actions }) => {
-  const { createSlice } = actions
-  createSlice({
-    id: "header",
-    component: require.resolve("./src/components/header.js"),
-  })
-  createSlice({
-    id: "footer",
-    component: require.resolve("./src/components/footer.js"),
-  })
-}
-
-// Shopify
-exports.createPages = async ({ graphql, actions }) => {
-  const { createPage } = actions
-  // Query for all products in Shopify
-  const result = await graphql(`
+  // Fetch all Shopify products
+  const shopifyResult = await graphql(`
     query {
       allShopifyProduct(sort: { title: ASC }) {
         edges {
           node {
             title
-            images {
+            featuredImage {
               originalSrc
+              altText
             }
             shopifyId
             handle
@@ -1190,17 +1171,39 @@ exports.createPages = async ({ graphql, actions }) => {
       }
     }
   `)
-  // Iterate over all products and create a new page using a template
-  // The product "handle" is generated automatically by Shopify
-  result.data.allShopifyProduct.edges.forEach(({ node }) => {
+
+  if (shopifyResult.errors) {
+    throw shopifyResult.errors;
+  }
+
+  const products = shopifyResult.allShopifyProduct.edges;
+
+
+  products.forEach(({ node }) => {
     createPage({
       path: `/products/${node.handle}`,
       component: path.resolve(`./src/templates/product.js`),
       context: {
         product: node,
       },
-    })
-  })
+    });
+  });
 }
 
+
+
+
+
+
+exports.createPages = ({ actions }) => {
+  const { createSlice } = actions
+  createSlice({
+    id: "header",
+    component: require.resolve("./src/components/header.js"),
+  })
+  createSlice({
+    id: "footer",
+    component: require.resolve("./src/components/footer.js"),
+  })
+}
       
