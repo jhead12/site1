@@ -17,6 +17,8 @@ export default function Head({ title, description, image }) {
       <meta name="twitter:card" content="summary" />
       <script src="http://localhost:8097"></script>
 
+      
+
       <meta name="twitter:title" content={title} />
       {description && <meta name="twitter:description" content={description} />}
       {image && <meta name="twitter:image" content={image.url} />}
