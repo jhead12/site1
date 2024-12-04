@@ -18,6 +18,7 @@ export default function Head({ title, description, image }) {
       <meta name="twitter:title" content={title} />
       {description && <meta name="twitter:description" content={description} />}
       {image && <meta name="twitter:image" content={image.url} />}
+        
     </>
   )
 }
