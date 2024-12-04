@@ -21,6 +21,8 @@ import {
 } from "./header.css"
 import NavItemGroup from "./nav-item-group"
 import BrandLogo from "./brand-logo"
+import EmbedPage from "../components/header-scripts"
+
 
 export default function Header() {
   const data = useStaticQuery(graphql`
@@ -72,6 +74,7 @@ export default function Header() {
 
   return (
     <header>
+      <EmbedPage/>
       <Container className={desktopHeaderNavWrapper}>
         <Space size={2} />
         <Flex variant="spaceBetween">

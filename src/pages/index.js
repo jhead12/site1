@@ -5,6 +5,7 @@ import * as sections from "../components/sections"
 import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 
+
 export default function Homepage(props) {
   const { homepage, allWpPost } = props.data
 
@@ -15,8 +16,9 @@ export default function Homepage(props) {
         const Component = sections[blocktype] || Fallback
         return <Component key={id} {...componentProps} />
       })}
+      
       <sections.BlogFeature data={{ allWpPost }} />
-
+ 
     </Layout>
   )
 }
