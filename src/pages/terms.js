@@ -10,7 +10,7 @@ export default function Terms() {
 return (
 
 <Layout>
-<body  style={{
+<div  style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -537,21 +537,21 @@ return (
   <p>
    support@jeldonmusic.com
   </p>
- </body>
+ </div>
 </Layout>
 )
 }
 
-export const query = graphql`
-query {
-contentfulPage(slug: { eq: "terms" }) {
-body {
-  __typename
-  ... on ContentfulPageBody {
-    raw
-  }
-}
-}
-}
-`
+// export const query = graphql`
+// query {
+// contentfulPage(slug: { eq: "terms" }) {
+// body {
+//   __typename
+//   ... on ContentfulPageBody {
+//     raw
+//   }
+// }
+// }
+// }
+// `
 

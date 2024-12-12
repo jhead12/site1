@@ -475,6 +475,20 @@ exports.createSchemaCustomization = async ({ actions }) => {
       image: BeatsImage
     }
 
+    interface Privacy implements Node {
+      id: ID!
+      blocktype: String
+      heading: String
+      text: String
+    }
+
+      interface Terms implements Node {
+      id: ID!
+      blocktype: String
+      heading: String
+      text: String
+    }
+
 
     interface AboutPage implements Node {
       id: ID!
