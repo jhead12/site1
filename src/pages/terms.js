@@ -10,7 +10,13 @@ export default function Terms() {
 return (
 
 <Layout>
-<body>
+<body  style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "100px",
+          }}>
   <h1>
    TERMS AND CONDITIONS
   </h1>
