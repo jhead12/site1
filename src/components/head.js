@@ -1,11 +1,9 @@
 import * as React from "react"
-import { useLocation } from "@reach/router" // this helps tracking the location
-import { initializeAndTrack } from 'gatsby-plugin-gdpr-cookies'
 
 export default function Head({ title, description, image }) {
 
-  const location = useLocation()
-initializeAndTrack(location)
+
+
   return (
     <>
       <meta charSet="utf-8" />
