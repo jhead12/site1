@@ -6,6 +6,7 @@ import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 
 
+
 export default function Homepage(props) {
   const { homepage, allWpPost } = props.data
 
@@ -18,8 +19,9 @@ export default function Homepage(props) {
       })}
       
       <sections.BlogFeature data={{ allWpPost }} />
- 
+
     </Layout>
+    
   )
 }
 export const Head = (props) => {
