@@ -37,6 +37,7 @@
     "gatsby-transformer-sharp": "^5.0.0",
     "is-absolute-url": "^4.0.1",
     "react": "^18.0.0",
+    "react-cookie-consent": "^9.0.0",
     "react-dom": "^18.0.0",
     "react-feather": "^2.0.9",
     "react-helmet": "^6.1.0",
