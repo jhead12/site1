@@ -86,9 +86,6 @@ module.exports = {
         // defines the environments where the tracking should be available  - default is ["production"]
         environments: ['production', 'development']
       },
-    },process.env.NODE_ENV === "development" || typeof window !== "undefined"
-    ? "gatsby-plugin-gdpr-cookies"
-    : null,
-
-  ].filter(Boolean),
+    },
+  ],
 }
