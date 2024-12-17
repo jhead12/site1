@@ -4,17 +4,14 @@ import Layout from "../components/layout"
 import * as sections from "../components/sections"
 import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
-// in your cookie banner
-import { useLocation } from "@reach/router" // this helps tracking the location
-import { initializeAndTrack } from 'gatsby-plugin-gdpr-cookies'
+
 
 
 
 export default function Homepage(props) {
   const { homepage, allWpPost } = props.data
   // in your cookie banner
-const location = useLocation()
-initializeAndTrack(location)
+
 
   return (
     <Layout>

@@ -11,6 +11,7 @@ module.exports = {
     description: " beats, tutorials",
   },
   plugins: [
+    
     {
       resolve: "gatsby-source-contentful",
       options: {
@@ -41,6 +42,7 @@ module.exports = {
         icon: "src/favicon.png",
       },
     },
+    
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
@@ -50,6 +52,7 @@ module.exports = {
         }
       }
     },{
+      
       resolve: `gatsby-plugin-gdpr-cookies`,
       options: {
         googleAnalytics: {
@@ -83,6 +86,9 @@ module.exports = {
         // defines the environments where the tracking should be available  - default is ["production"]
         environments: ['production', 'development']
       },
-    },
-  ],
+    },process.env.NODE_ENV === "development" || typeof window !== "undefined"
+    ? "gatsby-plugin-gdpr-cookies"
+    : null,
+
+  ].filter(Boolean),
 }
