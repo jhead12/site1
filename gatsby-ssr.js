@@ -1,3 +1,5 @@
+import * as React from "react"
+
 export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
     const facebookPixelId = process.env.GATSBY_FACEBOOK_PIXEL_ID;
   
