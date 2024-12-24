@@ -25,7 +25,8 @@ export default function LogoList(props) {
             (logo) =>
               logo && (
                 <li key={logo.id}>
-                  <LogoItem {...logo} />
+                <a href={logo.link} >  <LogoItem {...logo} />
+                  </a>
                 </li>
               )
           )}
@@ -42,10 +43,12 @@ export const query = graphql`
     logos {
       id
       alt
+      link
       image {
         id
         gatsbyImageData
         alt
+        
       }
     }
   }

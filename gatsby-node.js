@@ -246,6 +246,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       id: ID!
       image: HomepageImage
       alt: String
+      link: String
     }
 
     interface BeatsLogo implements Node {
@@ -664,6 +665,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       id: ID!
       image: HomepageImage @link(from: "image___NODE")
       alt: String
+      link: String
     }
 
     type ContentfulHomepageLogoList implements Node & HomepageBlock & HomepageLogoList
