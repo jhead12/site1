@@ -1,38 +1,22 @@
 import * as React from "react"
-import { graphql } from "gatsby"
-import { Container, Section, FlexList, Box, Text } from "./ui"
-import * as styles from "./about-stat-list.css"
+// import { graphql } from "gatsby"
+// import {  Text } from "./ui"
+// import * as styles from "./about-stat-list.css"
 
-function BeatsStat(props) {
-  return (
-    <Box width="fitContent" className={styles.statContainer}>
-      {props.value && <Text variant="stat">{props.value}</Text>}
-      {props.label && <Text variant="statLabel">{props.label}</Text>}
-    </Box>
-  )
-}
 
-export default function BeatsStatList(props) {
-  return (
-    <Section>
-      <Container>
-        <FlexList className={styles.statList} variant="center" responsive>
-          {props.content.map((stat) => (
-            <BeatsStat key={stat.id} {...stat} />
-          ))}
-        </FlexList>
-      </Container>
-    </Section>
-  )
-}
+const BeatList = () => (
+  <main>
+    <h1> Public Beat List</h1>
+    <iframe
+      src="https://player.beatstars.com/?storeId=128801"
+      width="100%"
+      height="300"
+      style={{ maxWidth: "1024px" }}
+      title="BeatStars Player"
+    >
+      -- none --
+    </iframe>
+  </main>
+);
 
-export const query = graphql`
-  fragment BeatsStatListContent on BeatsStatList {
-    id
-    content {
-      id
-      value
-      label
-    }
-  }
-`
+export default BeatList;

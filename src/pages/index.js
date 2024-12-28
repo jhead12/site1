@@ -20,8 +20,11 @@ export default function Homepage(props) {
         const Component = sections[blocktype] || Fallback
         return <Component key={id} {...componentProps} />
       })}
-      
+
+      <sections.BeatsStatList />
       <sections.BlogFeature data={{ allWpPost }} />
+
+
 
     </Layout>
     
