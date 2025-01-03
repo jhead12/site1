@@ -5,7 +5,7 @@ const EmbedPage = () => {
   return (
     <>
       <Helmet>
-        <script>
+        {/* <script>
           {`
           (function(w, d, t, h, s, n) {
             w.FlodeskObject = n;
@@ -34,7 +34,7 @@ const EmbedPage = () => {
             formId: '674a90583b3ce205b7f44141'
           });
           `}
-        </script>
+        </script> */}
       </Helmet>
       {/* <div>
         <h1>Embed Page</h1>
