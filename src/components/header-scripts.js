@@ -35,6 +35,15 @@ const EmbedPage = () => {
           });
           `}
         </script> */}
+
+        {
+<iframe 
+  src="https://samply.app/embed/gR2wVgSEYQrr5UkzrY7N" 
+  frameborder="0"
+  allowtransparency="true"
+  style="width: 100%; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.12)"
+></iframe>
+}
       </Helmet>
       {/* <div>
         <h1>Embed Page</h1>

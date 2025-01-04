@@ -2,7 +2,7 @@ import * as React from "react";
 import "../styles.css";
 import { Slice } from "gatsby";
 // import CookieConsent from "react-cookie-consent";
-import CookieConsent, { Cookies } from "react-cookie-consent";
+// import CookieConsent, { Cookies } from "react-cookie-consent";
 
 
 const Layout = ({ children }) => {
@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
       <Slice alias="footer" />
 
       {/* Cookie Consent */}
-      <CookieConsent
+      {/* <CookieConsent
         location="bottom"
         buttonText="Accept"
         declineButtonText="Decline"
@@ -67,7 +67,7 @@ const Layout = ({ children }) => {
             "Accept," you agree to our use of cookies.
           </p>
         </div>
-      </CookieConsent>
+      </CookieConsent> */}
     </div>
   );
 };

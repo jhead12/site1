@@ -5,3 +5,6 @@ node_modules
 public
 dist
 .DS_Store
+gatsby-config.js
+gatsby-config-dev.js
+components/layout.js

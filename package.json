@@ -5,8 +5,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "gatsby develop",
-    "develop": "gatsby develop",
+    "start": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
+    "develop": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
