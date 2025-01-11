@@ -1,6 +1,6 @@
 import * as React from "react"
 // import { graphql } from "gatsby"
-import { Container, Section, FlexList, Box, Text } from "./ui"
+import { Container, Text } from "./ui"
 // import * as styles from "./about-stat-list.css"
 
 
@@ -11,7 +11,7 @@ const BeatList = () => (
     <h1>Current Public Beat List</h1>
     </Text>
 
-<iframe 
+<iframe  title="samply music list"
   src="https://samply.app/embed/gR2wVgSEYQrr5UkzrY7N" 
   frameborder="0"
    width="100%"
@@ -20,7 +20,7 @@ const BeatList = () => (
   style={{ maxWidth: "1024px" }}
 ></iframe>
 
-    <iframe
+    {/* <iframe
       src="https://player.beatstars.com/?storeId=128801"
       width="100%"
       height="400"
@@ -28,7 +28,7 @@ const BeatList = () => (
       title="BeatStars Player"
     >
       -- none --
-    </iframe>
+    </iframe> */}
   </Container>
 );
 
