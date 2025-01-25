@@ -21,8 +21,6 @@ const BeatList = () => (
 ></iframe>
 
 
-
-
     {/* <iframe
       src="https://player.beatstars.com/?storeId=128801"
       width="100%"
