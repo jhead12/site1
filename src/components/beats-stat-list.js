@@ -12,13 +12,16 @@ const BeatList = () => (
     </Text>
 
 <iframe  title="samply music list"
-  src="https://samply.app/embed/gR2wVgSEYQrr5UkzrY7N" 
+  src="https://samply.app/embed/pXJcoEICbOorz8If1Yly" 
   frameborder="0"
    width="100%"
   height="400"
   allowtransparency="true"
   style={{ maxWidth: "1024px" }}
 ></iframe>
+
+
+
 
     {/* <iframe
       src="https://player.beatstars.com/?storeId=128801"
