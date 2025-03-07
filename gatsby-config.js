@@ -21,12 +21,12 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
-    {
-      resolve: `gatsby-source-wordpress`,
-      options: {
-        url: process.env.WPGRAPHQL_URL,
-      },
-    },
+    // {
+    //   resolve: `@wpengine/headless-gatsby-source-wordpress`,
+    //   options: {
+    //     url: process.env.WPGRAPHQL_URL,
+    //   },
+    // },
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",
     "gatsby-transformer-sharp",

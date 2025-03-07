@@ -1,4 +1,27 @@
 import * as React from "react"
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: process.env.WPGRAPHQL_URL,
+  cache: new InMemoryCache(),
+});
+
+
+client
+  .query({
+    query: gql`
+      query GetLocations {
+        locations {
+          id
+          name
+          description
+          photo
+        }
+      }
+    `,
+  })
+  .then((result) => console.log(result));
+
 
 export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
     const facebookPixelId = process.env.GATSBY_FACEBOOK_PIXEL_ID;
