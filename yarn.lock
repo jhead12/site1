@@ -6661,7 +6661,7 @@ gatsby-source-filesystem@^5.0.0, gatsby-source-filesystem@^5.14.0:
     valid-url "^1.0.9"
     xstate "^4.38.0"
 
-gatsby-source-wordpress@^7.13.4:
+gatsby-source-wordpress@^7.14.0:
   version "7.14.0"
   resolved "https://registry.yarnpkg.com/gatsby-source-wordpress/-/gatsby-source-wordpress-7.14.0.tgz#760fc573eddf5cfe9626d71cfe9eeea850c33151"
   integrity sha512-ZW+RS/bx6w7l3D597fYVpDsjhkOKcM0RBtf/0HRL1hGGtAYZLciivQcB+f9ydej44bNXTTb06cRNgNC4kS3dlA==
