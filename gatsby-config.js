@@ -1,8 +1,4 @@
 require("dotenv").config()
-require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
-})
-
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.jeldonmusic.com",
@@ -11,7 +7,7 @@ module.exports = {
     description: " beats, tutorials",
   },
   plugins: [
-    
+
     {
       resolve: "gatsby-source-contentful",
       options: {
@@ -21,12 +17,21 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
-    // {
-    //   resolve: `@wpengine/headless-gatsby-source-wordpress`,
-    //   options: {
-    //     url: process.env.WPGRAPHQL_URL,
-    //   },
-    // },
+    {
+      resolve: "gatsby-source-wordpress",
+      options: {
+        url: process.env.WPGRAPHQL_URL, // URL to your custom wp-graphql endpoint
+      },
+      // Optional: Set the type of the source plugin
+      // to be used in the GraphQL schema
+        debug: {
+          graphql: {
+            writeQueriesToDisk: true,
+            writeQueriesToDiskPath: "./graphql-queries",
+            writeQueriesToDiskFormat: "graphql",
+      }
+        }
+    },
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",
     "gatsby-transformer-sharp",
@@ -42,8 +47,8 @@ module.exports = {
         icon: "src/favicon.png",
       },
     },
-    
-    
-    
+
+
+
   ],
 }

@@ -7,20 +7,20 @@ const client = new ApolloClient({
 });
 
 
-client
-  .query({
-    query: gql`
-      query GetLocations {
-        locations {
-          id
-          name
-          description
-          photo
-        }
-      }
-    `,
-  })
-  .then((result) => console.log(result));
+// client
+//   .query({
+//     query: gql`
+//       query GetLocations {
+//         locations {
+//           id
+//           name
+//           description
+//           photo
+//         }
+//       }
+//     `,
+//   })
+//   .then((result) => console.log(result));
 
 
 export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
