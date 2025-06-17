@@ -2,12 +2,11 @@ require("dotenv").config()
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.jeldonmusic.com",
-    title: "Jeldon Music| Beats | Tutuorials | Mix",
+    title: "Jeldon Music| Beats | Tutorials | Mix",
     author: `j-eldon`,
-    description: " beats, tutorials",
+    description: "beats, tutorials",
   },
   plugins: [
-
     {
       resolve: "gatsby-source-contentful",
       options: {
@@ -20,17 +19,40 @@ module.exports = {
     {
       resolve: "gatsby-source-wordpress",
       options: {
-        url: process.env.WPGRAPHQL_URL, // URL to your custom wp-graphql endpoint
-      },
-      // Optional: Set the type of the source plugin
-      // to be used in the GraphQL schema
-        debug: {
-          graphql: {
-            writeQueriesToDisk: true,
-            writeQueriesToDiskPath: "./graphql-queries",
-            writeQueriesToDiskFormat: "graphql",
+        url: process.env.WPGRAPHQL_URL,
+        verbose: process.env.NODE_ENV === "development",
+        develop: {
+          hardCacheMediaFiles: true,
+          nodeUpdateInterval: 5000,
+        },
+        production: {
+          hardCacheMediaFiles: false,
+        },
+        excludeFieldNames: [`blocksJSON`, `savePost`],
+        type: {
+          MediaItem: {
+            localFile: {
+              requestConcurrency: 50,
+              maxFileSizeBytes: 15728640, // 15Mb
+            },
+          },
+        },
+        html: {
+          useGatsbyImage: true,
+          imageMaxWidth: 1024,
+          fallbackImageMaxWidth: 800,
+        },
+        schema: {
+          timeout: 30000,
+          perPage: 100,
+        },
+        auth: {
+          htaccess: {
+            username: process.env.WP_USERNAME,
+            password: process.env.WP_PASSWORD,
+          },
+        },
       }
-        }
     },
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",

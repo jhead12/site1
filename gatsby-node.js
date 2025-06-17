@@ -1,5 +1,4 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
-const { getGatsbyImageResolver } = require("gatsby-plugin-image/graphql-utils")
 
 // exports.createSchemaCustomization = async ({ actions }) => {
 //   actions.createFieldExtension({
@@ -27,16 +26,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       }
     },
   });
-
-  actions.createFieldExtension({
-    name: "imagePassthroughArgs",
-    extend(options) {
-      const { args } = getGatsbyImageResolver()
-      return {
-        args,
-      }
-    },
-  })
 
   actions.createFieldExtension({
     name: "imageUrl",
@@ -140,14 +129,14 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface HomepageImage implements Node {
       id: ID!
       alt: String
-      gatsbyImageData: GatsbyImageData @imagePassthroughArgs
+      gatsbyImageData: GatsbyImageData
       url: String
     }
 
     interface BeatsImage implements Node {
       id: ID!
       alt: String
-      gatsbyImageData: GatsbyImageData @imagePassthroughArgs
+      gatsbyImageData: GatsbyImageData
       url: String
     }
 
@@ -1115,10 +1104,68 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `)
 
+  // Define WordPress Video types to prevent GraphQL errors - COMMENTED OUT until WordPress video post types are created
+  /*
+  actions.createTypes(\`
+    type WpVideo implements Node @dontInfer {
+      id: ID!
+      title: String
+      excerpt: String
+      slug: String
+      date: Date
+      author: WpVideoAuthor
+      featuredImage: WpVideoFeaturedImage
+      videoCategories: WpVideoCategories
+      videoDetails: WpVideoDetails
+    }
+
+    type WpVideoAuthor {
+      node: WpVideoAuthorNode
+    }
+
+    type WpVideoAuthorNode {
+      name: String
+    }
+
+    type WpVideoFeaturedImage {
+      node: WpVideoFeaturedImageNode
+    }
+
+    type WpVideoFeaturedImageNode {
+      sourceUrl: String
+      altText: String
+    }
+
+    type WpVideoCategories {
+      nodes: [WpVideoCategoryNode]
+    }
+
+    type WpVideoCategoryNode {
+      id: String
+      name: String
+      slug: String
+    }
+
+    type WpVideoDetails {
+      youtubeVideoId: String
+      videoDuration: String
+      videoViews: String
+    }
+
+    type WpVideoCategory implements Node @dontInfer {
+      id: ID!
+      name: String
+      slug: String
+      count: Int
+    }
+  \`)
+  */
+
 }
 exports.createPages = async ({ graphql, actions }) => {
-  const { createPage } = actions;
+  const { createPage, createSlice } = actions;
 
+  // Create WordPress pages
   const result = await graphql(`
     {
       allWpPage {
@@ -1129,38 +1176,175 @@ exports.createPages = async ({ graphql, actions }) => {
           content
         }
       }
+      allWpPost {
+        nodes {
+          id
+          slug
+          title
+        }
+      }
+      allWpBeat {
+        nodes {
+          id
+          slug
+          title
+        }
+      }
+      allWpTutorial {
+        nodes {
+          id
+          slug
+          title
+        }
+      }
+      allWpMix {
+        nodes {
+          id
+          slug
+          title
+        }
+      }
+      # allWpVideo {
+      #   nodes {
+      #     id
+      #     slug
+      #     title
+      #   }
+      # }
     }
   `);
 
   if (result.errors) {
+    console.error('GraphQL errors:', result.errors);
     throw result.errors;
   }
 
-  const pages = result.data.allWpPage.nodes;
+  // Safely access data with fallbacks
+  const pages = result.data?.allWpPage?.nodes || [];
+  const posts = result.data?.allWpPost?.nodes || [];
+  const beats = result.data?.allWpBeat?.nodes || [];
+  const tutorials = result.data?.allWpTutorial?.nodes || [];
+  const mixes = result.data?.allWpMix?.nodes || [];
+  // const videos = result.data?.allWpVideo?.nodes || []; // COMMENTED OUT until WordPress video post types are created
 
+  // Debug logging
+  console.log(`Creating ${pages.length} WordPress pages`);
+  console.log(`Creating ${posts.length} blog posts`);
+  console.log(`Creating ${beats.length} beats`);
+  console.log(`Creating ${tutorials.length} tutorials`);
+  console.log(`Creating ${mixes.length} mixes`);
+  // console.log(`Creating ${videos.length} videos`); // COMMENTED OUT until WordPress video post types are created
+
+  // Check for WordPress connection
+  if (posts.length === 0) {
+    console.warn('⚠️  No WordPress posts found. Check WordPress connection at:', process.env.WPGRAPHQL_URL);
+  }
+
+  // Create WordPress pages
   pages.forEach(page => {
     createPage({
       path: `/${page.slug}/`,
-      component: require.resolve("./src/templates/page-template.js"),
+      component: require.resolve("./src/pages/{Page.slug}.js"),
       context: {
         id: page.id,
       },
     });
   });
-};
 
+  // Create Blog post pages with next/previous navigation
+  posts.forEach((post, index) => {
+    console.log(`Creating blog post page: /blog/${post.slug}/`);
+    const previousPost = index === 0 ? null : posts[index - 1];
+    const nextPost = index === posts.length - 1 ? null : posts[index + 1];
+    
+    createPage({
+      path: `/blog/${post.slug}/`,
+      component: require.resolve("./src/templates/blog-post.js"),
+      context: {
+        id: post.id,
+        slug: post.slug,
+        previousPost: previousPost ? {
+          slug: previousPost.slug,
+          title: previousPost.title
+        } : null,
+        nextPost: nextPost ? {
+          slug: nextPost.slug,
+          title: nextPost.title
+        } : null,
+      },
+    });
+  });
 
+  // Create Beat pages
+  beats.forEach(beat => {
+    createPage({
+      path: `/beats/${beat.slug}/`,
+      component: require.resolve("./src/templates/beat.tsx"),
+      context: {
+        id: beat.id,
+        slug: beat.slug,
+      },
+    });
+  });
 
+  // Create Tutorial pages
+  tutorials.forEach(tutorial => {
+    createPage({
+      path: `/tutorials/${tutorial.slug}/`,
+      component: require.resolve("./src/templates/tutorial.tsx"),
+      context: {
+        id: tutorial.id,
+        slug: tutorial.slug,
+      },
+    });
+  });
 
-exports.createPages = ({ actions }) => {
-  const { createSlice } = actions
+  // Create Mix pages
+  mixes.forEach(mix => {
+    createPage({
+      path: `/mixes/${mix.slug}/`,
+      component: require.resolve("./src/templates/mix.tsx"),
+      context: {
+        id: mix.id,
+        slug: mix.slug,
+      },
+    });
+  });
+
+  // Create Video pages with next/previous navigation - COMMENTED OUT until WordPress video post types are created
+  /*
+  videos.forEach((video, index) => {
+    console.log(`Creating video page: /videos/${video.slug}/`);
+    const previousVideo = index === 0 ? null : videos[index - 1];
+    const nextVideo = index === videos.length - 1 ? null : videos[index + 1];
+    
+    createPage({
+      path: `/videos/${video.slug}/`,
+      component: require.resolve("./src/templates/video.js"),
+      context: {
+        id: video.id,
+        slug: video.slug,
+        previousVideo: previousVideo ? {
+          slug: previousVideo.slug,
+          title: previousVideo.title
+        } : null,
+        nextVideo: nextVideo ? {
+          slug: nextVideo.slug,
+          title: nextVideo.title
+        } : null,
+      },
+    });
+  });
+  */
+
+  // Create slices
   createSlice({
     id: "header",
     component: require.resolve("./src/components/header.js"),
-  })
+  });
+  
   createSlice({
     id: "footer",
     component: require.resolve("./src/components/footer.js"),
-  })
-}
-      
+  });
+};

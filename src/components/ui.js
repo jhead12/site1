@@ -206,26 +206,44 @@ export function Blockquote(props) {
 }
 
 export function Avatar({ alt, image }) {
+  const imageData = getImage(image)
+  
+  if (!imageData) {
+    return null
+  }
+  
   return (
-    <GatsbyImage alt={alt} image={getImage(image)} className={styles.avatar} />
+    <GatsbyImage alt={alt} image={imageData} className={styles.avatar} />
   )
 }
 
 export function Logo({ alt, image, size = "small" }) {
+  const imageData = getImage(image)
+  
+  if (!imageData) {
+    return null
+  }
+  
   return (
     <GatsbyImage
       alt={alt}
-      image={getImage(image)}
+      image={imageData}
       className={styles.logos[size]}
     />
   )
 }
 
 export function Icon({ alt, image, size = "medium" }) {
+  const imageData = getImage(image)
+  
+  if (!imageData) {
+    return null
+  }
+  
   return (
     <GatsbyImage
       alt={alt}
-      image={getImage(image)}
+      image={imageData}
       className={styles.icons[size]}
     />
   )

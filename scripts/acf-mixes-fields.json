@@ -1,0 +1,224 @@
+[
+  {
+    "key": "group_mixes_fields",
+    "title": "Mix Information",
+    "fields": [
+      {
+        "key": "field_mix_audio_file",
+        "label": "Mix Audio File",
+        "name": "mix_audio_file",
+        "type": "file",
+        "instructions": "Upload the mix audio file",
+        "required": 1,
+        "return_format": "array",
+        "mime_types": "mp3,wav,m4a"
+      },
+      {
+        "key": "field_mix_duration",
+        "label": "Mix Duration",
+        "name": "mix_duration",
+        "type": "text",
+        "instructions": "Duration in MM:SS format (e.g., 45:30)",
+        "required": 1,
+        "placeholder": "45:30"
+      },
+      {
+        "key": "field_mix_type",
+        "label": "Mix Type",
+        "name": "mix_type",
+        "type": "radio",
+        "instructions": "Select the type of mix",
+        "required": 1,
+        "choices": {
+          "live": "Live Mix",
+          "studio": "Studio Mix",
+          "podcast": "Podcast/Radio Show",
+          "dj_set": "DJ Set",
+          "compilation": "Beat Compilation"
+        },
+        "default_value": "studio",
+        "layout": "vertical"
+      },
+      {
+        "key": "field_tracklist",
+        "label": "Tracklist",
+        "name": "tracklist",
+        "type": "repeater",
+        "instructions": "Add tracks included in this mix",
+        "required": 0,
+        "layout": "table",
+        "button_label": "Add Track",
+        "sub_fields": [
+          {
+            "key": "field_track_timestamp",
+            "label": "Timestamp",
+            "name": "track_timestamp",
+            "type": "text",
+            "required": 1,
+            "placeholder": "05:30"
+          },
+          {
+            "key": "field_track_artist",
+            "label": "Artist",
+            "name": "track_artist",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_track_title",
+            "label": "Track Title",
+            "name": "track_title",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_track_label",
+            "label": "Label/Producer",
+            "name": "track_label",
+            "type": "text",
+            "required": 0
+          }
+        ]
+      },
+      {
+        "key": "field_mix_genre",
+        "label": "Primary Genre",
+        "name": "mix_genre",
+        "type": "select",
+        "instructions": "Select the primary genre of this mix",
+        "required": 1,
+        "choices": {
+          "hip_hop": "Hip Hop",
+          "trap": "Trap",
+          "drill": "Drill",
+          "rnb": "R&B",
+          "afrobeats": "Afrobeats",
+          "house": "House",
+          "electronic": "Electronic",
+          "lofi": "Lo-Fi",
+          "jazz": "Jazz",
+          "funk": "Funk",
+          "soul": "Soul",
+          "mixed": "Mixed Genres"
+        },
+        "default_value": "hip_hop"
+      },
+      {
+        "key": "field_download_link",
+        "label": "Download Link",
+        "name": "download_link",
+        "type": "url",
+        "instructions": "External download link (SoundCloud, Bandcamp, etc.)",
+        "required": 0
+      },
+      {
+        "key": "field_streaming_links",
+        "label": "Streaming Links",
+        "name": "streaming_links",
+        "type": "group",
+        "instructions": "Add streaming platform links",
+        "required": 0,
+        "layout": "block",
+        "sub_fields": [
+          {
+            "key": "field_spotify_url",
+            "label": "Spotify URL",
+            "name": "spotify_url",
+            "type": "url",
+            "required": 0
+          },
+          {
+            "key": "field_apple_music_url",
+            "label": "Apple Music URL",
+            "name": "apple_music_url",
+            "type": "url",
+            "required": 0
+          },
+          {
+            "key": "field_youtube_music_url",
+            "label": "YouTube Music URL",
+            "name": "youtube_music_url",
+            "type": "url",
+            "required": 0
+          },
+          {
+            "key": "field_soundcloud_url",
+            "label": "SoundCloud URL",
+            "name": "soundcloud_url",
+            "type": "url",
+            "required": 0
+          },
+          {
+            "key": "field_bandcamp_url",
+            "label": "Bandcamp URL",
+            "name": "bandcamp_url",
+            "type": "url",
+            "required": 0
+          }
+        ]
+      },
+      {
+        "key": "field_mix_cover_art",
+        "label": "Mix Cover Art",
+        "name": "mix_cover_art",
+        "type": "image",
+        "instructions": "Upload custom cover art for this mix",
+        "required": 0,
+        "return_format": "array",
+        "preview_size": "medium"
+      },
+      {
+        "key": "field_recording_date",
+        "label": "Recording Date",
+        "name": "recording_date",
+        "type": "date_picker",
+        "instructions": "When was this mix recorded?",
+        "required": 0,
+        "display_format": "d/m/Y",
+        "return_format": "d/m/Y"
+      },
+      {
+        "key": "field_mix_equipment",
+        "label": "Equipment Used",
+        "name": "mix_equipment",
+        "type": "textarea",
+        "instructions": "List the equipment, software, or setup used for this mix",
+        "required": 0,
+        "rows": 3
+      },
+      {
+        "key": "field_featured_mix",
+        "label": "Featured Mix",
+        "name": "featured_mix",
+        "type": "true_false",
+        "instructions": "Mark as featured mix for homepage display",
+        "default_value": 0,
+        "ui": 1
+      },
+      {
+        "key": "field_play_count",
+        "label": "Play Count",
+        "name": "play_count",
+        "type": "number",
+        "instructions": "Number of times this mix has been played",
+        "required": 0,
+        "default_value": 0,
+        "readonly": 1
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "mixes"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label"
+  }
+]

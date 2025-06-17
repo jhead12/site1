@@ -21,7 +21,7 @@ import {
 } from "./header.css"
 import NavItemGroup from "./nav-item-group"
 import BrandLogo from "./brand-logo"
-import EmbedPage from "../components/header-scripts"
+// import EmbedPage from "../components/header-scripts"
 
 
 export default function Header() {
@@ -74,7 +74,7 @@ export default function Header() {
 
   return (
     <header>
-      <EmbedPage/>
+      {/* <EmbedPage/> */}
       <Container className={desktopHeaderNavWrapper}>
         <Space size={2} />
         <Flex variant="spaceBetween">

@@ -1,0 +1,190 @@
+[
+  {
+    "key": "group_beats_fields",
+    "title": "Beat Information",
+    "fields": [
+      {
+        "key": "field_audio_file",
+        "label": "Audio File",
+        "name": "audio_file",
+        "type": "file",
+        "instructions": "Upload the beat audio file (MP3, WAV)",
+        "required": 1,
+        "return_format": "array",
+        "mime_types": "mp3,wav,m4a"
+      },
+      {
+        "key": "field_bpm",
+        "label": "BPM (Beats Per Minute)",
+        "name": "bpm",
+        "type": "number",
+        "instructions": "Enter the tempo of the beat",
+        "required": 1,
+        "min": 60,
+        "max": 200,
+        "step": 1
+      },
+      {
+        "key": "field_musical_key",
+        "label": "Musical Key",
+        "name": "musical_key",
+        "type": "select",
+        "instructions": "Select the musical key",
+        "required": 1,
+        "choices": {
+          "C": "C Major",
+          "C#": "C# Major",
+          "Db": "Db Major",
+          "D": "D Major",
+          "D#": "D# Major",
+          "Eb": "Eb Major",
+          "E": "E Major",
+          "F": "F Major",
+          "F#": "F# Major",
+          "Gb": "Gb Major",
+          "G": "G Major",
+          "G#": "G# Major",
+          "Ab": "Ab Major",
+          "A": "A Major",
+          "A#": "A# Major",
+          "Bb": "Bb Major",
+          "B": "B Major",
+          "Cm": "C Minor",
+          "C#m": "C# Minor",
+          "Dm": "D Minor",
+          "D#m": "D# Minor",
+          "Em": "E Minor",
+          "Fm": "F Minor",
+          "F#m": "F# Minor",
+          "Gm": "G Minor",
+          "G#m": "G# Minor",
+          "Am": "A Minor",
+          "A#m": "A# Minor",
+          "Bm": "B Minor"
+        },
+        "default_value": "C"
+      },
+      {
+        "key": "field_price",
+        "label": "Price ($)",
+        "name": "price",
+        "type": "number",
+        "instructions": "Enter the price for this beat",
+        "required": 1,
+        "min": 0,
+        "step": 0.01,
+        "prepend": "$"
+      },
+      {
+        "key": "field_license_type",
+        "label": "License Type",
+        "name": "license_type",
+        "type": "radio",
+        "instructions": "Select the licensing option",
+        "required": 1,
+        "choices": {
+          "basic": "Basic License ($29) - MP3 Format",
+          "premium": "Premium License ($99) - WAV + MP3 + Trackouts",
+          "exclusive": "Exclusive License ($499) - Full Rights + Stems",
+          "custom": "Custom License - Contact for Pricing"
+        },
+        "default_value": "basic",
+        "layout": "vertical"
+      },
+      {
+        "key": "field_stems_available",
+        "label": "Stems Available",
+        "name": "stems_available",
+        "type": "true_false",
+        "instructions": "Are individual track stems available?",
+        "default_value": 0,
+        "ui": 1
+      },
+      {
+        "key": "field_stems_file",
+        "label": "Stems ZIP File",
+        "name": "stems_file",
+        "type": "file",
+        "instructions": "Upload ZIP file containing individual stems",
+        "required": 0,
+        "return_format": "array",
+        "mime_types": "zip",
+        "conditional_logic": [
+          [
+            {
+              "field": "field_stems_available",
+              "operator": "==",
+              "value": "1"
+            }
+          ]
+        ]
+      },
+      {
+        "key": "field_producer_credits",
+        "label": "Producer Credits",
+        "name": "producer_credits",
+        "type": "repeater",
+        "instructions": "Add producer and collaborator credits",
+        "required": 0,
+        "layout": "table",
+        "button_label": "Add Producer",
+        "sub_fields": [
+          {
+            "key": "field_producer_name",
+            "label": "Producer Name",
+            "name": "producer_name",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_producer_role",
+            "label": "Role",
+            "name": "producer_role",
+            "type": "select",
+            "choices": {
+              "produced": "Produced by",
+              "co_produced": "Co-Produced by",
+              "mixed": "Mixed by",
+              "mastered": "Mastered by",
+              "additional": "Additional Production"
+            },
+            "default_value": "produced"
+          }
+        ]
+      },
+      {
+        "key": "field_download_count",
+        "label": "Download Count",
+        "name": "download_count",
+        "type": "number",
+        "instructions": "Number of times this beat has been downloaded",
+        "required": 0,
+        "default_value": 0,
+        "readonly": 1
+      },
+      {
+        "key": "field_featured_beat",
+        "label": "Featured Beat",
+        "name": "featured_beat",
+        "type": "true_false",
+        "instructions": "Mark as featured beat for homepage display",
+        "default_value": 0,
+        "ui": 1
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "beats"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label"
+  }
+]

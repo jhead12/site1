@@ -1,0 +1,489 @@
+[
+  {
+    "key": "group_about_page_fields",
+    "title": "About Page Fields",
+    "fields": [
+      {
+        "key": "field_about_hero_section",
+        "label": "Hero Section",
+        "name": "hero_section",
+        "type": "group",
+        "instructions": "Configure the hero\/banner section at the top of the About page",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "layout": "block",
+        "sub_fields": [
+          {
+            "key": "field_hero_heading",
+            "label": "Main Heading",
+            "name": "heading",
+            "type": "text",
+            "instructions": "The main heading displayed prominently in the hero section",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "About Jeldon",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+          },
+          {
+            "key": "field_hero_subheading",
+            "label": "Subheading",
+            "name": "subheading",
+            "type": "text",
+            "instructions": "A descriptive subtitle or tagline",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "Producer, Artist, Educator",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+          },
+          {
+            "key": "field_hero_background_image",
+            "label": "Background Image",
+            "name": "background_image",
+            "type": "image",
+            "instructions": "High-resolution background image for the hero section (recommended: 1920x1080px)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+          },
+          {
+            "key": "field_hero_call_to_action",
+            "label": "Call to Action Button",
+            "name": "call_to_action",
+            "type": "group",
+            "instructions": "Optional button in the hero section",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+              {
+                "key": "field_cta_text",
+                "label": "Button Text",
+                "name": "text",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "50",
+                  "class": "",
+                  "id": ""
+                },
+                "default_value": "Get In Touch",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+              },
+              {
+                "key": "field_cta_link",
+                "label": "Button Link",
+                "name": "link",
+                "type": "text",
+                "instructions": "Internal link (e.g., \/contact) or external URL",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "50",
+                  "class": "",
+                  "id": ""
+                },
+                "default_value": "\/contact",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "field_about_biography",
+        "label": "Biography Section",
+        "name": "biography",
+        "type": "group",
+        "instructions": "Main biographical content and highlight statistics",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "layout": "block",
+        "sub_fields": [
+          {
+            "key": "field_bio_content",
+            "label": "Main Biography",
+            "name": "content",
+            "type": "wysiwyg",
+            "instructions": "The main biographical text with rich formatting",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+          },
+          {
+            "key": "field_bio_highlights",
+            "label": "Highlight Statistics",
+            "name": "highlights",
+            "type": "repeater",
+            "instructions": "Key statistics or achievements to highlight (e.g., \"15+ Years Experience\")",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 6,
+            "layout": "table",
+            "button_label": "Add Highlight",
+            "sub_fields": [
+              {
+                "key": "field_highlight_title",
+                "label": "Title",
+                "name": "title",
+                "type": "text",
+                "instructions": "What this statistic represents",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "",
+                  "class": "",
+                  "id": ""
+                },
+                "default_value": "",
+                "placeholder": "Years of Experience",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+              },
+              {
+                "key": "field_highlight_value",
+                "label": "Value",
+                "name": "value",
+                "type": "text",
+                "instructions": "The numerical value or key phrase",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "",
+                  "class": "",
+                  "id": ""
+                },
+                "default_value": "",
+                "placeholder": "15+",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+              },
+              {
+                "key": "field_highlight_description",
+                "label": "Description",
+                "name": "description",
+                "type": "textarea",
+                "instructions": "Brief description or context",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "",
+                  "class": "",
+                  "id": ""
+                },
+                "default_value": "",
+                "placeholder": "Years producing, mixing and mastering music",
+                "maxlength": "",
+                "rows": 2,
+                "new_lines": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "field_about_skills",
+        "label": "Skills & Expertise",
+        "name": "skills",
+        "type": "repeater",
+        "instructions": "Organize skills into categories (e.g., Production, Instruments, Software)",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "collapsed": "",
+        "min": 0,
+        "max": 10,
+        "layout": "block",
+        "button_label": "Add Skill Category",
+        "sub_fields": [
+          {
+            "key": "field_skill_category",
+            "label": "Category Name",
+            "name": "category",
+            "type": "text",
+            "instructions": "The name of this skill category",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "",
+            "placeholder": "Music Production",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+          },
+          {
+            "key": "field_skill_items",
+            "label": "Skills in this Category",
+            "name": "items",
+            "type": "repeater",
+            "instructions": "Individual skills within this category",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 20,
+            "layout": "table",
+            "button_label": "Add Skill",
+            "sub_fields": [
+              {
+                "key": "field_skill_name",
+                "label": "Skill Name",
+                "name": "name",
+                "type": "text",
+                "instructions": "",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "",
+                  "class": "",
+                  "id": ""
+                },
+                "default_value": "",
+                "placeholder": "Logic Pro X",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+              },
+              {
+                "key": "field_skill_level",
+                "label": "Proficiency Level",
+                "name": "level",
+                "type": "select",
+                "instructions": "",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                  "width": "",
+                  "class": "",
+                  "id": ""
+                },
+                "choices": {
+                  "beginner": "Beginner",
+                  "intermediate": "Intermediate",
+                  "advanced": "Advanced",
+                  "expert": "Expert"
+                },
+                "default_value": "advanced",
+                "allow_null": 0,
+                "multiple": 0,
+                "ui": 0,
+                "return_format": "value",
+                "ajax": 0,
+                "placeholder": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "field_about_achievements",
+        "label": "Achievements & Recognition",
+        "name": "achievements",
+        "type": "repeater",
+        "instructions": "Awards, certifications, notable collaborations, or other achievements",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "collapsed": "",
+        "min": 0,
+        "max": 20,
+        "layout": "block",
+        "button_label": "Add Achievement",
+        "sub_fields": [
+          {
+            "key": "field_achievement_title",
+            "label": "Achievement Title",
+            "name": "title",
+            "type": "text",
+            "instructions": "Name of the award, certification, or achievement",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "50",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "",
+            "placeholder": "Best Producer Award",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+          },
+          {
+            "key": "field_achievement_year",
+            "label": "Year",
+            "name": "year",
+            "type": "text",
+            "instructions": "Year this achievement was received",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "50",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "",
+            "placeholder": "2024",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+          },
+          {
+            "key": "field_achievement_description",
+            "label": "Description",
+            "name": "description",
+            "type": "textarea",
+            "instructions": "Brief description of the achievement and its significance",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "default_value": "",
+            "placeholder": "Recognized for outstanding contribution to...",
+            "maxlength": "",
+            "rows": 3,
+            "new_lines": ""
+          },
+          {
+            "key": "field_achievement_image",
+            "label": "Achievement Image",
+            "name": "image",
+            "type": "image",
+            "instructions": "Optional image associated with this achievement (award photo, certificate, etc.)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+              "width": "",
+              "class": "",
+              "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+          }
+        ]
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "page_template",
+          "operator": "==",
+          "value": "page-about.php"
+        }
+      ],
+      [
+        {
+          "param": "page",
+          "operator": "==",
+          "value": "about"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Custom fields for the About page to manage hero section, biography, skills, and achievements."
+  }
+]

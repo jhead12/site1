@@ -35,16 +35,20 @@ const EmbedPage = () => {
           });
           `}
         </script> */}
-
-        {
-<iframe 
-  src="https://samply.app/embed/gR2wVgSEYQrr5UkzrY7N" 
-  frameborder="0"
-  allowtransparency="true"
-  style="width: 100%; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.12)"
-></iframe>
-}
       </Helmet>
+      
+      <iframe
+        src="https://samply.app/embed/gR2wVgSEYQrr5UkzrY7N"
+        frameBorder="0"
+        allowTransparency="true"
+        title="Samply App Embed"
+        style={{
+          width: '100%',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.12)'
+        }}
+      ></iframe>
+      
       {/* <div>
         <h1>Embed Page</h1>
         <p>This is a page with the embedded Flodesk form.</p>

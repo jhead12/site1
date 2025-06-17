@@ -1,0 +1,1 @@
+import React from "react";// Temporary placeholder for TopChart component// TODO: Implement Web3 functionality when readyexport function TopChart() {  return (    <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>      <h3>Top Chart</h3>      <p>Web3 leaderboard functionality coming soon...</p>    </div>  );}

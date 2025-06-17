@@ -10,8 +10,6 @@ import SEOHead from "../components/head"
 
 export default function Homepage(props) {
   const { homepage, allWpPost } = props.data
-  // in your cookie banner
-
 
   return (
     <Layout>
@@ -23,9 +21,6 @@ export default function Homepage(props) {
 
       <sections.BeatsStatList />
       <sections.BlogFeature data={{ allWpPost }} />
-
-
-
     </Layout>
     
   )
@@ -64,6 +59,7 @@ export const query = graphql`
         title
         excerpt
         uri
+        slug
         date(formatString: "MMMM DD, YYYY")
         featuredImage {
           node {

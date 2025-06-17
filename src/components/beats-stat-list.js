@@ -13,10 +13,10 @@ const BeatList = () => (
 
 <iframe  title="samply music list"
   src="https://samply.app/embed/pXJcoEICbOorz8If1Yly" 
-  frameborder="0"
+  frameBorder="0"
    width="100%"
   height="400"
-  allowtransparency="true"
+  allowTransparency="true"
   style={{ maxWidth: "1024px" }}
 ></iframe>
 

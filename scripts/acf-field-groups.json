@@ -1,0 +1,343 @@
+[
+  {
+    "key": "group_beats_fields",
+    "title": "Beat Fields",
+    "fields": [
+      {
+        "key": "field_audio_file",
+        "label": "Audio File",
+        "name": "audio_file",
+        "type": "file",
+        "instructions": "Upload the main audio file for this beat",
+        "required": 1,
+        "mime_types": "mp3,wav,m4a",
+        "return_format": "array"
+      },
+      {
+        "key": "field_bpm",
+        "label": "BPM",
+        "name": "bpm",
+        "type": "number",
+        "instructions": "Beats per minute",
+        "required": 1,
+        "min": 60,
+        "max": 200
+      },
+      {
+        "key": "field_musical_key",
+        "label": "Musical Key",
+        "name": "musical_key",
+        "type": "select",
+        "instructions": "The musical key of the beat",
+        "required": 1,
+        "choices": {
+          "C": "C",
+          "C#": "C#",
+          "D": "D",
+          "D#": "D#",
+          "E": "E",
+          "F": "F",
+          "F#": "F#",
+          "G": "G",
+          "G#": "G#",
+          "A": "A",
+          "A#": "A#",
+          "B": "B"
+        }
+      },
+      {
+        "key": "field_price",
+        "label": "Price",
+        "name": "price",
+        "type": "number",
+        "instructions": "Price in USD",
+        "required": 1,
+        "min": 0,
+        "step": 0.01
+      },
+      {
+        "key": "field_license_type",
+        "label": "License Type",
+        "name": "license_type",
+        "type": "radio",
+        "instructions": "Type of license available",
+        "required": 1,
+        "choices": {
+          "basic": "Basic License",
+          "premium": "Premium License",
+          "exclusive": "Exclusive License"
+        },
+        "default_value": "basic"
+      },
+      {
+        "key": "field_stems_available",
+        "label": "Stems Available",
+        "name": "stems_available",
+        "type": "true_false",
+        "instructions": "Are individual stems available for purchase?",
+        "default_value": 0
+      },
+      {
+        "key": "field_producer_credits",
+        "label": "Producer Credits",
+        "name": "producer_credits",
+        "type": "repeater",
+        "instructions": "Add producer credits",
+        "min": 1,
+        "layout": "table",
+        "button_label": "Add Producer",
+        "sub_fields": [
+          {
+            "key": "field_producer_name",
+            "label": "Producer Name",
+            "name": "producer_name",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_producer_role",
+            "label": "Role",
+            "name": "role",
+            "type": "select",
+            "choices": {
+              "producer": "Producer",
+              "co-producer": "Co-Producer",
+              "additional": "Additional Production"
+            }
+          }
+        ]
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "beats"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "show_in_graphql": 1,
+    "graphql_field_name": "beatFields"
+  },
+  {
+    "key": "group_tutorial_fields",
+    "title": "Tutorial Fields",
+    "fields": [
+      {
+        "key": "field_video_file",
+        "label": "Video File",
+        "name": "video_file",
+        "type": "file",
+        "instructions": "Upload the tutorial video file",
+        "mime_types": "mp4,mov,avi",
+        "return_format": "array"
+      },
+      {
+        "key": "field_video_url",
+        "label": "Video URL",
+        "name": "video_url",
+        "type": "url",
+        "instructions": "Or provide a URL to the video (YouTube, Vimeo, etc.)"
+      },
+      {
+        "key": "field_tutorial_level",
+        "label": "Tutorial Level",
+        "name": "tutorial_level",
+        "type": "select",
+        "instructions": "Difficulty level of this tutorial",
+        "required": 1,
+        "choices": {
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "advanced": "Advanced"
+        }
+      },
+      {
+        "key": "field_software_used",
+        "label": "Software Used",
+        "name": "software_used",
+        "type": "checkbox",
+        "instructions": "What software is covered in this tutorial?",
+        "choices": {
+          "pro-tools": "Pro Tools",
+          "logic-pro": "Logic Pro",
+          "ableton-live": "Ableton Live",
+          "fl-studio": "FL Studio",
+          "cubase": "Cubase",
+          "reaper": "Reaper",
+          "studio-one": "Studio One"
+        }
+      },
+      {
+        "key": "field_chapter_markers",
+        "label": "Chapter Markers",
+        "name": "chapter_markers",
+        "type": "repeater",
+        "instructions": "Add chapter markers for the video",
+        "layout": "table",
+        "button_label": "Add Chapter",
+        "sub_fields": [
+          {
+            "key": "field_chapter_time",
+            "label": "Time",
+            "name": "time",
+            "type": "text",
+            "instructions": "Time in MM:SS format (e.g., 1:30)",
+            "required": 1
+          },
+          {
+            "key": "field_chapter_title",
+            "label": "Chapter Title",
+            "name": "title",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_chapter_description",
+            "label": "Description",
+            "name": "description",
+            "type": "textarea",
+            "rows": 2
+          }
+        ]
+      },
+      {
+        "key": "field_tutorial_resources",
+        "label": "Resources",
+        "name": "resources",
+        "type": "file",
+        "instructions": "Upload project files, samples, or other resources",
+        "multiple": 1,
+        "return_format": "array"
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "tutorials"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "show_in_graphql": 1,
+    "graphql_field_name": "tutorialFields"
+  },
+  {
+    "key": "group_mix_fields",
+    "title": "Mix Fields",
+    "fields": [
+      {
+        "key": "field_mix_audio_file",
+        "label": "Audio File",
+        "name": "audio_file",
+        "type": "file",
+        "instructions": "Upload the mix audio file",
+        "required": 1,
+        "mime_types": "mp3,wav,m4a",
+        "return_format": "array"
+      },
+      {
+        "key": "field_mix_duration",
+        "label": "Mix Duration",
+        "name": "mix_duration",
+        "type": "text",
+        "instructions": "Duration in MM:SS format (e.g., 45:30)",
+        "required": 1
+      },
+      {
+        "key": "field_tracklist",
+        "label": "Tracklist",
+        "name": "tracklist",
+        "type": "repeater",
+        "instructions": "Add tracks in the mix",
+        "layout": "table",
+        "button_label": "Add Track",
+        "sub_fields": [
+          {
+            "key": "field_track_artist",
+            "label": "Artist",
+            "name": "artist",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_track_title",
+            "label": "Track Title",
+            "name": "title",
+            "type": "text",
+            "required": 1
+          },
+          {
+            "key": "field_track_timestamp",
+            "label": "Timestamp",
+            "name": "timestamp",
+            "type": "text",
+            "instructions": "When this track starts (MM:SS format)"
+          }
+        ]
+      },
+      {
+        "key": "field_mix_type",
+        "label": "Mix Type",
+        "name": "mix_type",
+        "type": "radio",
+        "instructions": "Type of mix",
+        "required": 1,
+        "choices": {
+          "live": "Live Set",
+          "studio": "Studio Mix",
+          "podcast": "Podcast Mix"
+        }
+      },
+      {
+        "key": "field_download_link",
+        "label": "Download Link",
+        "name": "download_link",
+        "type": "url",
+        "instructions": "Direct download link for the mix"
+      },
+      {
+        "key": "field_spotify_url",
+        "label": "Spotify URL",
+        "name": "spotify_url",
+        "type": "url",
+        "instructions": "Link to Spotify playlist or track"
+      },
+      {
+        "key": "field_apple_music_url",
+        "label": "Apple Music URL",
+        "name": "apple_music_url",
+        "type": "url",
+        "instructions": "Link to Apple Music playlist or track"
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "mixes"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "show_in_graphql": 1,
+    "graphql_field_name": "mixFields"
+  }
+]

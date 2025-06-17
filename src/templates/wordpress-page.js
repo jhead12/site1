@@ -1,8 +1,9 @@
-import * as React from "react";
-import { graphql } from "gatsby";
-import Layout from "../components/layout";
-import { Container, Box, Heading } from "../components/ui";
-import SEOHead from "../components/head";
+// src/templates/wordpress-page.js
+import * as React from 'react';
+import { graphql } from 'gatsby';
+import Layout from '../components/layout';
+import { Container, Box, Heading } from '../components/ui';
+import SEOHead from '../components/head';
 
 export default function PageTemplate(props) {
   const { wpPage } = props.data;
@@ -35,7 +36,6 @@ export const query = graphql`
       title
       content
       slug
-
     }
   }
 `;
