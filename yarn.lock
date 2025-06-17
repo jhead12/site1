@@ -2704,80 +2704,6 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.3.tgz#e45e384e4b8ec16bce2fd903af78450f6bf7ec98"
   integrity sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==
 
-"@jeldon-music/crtv4@file:./crtv4":
-  version "0.1.0"
-  dependencies:
-    "@aa-sdk/core" "^4.14.0"
-    "@aa-sdk/ethers" "^4.27.0"
-    "@account-kit/core" "^4.9.0"
-    "@account-kit/infra" "^4.9.0"
-    "@account-kit/react" "^4.9.0"
-    "@account-kit/signer" "^4.14.0"
-    "@account-kit/smart-contracts" "^4.14.0"
-    "@apollo/client" "^3.13.8"
-    "@apollo/client-integration-nextjs" "^0.12.2"
-    "@hookform/resolvers" "^5.0.1"
-    "@kreisler/js-google-translate-free" "^4.0.2"
-    "@livepeer/ai" "^0.6.2"
-    "@livepeer/react" "^4.3.2"
-    "@radix-ui/react-avatar" "^1.1.3"
-    "@radix-ui/react-dialog" "^1.1.11"
-    "@radix-ui/react-dropdown-menu" "^2.1.6"
-    "@radix-ui/react-icons" "^1.3.2"
-    "@radix-ui/react-label" "^2.1.4"
-    "@radix-ui/react-progress" "^1.1.4"
-    "@radix-ui/react-radio-group" "^1.3.4"
-    "@radix-ui/react-select" "^2.2.2"
-    "@radix-ui/react-separator" "^1.1.4"
-    "@radix-ui/react-slot" "^1.2.0"
-    "@radix-ui/react-tabs" "^1.1.3"
-    "@radix-ui/react-toast" "^1.2.11"
-    "@radix-ui/react-tooltip" "^1.2.3"
-    "@radix-ui/react-visually-hidden" "^1.1.2"
-    "@simplewebauthn/browser" "^13.1.0"
-    "@snapshot-labs/snapshot.js" "^0.12.61"
-    "@stackso/js-core" "^0.5.11"
-    "@tanstack/react-query" "^5.50.1"
-    "@unlock-protocol/contracts" "^0.0.35"
-    "@unlock-protocol/paywall" "^0.8.1"
-    "@unlock-protocol/unlock-js" "^0.51.2"
-    "@useorbis/db-sdk" "^0.0.60-alpha"
-    "@wagmi/connectors" "^5.1.7"
-    "@wagmi/core" "^2.13.4"
-    "@wert-io/module-react-component" "^2.1.5"
-    "@wert-io/widget-initializer" "^6.7.1"
-    "@wert-io/widget-sc-signer" "^2.0.1"
-    "@wert-io/widget-themes" "^1.5.0"
-    alchemy-sdk "^3.5.8"
-    class-variance-authority "^0.7.1"
-    clsx "^2.1.1"
-    embla-carousel-react "^8.6.0"
-    encoding "^0.1.13"
-    ethereum-blockies-base64 "^1.0.2"
-    ethers "^6.0.8"
-    framer-motion "^12.10.0"
-    ipfs-only-hash "^4.0.0"
-    jwt-decode "^4.0.0"
-    livepeer "^3.5.0"
-    lucide-react "^0.477.0"
-    next "14.2.4"
-    next-safe-action "^7.10.8"
-    next-themes "^0.4.4"
-    pino-pretty "^13.0.0"
-    react "^18"
-    react-dom "^18"
-    react-hook-form "^7.56.1"
-    react-icons "^5.5.0"
-    siwe "^3.0.0"
-    sonner "^2.0.1"
-    tailwind-merge "^3.2.0"
-    tailwindcss-animate "^1.0.7"
-    tus-js-client "^4.3.1"
-    uuid "^11.1.0"
-    viem "^2.23.5"
-    wagmi "2.12.7"
-    zod "^3.24.3"
-
 "@jest/console@^29.7.0":
   version "29.7.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-29.7.0.tgz#cd4822dbdb84529265c5a2bdb529a3c9cc950ffc"
@@ -9655,9 +9581,9 @@ contentful-cli@^1.15.3:
     yargs "~13.3.2"
 
 contentful-export@^7.19.0:
-  version "7.21.60"
-  resolved "https://registry.yarnpkg.com/contentful-export/-/contentful-export-7.21.60.tgz#57f158b9ecff3c2026334b70eeb218c177c29dba"
-  integrity sha512-U9frG9JDiObi93zSFWMZIjfxpgTx/ONE0h+qwUdJVcx9MJIPIDbFQLDlAlhEAhcTcSvvFIvvDqx0YeI9W/nCWw==
+  version "7.21.61"
+  resolved "https://registry.yarnpkg.com/contentful-export/-/contentful-export-7.21.61.tgz#d533cb26749d052310afa27372c6e939053b6338"
+  integrity sha512-Q/Wxt4WNJf3/tfo/x803dcz4YlHWftjefnwKwSkpAt2rPe3dn2D4dampJZYmbVorO9s3eF+gxmuonMg8O67xNQ==
   dependencies:
     axios "^1.8.4"
     bfj "^8.0.0"
@@ -10809,9 +10735,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.160:
-  version "1.5.168"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.168.tgz#ad2bad79e34ba3ba8d79ba809c1e0756685c3f4f"
-  integrity sha512-RUNQmFLNIWVW6+z32EJQ5+qx8ci6RGvdtDC0Ls+F89wz6I2AthpXF0w0DIrn2jpLX0/PU9ZCo+Qp7bg/EckJmA==
+  version "1.5.169"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.169.tgz#6afdfd8e701b7ab744e2bb0cfdec3cefc1072cbe"
+  integrity sha512-q7SQx6mkLy0GTJK9K9OiWeaBMV4XQtBSdf6MJUzDB/H/5tFXfIiX38Lci1Kl6SsgiEhz1SQI1ejEOU5asWEhwQ==
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -18681,7 +18607,7 @@ react-devtools-core@^5.0.0:
     shell-quote "^1.6.1"
     ws "^7"
 
-react-dom@^18, react-dom@^18.0.0, react-dom@^18.1.0:
+react-dom@^18.0.0, react-dom@^18.1.0:
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.1.tgz#c2265d79511b57d479b3dd3fdfa51536494c5cb4"
   integrity sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==
@@ -18865,7 +18791,7 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
 
-react@^18, react@^18.0.0, react@^18.1.0:
+react@^18.0.0, react@^18.1.0:
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/react/-/react-18.3.1.tgz#49ab892009c53933625bd16b2533fc754cab2891"
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==

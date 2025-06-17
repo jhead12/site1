@@ -3,9 +3,10 @@
   publish = "public"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "20.18.0"
   NPM_FLAGS = "--prefer-offline --no-audit"
   YARN_FLAGS = "--prefer-offline --no-audit"
+  NODE_OPTIONS = "--max_old_space_size=4096"
 
 [[plugins]]
   package = "@netlify/plugin-gatsby"
