@@ -1,0 +1,11 @@
+[build]
+  command = "yarn build"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--prefer-offline --no-audit"
+  YARN_FLAGS = "--prefer-offline --no-audit"
+
+[[plugins]]
+  package = "@netlify/plugin-gatsby"
