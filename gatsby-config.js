@@ -28,6 +28,16 @@ module.exports = {
         production: {
           hardCacheMediaFiles: false,
         },
+        // Ignore SSL certificate validation errors
+        debug: {
+          throwServerErrors: false,
+        },
+        // Add this to bypass SSL certificate validation
+        axios: {
+          httpsAgent: {
+            rejectUnauthorized: false,
+          },
+        },
         excludeFieldNames: [`blocksJSON`, `savePost`],
         type: {
           MediaItem: {

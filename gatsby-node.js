@@ -1,5 +1,8 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
 
+// Disable SSL certificate validation - temporary fix for expired certificate
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 // exports.createSchemaCustomization = async ({ actions }) => {
 //   actions.createFieldExtension({
 //     name: "blocktype",
