@@ -1104,52 +1104,26 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `)
 
-  // Define WordPress Video types to prevent GraphQL errors - COMMENTED OUT until WordPress video post types are created
-  /*
-  actions.createTypes(\`
+  // Define WordPress Video types to prevent GraphQL errors - ENABLED for real video integration
+  actions.createTypes(`
+    type WpContentNode_Videodetails {
+      youtubeVideoId: String
+      youtubeUrl: String
+      videoDuration: String
+      videoViews: String
+      videoTags: String
+      customThumbnail: String
+      videoQuality: String
+      equipment: String
+    }
+
     type WpVideo implements Node @dontInfer {
       id: ID!
       title: String
       excerpt: String
       slug: String
       date: Date
-      author: WpVideoAuthor
-      featuredImage: WpVideoFeaturedImage
-      videoCategories: WpVideoCategories
-      videoDetails: WpVideoDetails
-    }
-
-    type WpVideoAuthor {
-      node: WpVideoAuthorNode
-    }
-
-    type WpVideoAuthorNode {
-      name: String
-    }
-
-    type WpVideoFeaturedImage {
-      node: WpVideoFeaturedImageNode
-    }
-
-    type WpVideoFeaturedImageNode {
-      sourceUrl: String
-      altText: String
-    }
-
-    type WpVideoCategories {
-      nodes: [WpVideoCategoryNode]
-    }
-
-    type WpVideoCategoryNode {
-      id: String
-      name: String
-      slug: String
-    }
-
-    type WpVideoDetails {
-      youtubeVideoId: String
-      videoDuration: String
-      videoViews: String
+      videoDetails: WpContentNode_Videodetails
     }
 
     type WpVideoCategory implements Node @dontInfer {
@@ -1158,8 +1132,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       slug: String
       count: Int
     }
-  \`)
-  */
+  `)
 
 }
 exports.createPages = async ({ graphql, actions }) => {
@@ -1204,13 +1177,13 @@ exports.createPages = async ({ graphql, actions }) => {
           title
         }
       }
-      # allWpVideo {
-      #   nodes {
-      #     id
-      #     slug
-      #     title
-      #   }
-      # }
+      allWpVideo {
+        nodes {
+          id
+          slug
+          title
+        }
+      }
     }
   `);
 
@@ -1225,7 +1198,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const beats = result.data?.allWpBeat?.nodes || [];
   const tutorials = result.data?.allWpTutorial?.nodes || [];
   const mixes = result.data?.allWpMix?.nodes || [];
-  // const videos = result.data?.allWpVideo?.nodes || []; // COMMENTED OUT until WordPress video post types are created
+  const videos = result.data?.allWpVideo?.nodes || [];
 
   // Debug logging
   console.log(`Creating ${pages.length} WordPress pages`);
@@ -1233,7 +1206,7 @@ exports.createPages = async ({ graphql, actions }) => {
   console.log(`Creating ${beats.length} beats`);
   console.log(`Creating ${tutorials.length} tutorials`);
   console.log(`Creating ${mixes.length} mixes`);
-  // console.log(`Creating ${videos.length} videos`); // COMMENTED OUT until WordPress video post types are created
+  console.log(`Creating ${videos.length} videos`);
 
   // Check for WordPress connection
   if (posts.length === 0) {
@@ -1311,8 +1284,7 @@ exports.createPages = async ({ graphql, actions }) => {
     });
   });
 
-  // Create Video pages with next/previous navigation - COMMENTED OUT until WordPress video post types are created
-  /*
+  // Create Video pages with next/previous navigation
   videos.forEach((video, index) => {
     console.log(`Creating video page: /videos/${video.slug}/`);
     const previousVideo = index === 0 ? null : videos[index - 1];
@@ -1335,7 +1307,6 @@ exports.createPages = async ({ graphql, actions }) => {
       },
     });
   });
-  */
 
   // Create slices
   createSlice({
