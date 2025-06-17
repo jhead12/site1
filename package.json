@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "node": ">=20.18.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "start": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
@@ -145,5 +145,8 @@
     "node-fetch": "^2.6.7",
     "prettier": "2.5.1",
     "yargs-parser": "^21.0.0"
+  },
+  "resolutions": {
+    "yargs": "17.7.2"
   }
 }
