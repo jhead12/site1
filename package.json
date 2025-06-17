@@ -49,7 +49,6 @@
     "@fontsource/dm-mono": "^4.5.9",
     "@fontsource/dm-sans": "^4.5.8",
     "@hookform/resolvers": "^5.0.1",
-    "@jeldon-music/crtv4": "file:./crtv4",
     "@kreisler/js-google-translate-free": "^4.0.2",
     "@livepeer/ai": "^0.6.2",
     "@livepeer/react": "^4.3.2",
