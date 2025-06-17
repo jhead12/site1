@@ -1,3 +1,6 @@
+// This is a temporary configuration file that disables WordPress integration
+// Copy this to gatsby-config.js if SSL issues can't be resolved
+
 require("dotenv").config()
 module.exports = {
   siteMetadata: {
@@ -16,33 +19,6 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
-    {
-      resolve: "gatsby-source-wordpress",
-      options: {
-        // Basic URL - only required option
-        url: process.env.WPGRAPHQL_URL || "https://blog.jeldonmusic.com/graphql",
-        // These are the defaults options
-        verbose: false,
-        develop: {
-          hardCacheMediaFiles: true,
-        },
-        production: {
-          hardCacheMediaFiles: false,
-        },
-        type: {
-          MediaItem: {
-            localFile: {
-              requestConcurrency: 5,
-              maxFileSizeBytes: 15728640, // 15Mb
-            },
-          },
-        },
-        schema: {
-          perPage: 20,
-          timeout: 120000, // Use longer timeout for SSL issues
-        },
-      }
-    },
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",
     "gatsby-transformer-sharp",
@@ -58,8 +34,5 @@ module.exports = {
         icon: "src/favicon.png",
       },
     },
-
-
-
   ],
 }
