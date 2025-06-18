@@ -32,7 +32,8 @@
     "warnings:check": "bash ./scripts/check-warnings-status.sh",
     "blog:test": "bash ./scripts/test-blog-integration.sh",
     "blog:debug": "bash ./scripts/debug-blog-connection.sh",
-    "about:check": "node ./scripts/check-about-page.js"
+    "about:check": "node ./scripts/check-about-page.js",
+    "setup:phase3": "bash ./scripts/setup-phase-3.sh"
   },
   "dependencies": {
     "@aa-sdk/core": "^4.14.0",
