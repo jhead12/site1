@@ -19,27 +19,38 @@ module.exports = {
     {
       resolve: "gatsby-source-wordpress",
       options: {
-        // Basic URL - only required option
-        url: process.env.WPGRAPHQL_URL || "https://blog.jeldonmusic.com/graphql",
-        // These are the defaults options
-        verbose: false,
+        url: process.env.WPGRAPHQL_URL,
+        verbose: process.env.NODE_ENV === "development",
         develop: {
           hardCacheMediaFiles: true,
+          nodeUpdateInterval: 5000,
         },
         production: {
           hardCacheMediaFiles: false,
         },
+        excludeFieldNames: [`blocksJSON`, `savePost`],
         type: {
           MediaItem: {
             localFile: {
-              requestConcurrency: 5,
+              requestConcurrency: 50,
               maxFileSizeBytes: 15728640, // 15Mb
             },
           },
         },
+        html: {
+          useGatsbyImage: true,
+          imageMaxWidth: 1024,
+          fallbackImageMaxWidth: 800,
+        },
         schema: {
-          perPage: 20,
-          timeout: 120000, // Use longer timeout for SSL issues
+          timeout: 30000,
+          perPage: 100,
+        },
+        auth: {
+          htaccess: {
+            username: process.env.WP_USERNAME,
+            password: process.env.WP_PASSWORD,
+          },
         },
       }
     },

@@ -6,6 +6,7 @@ import {
   Subhead,
   Flex
 } from "../ui"
+import "../blog-mobile-fix.css"
 
 const RelatedPosts = ({ posts, currentPostSlug }) => {
   if (!posts || posts.length === 0) {
@@ -30,18 +31,25 @@ const RelatedPosts = ({ posts, currentPostSlug }) => {
           >
             {post.featuredImage?.node?.sourceUrl && (
               <Box marginY={2}>
-                <Link to={`/blog/${post.slug}/`}>
-                  <img
-                    src={post.featuredImage.node.sourceUrl}
-                    alt={post.featuredImage.node.altText || post.title}
-                    style={{ 
-                      width: "100%", 
-                      height: "150px", 
-                      objectFit: "cover",
-                      borderRadius: "4px"
-                    }}
-                  />
-                </Link>
+                <div className="blog-image-wrapper">
+                  <Link to={`/blog/${post.slug}/`}>
+                    <img
+                      src={post.featuredImage.node.sourceUrl}
+                      alt={post.featuredImage.node.altText || post.title}
+                      loading="lazy"
+                      onLoad={(e) => e.target.style.opacity = '1'}
+                      onError={(e) => e.target.style.display = 'none'}
+                      style={{ 
+                        width: "100%", 
+                        height: "150px", 
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                        opacity: 0,
+                        transition: "opacity 0.3s ease"
+                      }}
+                    />
+                  </Link>
+                </div>
               </Box>
             )}
             

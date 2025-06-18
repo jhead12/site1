@@ -3,15 +3,13 @@
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=20.18.0"
   },
   "scripts": {
     "start": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
     "develop": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
     "develop:wp": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop --verbose",
-    "build": "NODE_TLS_REJECT_UNAUTHORIZED=0 gatsby build",
-    "build:no-ssl-check": "NODE_TLS_REJECT_UNAUTHORIZED=0 gatsby build",
-    "build:no-wp": "GATSBY_CONFIG_FILE=gatsby-config-no-wp.js gatsby build",
+    "build": "gatsby build",
     "build:analyze": "ANALYZE=true gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
@@ -147,8 +145,5 @@
     "node-fetch": "^2.6.7",
     "prettier": "2.5.1",
     "yargs-parser": "^21.0.0"
-  },
-  "resolutions": {
-    "yargs": "17.7.2"
   }
 }

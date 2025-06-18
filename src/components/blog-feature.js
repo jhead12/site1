@@ -12,6 +12,7 @@ import {
   Text
 } from "./ui"
 import "./blogimg.css"
+import "./blog-mobile-fix.css"
 
 export default function BlogFeature(props) {
   const {allWpPost } = props.data
@@ -37,13 +38,25 @@ export default function BlogFeature(props) {
             {recentPosts.map((post) => (
               <Box key={post.id}>
               {post.featuredImage?.node?.sourceUrl && (
-                <Link to={`/blog/${post.slug}/`}>
-                  <img
-                    src={post.featuredImage.node.sourceUrl}
-                    alt={post.featuredImage.node.altText || post.title}
-                    className="blog-feature-image"
-                  />
-                </Link>
+                <div className="blog-image-wrapper">
+                  <Link to={`/blog/${post.slug}/`}>
+                    <img
+                      src={post.featuredImage.node.sourceUrl}
+                      alt={post.featuredImage.node.altText || post.title}
+                      className="blog-feature-image"
+                      loading="lazy"
+                      onLoad={(e) => {
+                        // Remove loading state when image loads
+                        e.target.style.opacity = '1';
+                      }}
+                      onError={(e) => {
+                        // Handle image load errors gracefully
+                        e.target.style.display = 'none';
+                      }}
+                      style={{ opacity: 0 }}
+                    />
+                  </Link>
+                </div>
               )}
                  <Kicker>
                 <Link to={`/blog/${post.slug}/`}>{post.title}</Link>

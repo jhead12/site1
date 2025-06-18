@@ -13,6 +13,7 @@ import {
   Subhead,
   Flex
 } from "../components/ui"
+import "../components/blog-mobile-fix.css"
 
 const BlogPage = ({ data, location }) => {
   const posts = data.allWpPost.nodes
@@ -115,18 +116,25 @@ const BlogPage = ({ data, location }) => {
                   <Flex gap={4}>
                     {post.featuredImage?.node?.sourceUrl && (
                       <Box style={{ minWidth: "200px" }}>
-                        <Link to={`/blog/${post.slug}/`}>
-                          <img
-                            src={post.featuredImage.node.sourceUrl}
-                            alt={post.featuredImage.node.altText || post.title}
-                            style={{ 
-                              width: "200px", 
-                              height: "120px", 
-                              objectFit: "cover",
-                              borderRadius: "8px"
-                            }}
-                          />
-                        </Link>
+                        <div className="blog-image-wrapper">
+                          <Link to={`/blog/${post.slug}/`}>
+                            <img
+                              src={post.featuredImage.node.sourceUrl}
+                              alt={post.featuredImage.node.altText || post.title}
+                              loading="lazy"
+                              onLoad={(e) => e.target.style.opacity = '1'}
+                              onError={(e) => e.target.style.display = 'none'}
+                              style={{ 
+                                width: "200px", 
+                                height: "120px", 
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                                opacity: 0,
+                                transition: "opacity 0.3s ease"
+                              }}
+                            />
+                          </Link>
+                        </div>
                       </Box>
                     )}
                     

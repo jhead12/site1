@@ -1,9 +1,9 @@
 [build]
-  command = "NODE_TLS_REJECT_UNAUTHORIZED=0 yarn build"
+  command = "yarn build"
   publish = "public"
 
 [build.environment]
-  NODE_VERSION = "20.19.0"
+  NODE_VERSION = "20.18.0"
   NPM_FLAGS = "--prefer-offline --no-audit"
   YARN_FLAGS = "--prefer-offline --no-audit"
   NODE_OPTIONS = "--max_old_space_size=4096"

@@ -18,6 +18,7 @@ import RelatedPosts from "../components/blog/related-posts"
 import WordPressComments from "../components/wordpress-comments"
 import BlogNavigation from "../components/blog/blog-navigation"
 import SocialShare from "../components/blog/social-share"
+import "../components/blog-mobile-fix.css"
 
 export default function BlogPost({ data, pageContext, location }) {
   const post = data.wpPost
@@ -57,19 +58,27 @@ export default function BlogPost({ data, pageContext, location }) {
                   alt={featuredImage.altText || post.title}
                   image={getImage(imageData)}
                   style={{ margin: "0 auto", borderRadius: "8px" }}
+                  loading="lazy"
                 />
               ) : (
-                <img
-                  src={featuredImage.sourceUrl}
-                  alt={featuredImage.altText || post.title}
-                  style={{ 
-                    width: '100%', 
-                    height: 'auto', 
-                    borderRadius: '8px',
-                    margin: "0 auto",
-                    display: "block"
-                  }}
-                />
+                <div className="blog-image-wrapper">
+                  <img
+                    src={featuredImage.sourceUrl}
+                    alt={featuredImage.altText || post.title}
+                    loading="lazy"
+                    onLoad={(e) => e.target.style.opacity = '1'}
+                    onError={(e) => e.target.style.display = 'none'}
+                    style={{ 
+                      width: '100%', 
+                      height: 'auto', 
+                      borderRadius: '8px',
+                      margin: "0 auto",
+                      display: "block",
+                      opacity: 0,
+                      transition: "opacity 0.3s ease"
+                    }}
+                  />
+                </div>
               )}
             </Box>
           )}
