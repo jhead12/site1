@@ -26,7 +26,7 @@ export default function VideoPost({ data, pageContext }) {
   const extractYouTubeId = (text) => {
     if (!text) return null;
     // Try to match YouTube ID patterns like v=dQw4w9WgXcQ or youtu.be/dQw4w9WgXcQ
-    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+    const youtubeRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
     const match = text.match(youtubeRegex);
     return match ? match[1] : null;
   };

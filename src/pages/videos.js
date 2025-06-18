@@ -152,7 +152,7 @@ const VideosPage = ({ data, location }) => {
                       <Box style={{ position: "relative" }}>
                         {video.videoDetails?.youtubeVideoId || video.content?.includes('youtube.com/embed/') ? (
                           <img
-                            src={`https://img.youtube.com/vi/${video.videoDetails?.youtubeVideoId || (video.content?.match(/youtube\.com\/embed\/([^"&?\/ ]{11})/i)?.[1])}/mqdefault.jpg`}
+                            src={`https://img.youtube.com/vi/${video.videoDetails?.youtubeVideoId || (video.content?.match(/youtube\.com\/embed\/([^"&?/ ]{11})/i)?.[1])}/mqdefault.jpg`}
                             alt={video.title}
                             style={{ 
                               width: "100%", 

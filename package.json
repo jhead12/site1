@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "node": ">=20.18.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "start": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
