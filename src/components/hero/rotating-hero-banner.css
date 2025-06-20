@@ -1,0 +1,226 @@
+/* Rotating Hero Banner CSS */
+.rotating-hero-banner {
+  position: relative;
+  height: 100vh;
+  min-height: 500px;
+  max-height: 800px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.hero-banner-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 400px;
+  max-height: 800px;
+  overflow: hidden;
+}
+
+.hero-banner-slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-banner-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: white;
+}
+
+.hero-banner-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  z-index: 2;
+}
+
+.hero-banner-text {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-banner-text h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner-text p {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Controls */
+.hero-banner-controls {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 3;
+}
+
+.hero-banner-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active {
+  background: white;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .rotating-hero-banner {
+    height: 60vh;
+    min-height: 400px;
+  }
+
+  .hero-banner-container {
+    height: 60vh;
+    min-height: 300px;
+  }
+
+  .hero-banner-content {
+    padding: 1rem;
+  }
+
+  .hero-banner-text h2 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-banner-text p {
+    font-size: 0.875rem !important;
+    margin-bottom: 0.5rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .hero-banner-controls {
+    padding: 0.5rem;
+  }
+
+  .hero-banner-controls button {
+    font-size: 1.25rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .hero-banner-dots {
+    gap: 0.25rem;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rotating-hero-banner {
+    height: 50vh;
+    min-height: 300px;
+  }
+
+  .hero-banner-container {
+    height: 50vh;
+    min-height: 250px;
+  }
+
+  .hero-banner-text h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .hero-banner-text p {
+    font-size: 0.75rem !important;
+    -webkit-line-clamp: 2;
+  }
+
+  .hero-banner-badge,
+  .hero-banner-kicker {
+    font-size: 0.625rem;
+    padding: 2px 6px;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+  .hero-banner-controls {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-banner-content {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Loading State */
+.hero-banner-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: #1a1a1a;
+  color: white;
+}
+
+/* Animation States */
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+/* Progressive enhancement for newer devices */
+@supports (backdrop-filter: blur(4px)) {
+  .hero-banner-controls {
+    backdrop-filter: blur(4px);
+  }
+}

@@ -150,6 +150,37 @@ style={{ opacity: 0, transition: "opacity 0.3s ease" }}  // Initial hidden state
   - Personalized recommendations
   - Smart pricing algorithms
 
+---
+
+## 🚀 Planned Future Phases (Expanded)
+
+### Phase 6: Album Cover & Merchandise Store
+- Album cover galleries and music release pages
+- Merchandise store for branded apparel, accessories, and collectibles
+- Dropshipping integration (e.g., Printful, Printify) for on-demand merch
+- Amazon Affiliate integration for music-related products
+- Featured merch and albums in hero/banner and product sections
+- Purchase links for both direct and affiliate products
+
+### Phase 7: Localization & Cultural Themes
+- Multi-language support (i18n) for all site content (e.g., using gatsby-plugin-react-i18next)
+- Language switcher for users
+- Theme options to match various cultures/regions (color, imagery, typography)
+- RTL (right-to-left) and LTR (left-to-right) language support
+- Region-based product recommendations and banners
+
+### Phase 8: Advanced ThriveCart Integration & Affiliate Program
+- Full ThriveCart integration for beat sales, courses, and merch
+- Enable affiliate program so other users can promote your products and earn commissions
+- Affiliate dashboard for tracking referrals and payouts
+- Automated affiliate link generation for all products
+- Tiered commission structures and reporting
+- Marketing tools for affiliates (banners, email templates, etc.)
+
+---
+
+These phases will ensure the platform supports music releases, merch sales, global audiences, and a robust affiliate ecosystem for maximum reach and revenue.
+
 ### 🛠 Available Tools & Scripts
 
 #### Development Commands

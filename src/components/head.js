@@ -4,6 +4,7 @@ export default function Head({ title, description, image }) {
   return (
     <>
       <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <title>{"Matrixblend: Jeldon Music"}</title>
       {description && (
         <meta
