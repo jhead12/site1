@@ -63,15 +63,10 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
 
   const data = useStaticQuery(graphql`
     query HeroBannerContent {
-      # WordPress Videos
-      allWpPost(
-        filter: {
-          categories: {
-            nodes: { elemMatch: { slug: { eq: "videos" } } }
-          }
-        }
+      # WordPress Videos - now using direct video post type and sorting by views
+      allWpVideo(
         sort: { date: DESC }
-        limit: 3
+        limit: 5
       ) {
         nodes {
           id
@@ -79,12 +74,11 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           excerpt
           slug
           date
-          categories {
-            nodes {
-              name
-              slug
-            }
-          }              featuredImage {
+          videoDetails {
+            youtubeVideoId
+            videoViews
+          }
+          featuredImage {
             node {
               altText
               localFile {
@@ -120,19 +114,25 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   useEffect(() => {
     try {
       // Combine WordPress and Contentful data
-      const wpPosts = data?.allWpPost?.nodes || [];
+      const wpVideos = data?.allWpVideo?.nodes || [];
       const contentfulHeros = data?.allContentfulHomepageHero?.nodes || [];
 
-      // Transform WordPress posts
-      const wpItems = wpPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        description: post.excerpt,
-        image: post.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData,
-        slug: `/videos/${post.slug}`,
-        date: post.date,
-        type: 'video'
-      }));
+      // Transform WordPress videos and parse view counts
+      const wpItems = wpVideos.map(video => {
+        // Parse view count from the videoViews field (default to 0 if not available)
+        const viewCount = parseInt(video.videoDetails?.videoViews || '0', 10);
+        
+        return {
+          id: video.id,
+          title: video.title,
+          description: video.excerpt,
+          image: video.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData,
+          slug: `/videos/${video.slug}`,
+          date: video.date,
+          type: 'video',
+          viewCount: viewCount // Store view count for sorting
+        };
+      });
 
       // Transform Contentful items
       const contentfulItems = contentfulHeros.map(hero => ({
@@ -143,14 +143,15 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         slug: hero.links?.[0]?.href || '/',
         date: new Date().toISOString(), // Use current date since we don't have updatedAt
         type: 'hero',
-        kicker: hero.kicker
+        kicker: hero.kicker,
+        viewCount: Number.MAX_SAFE_INTEGER // Ensure hero items always have highest priority
       }));
 
-      // Combine and sort by date
+      // Combine and sort by view count (highest views first)
       const combinedItems = [...wpItems, ...contentfulItems]
         .filter(item => item.image) // Only include items with images
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 3); // Keep only the latest 3 items
+        .sort((a, b) => b.viewCount - a.viewCount) // Sort by view count (highest first)
+        .slice(0, 3); // Keep only the top 3 items
 
       if (combinedItems.length > 0) {
         setHeroData(combinedItems);
@@ -235,7 +236,11 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
                 <span className="hero-banner-kicker">{currentContent.kicker}</span>
               )}
               {currentContent.type === 'video' && (
-                <span className="hero-banner-badge">Latest Video</span>
+                <span className="hero-banner-badge">
+                  {currentContent.viewCount > 0 
+                    ? `${currentContent.viewCount.toLocaleString()} views` 
+                    : 'Featured Video'}
+                </span>
               )}
               <h2>{currentContent.title}</h2>
               <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
