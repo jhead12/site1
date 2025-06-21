@@ -1104,6 +1104,45 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `)
 
+  // Define custom types for WordPress Beats and Mixes
+  actions.createTypes(`
+    type WpBeat_Beatfields {
+      bpm: Int
+      musicalKey: String
+      price: String
+      genre: String
+      soundcloudUrl: String
+      purchaseUrl: String
+      audioFile: WpMediaItem
+    }
+
+    type WpMix_Mixfields {
+      mixDuration: String
+      mixType: String
+      spotifyUrl: String
+      soundcloudUrl: String
+      audioFile: WpMediaItem
+    }
+
+    type WpBeat implements Node @dontInfer {
+      id: ID!
+      title: String
+      excerpt: String
+      slug: String
+      date: Date
+      beatFields: WpBeat_Beatfields
+    }
+
+    type WpMix implements Node @dontInfer {
+      id: ID!
+      title: String
+      excerpt: String
+      slug: String
+      date: Date
+      mixFields: WpMix_Mixfields
+    }
+  `)
+
   // Define WordPress Video types to prevent GraphQL errors - ENABLED for real video integration
   actions.createTypes(`
     type WpContentNode_Videodetails {

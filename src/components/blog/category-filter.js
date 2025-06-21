@@ -8,7 +8,7 @@ import {
 
 const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }) => {
   return (
-    <Box marginY={4}>
+    <Box marginY={4} style={{ paddingTop: "2.5rem" }}>
       <Text variant="subhead" marginY={2}>Filter by Category:</Text>
       <Flex gap={2} style={{ flexWrap: "wrap" }}>
         <Button

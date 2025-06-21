@@ -1,0 +1,50 @@
+[
+  {
+    "key": "field_beats_soundcloud_url",
+    "label": "SoundCloud URL",
+    "name": "soundcloudUrl",
+    "type": "url",
+    "instructions": "Enter the SoundCloud URL for this beat (optional)",
+    "required": 0,
+    "conditional_logic": 0,
+    "wrapper": {
+      "width": "",
+      "class": "",
+      "id": ""
+    },
+    "default_value": "",
+    "placeholder": "https://soundcloud.com/your-username/track-title"
+  },
+  {
+    "key": "field_beats_purchase_url",
+    "label": "Purchase URL",
+    "name": "purchaseUrl",
+    "type": "url",
+    "instructions": "Enter the URL where this beat can be purchased (optional)",
+    "required": 0,
+    "conditional_logic": 0,
+    "wrapper": {
+      "width": "",
+      "class": "",
+      "id": ""
+    },
+    "default_value": "",
+    "placeholder": "https://yourstore.com/beat-title"
+  },
+  {
+    "key": "field_mixes_soundcloud_url",
+    "label": "SoundCloud URL",
+    "name": "soundcloudUrl",
+    "type": "url",
+    "instructions": "Enter the SoundCloud URL for this mix (optional)",
+    "required": 0,
+    "conditional_logic": 0,
+    "wrapper": {
+      "width": "",
+      "class": "",
+      "id": ""
+    },
+    "default_value": "",
+    "placeholder": "https://soundcloud.com/your-username/mix-title"
+  }
+]

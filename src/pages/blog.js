@@ -88,12 +88,13 @@ const BlogPage = ({ data, location }) => {
           </Text>
           
           {/* Search */}
-          <BlogSearch 
-            posts={categoryFilteredPosts}
-            onFilteredPosts={setSearchFilteredPosts}
-            selectedCategory={selectedCategory}
-          />
-          
+          <Box marginBottom={7}>
+            <BlogSearch 
+              posts={categoryFilteredPosts}
+              onFilteredPosts={setSearchFilteredPosts}
+              selectedCategory={selectedCategory}
+            />
+          </Box>
           {/* Category Filter */}
           <CategoryFilter 
             categories={categoriesWithCounts}
@@ -124,9 +125,7 @@ const BlogPage = ({ data, location }) => {
                               loading="lazy"
                               onLoad={(e) => e.target.style.opacity = '1'}
                               onError={(e) => e.target.style.display = 'none'}
-                              style={{ 
-                                width: "200px", 
-                                height: "120px", 
+                              style={{
                                 objectFit: "cover",
                                 borderRadius: "8px",
                                 opacity: 0,

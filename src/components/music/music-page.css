@@ -1,0 +1,63 @@
+/**
+ * Styles for the Music Hub page
+ */
+
+.music-filters button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.music-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.music-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* SoundCloud player styling */
+.soundcloud-player iframe {
+  transition: box-shadow 0.2s ease;
+}
+
+.soundcloud-player iframe:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Beat/Track badge styling */
+.music-item-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .music-filters {
+    flex-direction: column;
+  }
+  
+  .music-filters > div {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Audio player styling */
+audio {
+  height: 40px;
+  background-color: #f8f8f8;
+}
+
+/* Purchase button hover effect */
+a[href*="purchase"]:hover {
+  background-color: #003c82 !important;
+}
+
+/* SoundCloud button hover effect */
+a[href*="soundcloud.com"]:hover {
+  background-color: #e04d00 !important;
+}
