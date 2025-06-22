@@ -1,0 +1,56 @@
+/**
+ * Global fixes for layout issues across the site
+ */
+
+/* Force images to display properly */
+img {
+  max-width: 100%;
+}
+
+/* Ensure content doesn't overflow on mobile */
+@media (max-width: 768px) {
+  main {
+    padding: 10px !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+  
+  /* Fix flex containers in mobile */
+  .ui_flex__1mstrgk6 {
+    flex-wrap: wrap;
+  }
+  
+  /* Ensure text doesn't overflow */
+  .ui_text_kicker__1mstrgk4v,
+  .ui_text_body__1mstrgk4p,
+  a {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-word;
+  }
+}
+
+/* Special case for text that has limited space */
+.ui_text_kicker__1mstrgk4v {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Make iframes responsive */
+iframe {
+  max-width: 100%;
+}
+
+/* Background color fix */
+.ui_backgrounds_muted__1mstrgk5f {
+  background-color: #f8f9fa;
+}

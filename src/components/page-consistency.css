@@ -1,0 +1,113 @@
+/**
+ * Page Consistency Styles
+ * These styles ensure consistent design between the hero banner and page content
+ */
+
+/* Add magazine-style box shadows to various page elements */
+.ui_section__1mstrgk2p {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle transitions to all sections for consistency with hero */
+.ui_section__1mstrgk2p {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Apply consistent styling to section headers */
+.ui_text_heading__1mstrgk4s,
+.ui_text_subhead__1mstrgk4t {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+/* Style links consistently with hero banner */
+.ui_link__1mstrgk54 {
+  position: relative;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.ui_link__1mstrgk54::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+.ui_link__1mstrgk54:hover::after {
+  width: 100%;
+}
+
+/* Blog image styling to match hero aesthetics */
+.blog-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.blog-image-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.blog-feature-image {
+  transition: transform 0.5s ease;
+}
+
+.blog-image-wrapper:hover .blog-feature-image {
+  transform: scale(1.05);
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 768px) {
+  main {
+    padding: 10px !important;
+    overflow-x: hidden;
+  }
+  
+  /* Fix for overlapping text in mobile */
+  .ui_flex__1mstrgk6 {
+    flex-direction: column;
+  }
+  
+  .ui_flexGap_3__1mstrgkk {
+    gap: 1rem;
+  }
+  
+  /* Ensure spacing between elements */
+  .ui_containers_fullbleed__1mstrgk5 {
+    padding: 0 0.5rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .ui_text_body__1mstrgk4p p {
+    margin: 0.5rem 0;
+  }
+  
+  .hero-banner-container + section {
+    margin-top: 2rem;
+  }
+}
+
+/* Consistent iframe styling */
+iframe {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+iframe:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}

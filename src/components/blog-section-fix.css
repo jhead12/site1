@@ -1,0 +1,127 @@
+/**
+ * Specific fixes for the blog section shown on homepage
+ */
+
+/* Target the specific blog section shown in the screenshot */
+section.ui_widths_full__1mstrgku.ui_backgrounds_muted__1mstrgk5f.ui_padding_4__1mstrgk15.ui_section__1mstrgk2p {
+  padding: 2rem 1rem !important;
+  margin: 0 !important;
+}
+
+/* Fix the container inside it */
+section.ui_backgrounds_muted__1mstrgk5f .ui_containers_fullbleed__1mstrgk5.ui_container__1mstrgk0 {
+  padding: 0 !important;
+}
+
+/* Make the text header stand out more */
+section.ui_backgrounds_muted__1mstrgk5f h3.ui_text_subhead__1mstrgk4t {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid #3182ce;
+  color: #2c5282;
+}
+
+/* Fix the flex layout */
+section.ui_backgrounds_muted__1mstrgk5f .ui_flex__1mstrgk6.ui_flexGap_3__1mstrgkk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* Style each blog item */
+section.ui_backgrounds_muted__1mstrgk5f .ui_widths_full__1mstrgku {
+  width: calc(33.333% - 1rem);
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 0;
+}
+
+section.ui_backgrounds_muted__1mstrgk5f .ui_widths_full__1mstrgku:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Fix image wrapper */
+section.ui_backgrounds_muted__1mstrgk5f .blog-image-wrapper {
+  margin-bottom: 0;
+  height: 160px;
+}
+
+/* Fix text elements */
+section.ui_backgrounds_muted__1mstrgk5f .ui_text_kicker__1mstrgk4v,
+section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
+  padding: 0.75rem 1rem;
+}
+
+section.ui_backgrounds_muted__1mstrgk5f .ui_text_kicker__1mstrgk4v {
+  border-bottom: 1px solid #edf2f7;
+  font-weight: 600;
+}
+
+section.ui_backgrounds_muted__1mstrgk5f .ui_text_kicker__1mstrgk4v a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  color: #2c5282;
+  text-decoration: none;
+}
+
+section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #4a5568;
+  height: 4.5em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 1024px) {
+  section.ui_backgrounds_muted__1mstrgk5f .ui_widths_full__1mstrgku {
+    width: calc(50% - 0.75rem);
+  }
+}
+
+@media (max-width: 768px) {
+  section.ui_backgrounds_muted__1mstrgk5f .ui_flex__1mstrgk6.ui_flexGap_3__1mstrgkk {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  section.ui_backgrounds_muted__1mstrgk5f .ui_widths_full__1mstrgku {
+    width: 85%;
+    min-width: 260px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    margin-right: 15px;
+  }
+  
+  section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    height: 3em;
+  }
+}
+
+@media (max-width: 480px) {
+  section.ui_backgrounds_muted__1mstrgk5f h3.ui_text_subhead__1mstrgk4t {
+    font-size: 1.5rem;
+  }
+  
+  section.ui_backgrounds_muted__1mstrgk5f .ui_widths_full__1mstrgku {
+    width: 85%;
+    min-width: 240px;
+  }
+}

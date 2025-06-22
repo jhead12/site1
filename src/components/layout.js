@@ -1,6 +1,8 @@
 import * as React from "react";
 import "../styles.css";
 import { Slice } from "gatsby";
+import "./page-consistency.css";
+import "./global-fixes.css";
 // import CookieConsent from "react-cookie-consent";
 // import CookieConsent, { Cookies } from "react-cookie-consent";
 
@@ -12,7 +14,13 @@ const Layout = ({ children }) => {
       <Slice alias="header" />
 
       {/* Main Content */}
-      <main style={{ margin: "0 auto", padding: "20px", maxWidth: "1200px" }}>
+      <main style={{ 
+        margin: "0 auto", 
+        padding: "20px", 
+        maxWidth: "1200px",
+        position: "relative",
+        zIndex: "1" 
+      }}>
         {children}
       </main>
 
