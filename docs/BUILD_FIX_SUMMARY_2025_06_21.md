@@ -6,6 +6,7 @@
 2. **WordPress Connection Timeout**: Added bypass mechanism for WordPress GraphQL in Netlify builds
 3. **Missing `url` field**: Added `url` field as an alias of `publicURL` for File nodes to maintain API consistency
 4. **Netlify Build Configuration**: Updated netlify.toml to use WordPress-bypassed build command
+5. **Missing Audio Directory**: Enhanced directory creation script to handle all required directories and placeholder files
 
 ## Changes Made
 
@@ -16,8 +17,22 @@
 
 2. In `package.json`:
    - Added dedicated `build:netlify` script for Netlify deployment
+   - Integrated ensure-dirs script into build process
 
 3. In `netlify.toml`:
+   - Updated build command comments
+   - Clarified directory creation process
+
+4. In `scripts/ensure-directories.js`:
+   - Enhanced script to use absolute paths
+   - Added creation of placeholder files for required directories
+   - Added demo track placeholders for audio player testing
+   - Improved error handling and logging
+
+5. In `src/components/player/persistent-player.js`:
+   - Added support for handling placeholder audio files
+   - Implemented graceful fallback for demo tracks
+   - Added simulation of playback for placeholder files
    - Updated build command to use `yarn build:netlify`
 
 4. Added documentation:

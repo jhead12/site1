@@ -1,6 +1,10 @@
 [build]
   command = "yarn build:netlify"
   publish = "public"
+  
+  # The build:netlify script automatically ensures directories exist
+  # using the scripts/ensure-directories.js script which creates 
+  # static/audio with placeholder files if needed
 
 [build.environment]
   NODE_VERSION = "20.19.0"
