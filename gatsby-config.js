@@ -8,6 +8,21 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "images",
+        path: `${__dirname}/src/images`,
+      },
+    },
+    // Add another source-filesystem entry for audio files
+    {
+      resolve: "gatsby-source-filesystem", 
+      options: {
+        name: "audio",
+        path: `${__dirname}/static/audio`,
+      },
+    },
+    {
       resolve: "gatsby-source-contentful",
       options: {
         downloadLocal: true,
@@ -16,7 +31,8 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
-    {
+    // Only include WordPress source if BYPASS_WORDPRESS is not set to true
+    ...(process.env.BYPASS_WORDPRESS === "true" ? [] : [{
       resolve: "gatsby-source-wordpress",
       options: {
         url: process.env.WPGRAPHQL_URL,
@@ -43,8 +59,8 @@ module.exports = {
           fallbackImageMaxWidth: 800,
         },
         schema: {
-          timeout: 30000,
-          perPage: 100,
+          timeout: 60000, // Increased timeout to 60 seconds
+          perPage: 20, // Reduced per page to lower resource usage
         },
         auth: {
           htaccess: {
@@ -53,10 +69,10 @@ module.exports = {
           },
         },
       }
-    },
+    }]),
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",
-    "gatsby-transformer-sharp",
+    "gatsby-transformer-sharp", // This transforms image files into usable nodes with fields like publicURL
     "gatsby-plugin-vanilla-extract",
     {
       resolve: "gatsby-plugin-manifest",

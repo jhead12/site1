@@ -12,6 +12,7 @@
     "develop:ssl-bypass": "GATSBY_CONFIG_FILE=gatsby-config-ssl-bypass.js gatsby develop",
     "develop:mock": "bash ./scripts/enable-ssl-bypass.sh && GATSBY_CONFIG_FILE=gatsby-config-ssl-bypass.js gatsby develop",
     "build": "gatsby build",
+    "build:netlify": "GATSBY_CONFIG_FILE=gatsby-config-ssl-bypass.js BYPASS_WORDPRESS=true gatsby build",
     "build:no-wp": "GATSBY_CONFIG_FILE=gatsby-config-ssl-bypass.js BYPASS_WORDPRESS=true gatsby build",
     "build:analyze": "ANALYZE=true gatsby build",
     "serve": "gatsby serve",

@@ -50,7 +50,11 @@ export const beatFields = graphql`
     beatFields {
       audioFile {
         localFile {
-          publicURL
+          url
+          # Fallback if publicURL isn't available
+          childImageSharp {
+            gatsbyImageData
+          }
         }
       }
       bpm
@@ -87,7 +91,10 @@ export const tutorialFields = graphql`
     tutorialFields {
       videoFile {
         localFile {
-          publicURL
+          url
+          childImageSharp {
+            gatsbyImageData
+          }
         }
       }
       videoUrl
@@ -100,8 +107,11 @@ export const tutorialFields = graphql`
       }
       resources {
         localFile {
-          publicURL
+          url
           name
+          childImageSharp {
+            gatsbyImageData
+          }
         }
       }
     }
@@ -115,7 +125,10 @@ export const mixFields = graphql`
     mixFields {
       audioFile {
         localFile {
-          publicURL
+          url
+          childImageSharp {
+            gatsbyImageData
+          }
         }
       }
       mixDuration

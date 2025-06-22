@@ -6,6 +6,20 @@ import './rotating-hero-banner.css';
 // Import mock data for development when connections fail
 import heroMockData from '../../data/mock/hero-data.json';
 
+// Helper function to truncate text to a single sentence
+const truncateToFirstSentence = (text) => {
+  if (!text) return '';
+  
+  // Remove HTML tags
+  const plainText = text.replace(/<[^>]*>/g, '');
+  
+  // Find the first sentence end (period, exclamation, or question mark followed by space)
+  const match = plainText.match(/[^.!?]*[.!?]/);
+  
+  // Return the first sentence or truncate if no sentence end is found
+  return match ? match[0].trim() : plainText.substring(0, 100) + '...';
+};
+
 const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -125,7 +139,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         return {
           id: video.id,
           title: video.title,
-          description: video.excerpt,
+          description: truncateToFirstSentence(video.excerpt),
           image: video.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData,
           slug: `/videos/${video.slug}`,
           date: video.date,
@@ -138,7 +152,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
       const contentfulItems = contentfulHeros.map(hero => ({
         id: hero.id,
         title: hero.heading,
-        description: hero.text || hero.subhead,
+        description: truncateToFirstSentence(hero.text || hero.subhead),
         image: hero.image?.gatsbyImageData,
         slug: hero.links?.[0]?.href || '/',
         date: new Date().toISOString(), // Use current date since we don't have updatedAt
@@ -157,11 +171,21 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         setHeroData(combinedItems);
       } else {
         console.warn('No live data available, falling back to mock data');
-        setHeroData(heroMockData);
+        // Apply truncation to mock data
+        const truncatedMockData = heroMockData.map(item => ({
+          ...item,
+          description: truncateToFirstSentence(item.description)
+        }));
+        setHeroData(truncatedMockData);
       }
     } catch (error) {
       console.error('Error processing hero data:', error);
-      setHeroData(heroMockData);
+      // Apply truncation to mock data
+      const truncatedMockData = heroMockData.map(item => ({
+        ...item,
+        description: truncateToFirstSentence(item.description)
+      }));
+      setHeroData(truncatedMockData);
     }
   }, [data]);
 
@@ -225,6 +249,10 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
     <div className="hero-banner-container">
       <div className={`hero-banner-slide ${fadeClass}`}>
         <Link to={currentContent.slug} className="hero-banner-link">
+          <div className="hero-banner-corner-ribbon">Featured</div>
+          <div className="hero-banner-date">
+            {new Date().toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}
+          </div>
           <GatsbyImage
             image={currentContent.image}
             alt={currentContent.title}
@@ -237,6 +265,10 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
               )}
               {currentContent.type === 'video' && (
                 <span className="hero-banner-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px', verticalAlign: 'middle'}}>
+                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                  </svg>
                   {currentContent.viewCount > 0 
                     ? `${currentContent.viewCount.toLocaleString()} views` 
                     : 'Featured Video'}
@@ -244,6 +276,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
               )}
               <h2>{currentContent.title}</h2>
               <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
+              <div className="hero-banner-read-more">Read Article <span>→</span></div>
             </div>
           </div>
         </Link>

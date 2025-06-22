@@ -13,6 +13,7 @@ interface BeatsFields {
   audioFile?: {
     localFile?: {
       publicURL?: string
+      url?: string
     }
   }
   waveformImage?: {
@@ -80,13 +81,13 @@ const BeatTemplate: React.FC<BeatTemplateProps> = ({ data, pageContext }) => {
             {/* Main Content */}
             <div className="lg:col-span-2">
               {/* Audio Player */}
-              {fields.audioFile?.localFile?.publicURL && (
+              {fields.audioFile?.localFile?.url && (
                 <div className="audio-player mb-6 p-4 bg-gray-100 rounded-lg">
                   <h3 className="text-lg font-semibold mb-3">Listen to Beat</h3>
                   <audio 
                     controls 
                     className="w-full"
-                    src={fields.audioFile.localFile.publicURL}
+                    src={fields.audioFile.localFile.url}
                   >
                     Your browser does not support the audio element.
                   </audio>

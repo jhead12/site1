@@ -26,7 +26,7 @@ const MusicPage = ({ data }) => {
     type: "beat",
     source: "WordPress",
     slug: `/beats/${beat.slug}/`,
-    audioUrl: beat.beatFields?.audioFile?.localFile?.publicURL || null,
+    audioUrl: beat.beatFields?.audioFile?.localFile?.url || null,
     price: beat.beatFields?.price || null,
     bpm: beat.beatFields?.bpm || null,
     key: beat.beatFields?.musicalKey || null,
@@ -44,7 +44,7 @@ const MusicPage = ({ data }) => {
     type: "mix",
     source: "WordPress",
     slug: `/mixes/${mix.slug}/`,
-    audioUrl: mix.mixFields?.audioFile?.localFile?.publicURL || null,
+    audioUrl: mix.mixFields?.audioFile?.localFile?.url || null,
     duration: mix.mixFields?.mixDuration || null, // Uses mixDuration instead of duration
     image: mix.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData || null,
     genre: mix.mixFields?.mixType || null,
@@ -145,7 +145,7 @@ export const query = graphql`
           price
           audioFile {
             localFile {
-              publicURL
+              url
             }
           }
         }
@@ -172,7 +172,7 @@ export const query = graphql`
           spotifyUrl
           audioFile {
             localFile {
-              publicURL
+              url
             }
           }
         }

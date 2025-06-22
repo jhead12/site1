@@ -12,6 +12,7 @@ interface MixFields {
   audioFile?: {
     localFile?: {
       publicURL?: string
+      url?: string
     }
   }
   downloadUrl?: string
@@ -110,13 +111,13 @@ const MixTemplate: React.FC<MixTemplateProps> = ({ data, pageContext }) => {
             {/* Main Content */}
             <div className="lg:col-span-2">
               {/* Audio Player */}
-              {fields.audioFile?.localFile?.publicURL && (
+              {fields.audioFile?.localFile?.url && (
                 <div className="audio-player mb-6 p-6 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg text-white">
                   <h3 className="text-xl font-semibold mb-4">🎧 Listen to Mix</h3>
                   <audio 
                     controls 
                     className="w-full h-12"
-                    src={fields.audioFile.localFile.publicURL}
+                    src={fields.audioFile.localFile.url}
                   >
                     Your browser does not support the audio element.
                   </audio>

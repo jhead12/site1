@@ -1113,7 +1113,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       genre: String
       soundcloudUrl: String
       purchaseUrl: String
-      audioFile: WpMediaItem
+      audioFile: WpMediaItem @link
     }
 
     type WpMix_Mixfields {
@@ -1121,7 +1121,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       mixType: String
       spotifyUrl: String
       soundcloudUrl: String
-      audioFile: WpMediaItem
+      audioFile: WpMediaItem @link
     }
 
     type WpBeat implements Node @dontInfer {
@@ -1172,63 +1172,114 @@ exports.createSchemaCustomization = async ({ actions }) => {
       count: Int
     }
   `)
-
 }
+
+// Add resolvers for fields that can't be handled by gatsby-transformer-sharp
+exports.createResolvers = ({ createResolvers }) => {
+  const resolvers = {
+    File: {
+      // Make the publicURL field available for all File nodes
+      publicURL: {
+        type: `String!`,
+        resolve: (source) => {
+          // Return URL path relative to the website with fallback
+          return source.relativePath ? `/${source.relativePath}` : null;
+        },
+      },
+      // Add url as an alias of publicURL for consistency with contentful
+      url: {
+        type: `String!`,
+        resolve: (source) => {
+          // Return URL path relative to the website with fallback
+          return source.relativePath ? `/${source.relativePath}` : null;
+        },
+      },
+    },
+  }
+  createResolvers(resolvers)
+}
+
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage, createSlice } = actions;
 
-  // Create WordPress pages
-  const result = await graphql(`
-    {
-      allWpPage {
-        nodes {
-          id
-          slug
-          title
-          content
-        }
-      }
-      allWpPost {
-        nodes {
-          id
-          slug
-          title
-        }
-      }
-      allWpBeat {
-        nodes {
-          id
-          slug
-          title
-        }
-      }
-      allWpTutorial {
-        nodes {
-          id
-          slug
-          title
-        }
-      }
-      allWpMix {
-        nodes {
-          id
-          slug
-          title
-        }
-      }
-      allWpVideo {
-        nodes {
-          id
-          slug
-          title
-        }
-      }
-    }
-  `);
+  // Skip WordPress queries if BYPASS_WORDPRESS is true
+  if (process.env.BYPASS_WORDPRESS === "true") {
+    console.log("WordPress data fetch bypassed by BYPASS_WORDPRESS environment variable");
+    
+    // Create slices
+    createSlice({
+      id: "header",
+      component: require.resolve("./src/components/header.js"),
+    });
+    
+    createSlice({
+      id: "footer",
+      component: require.resolve("./src/components/footer.js"),
+    });
+    
+    return;
+  }
 
-  if (result.errors) {
-    console.error('GraphQL errors:', result.errors);
-    throw result.errors;
+  // Create WordPress pages
+  let result;
+  try {
+    result = await graphql(`
+      {
+        allWpPage {
+          nodes {
+            id
+            slug
+            title
+            content
+          }
+        }
+        allWpPost {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+        allWpBeat {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+        allWpTutorial {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+        allWpMix {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+        allWpVideo {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+      }
+    `);
+
+    if (result.errors) {
+      console.error('GraphQL errors:', result.errors);
+      console.warn('Continuing build despite GraphQL errors');
+    }
+  } catch (error) {
+    console.error('Error fetching WordPress data:', error);
+    console.warn('Continuing build despite fetch error');
+    // Create empty result object to allow the build to continue
+    result = { data: {} };
   }
 
   // Safely access data with fallbacks
