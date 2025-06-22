@@ -7,6 +7,7 @@
 3. **Missing `url` field**: Added `url` field as an alias of `publicURL` for File nodes to maintain API consistency
 4. **Netlify Build Configuration**: Updated netlify.toml to use WordPress-bypassed build command
 5. **Missing Audio Directory**: Enhanced directory creation script to handle all required directories and placeholder files
+6. **WordPress Schema Errors**: Fixed GraphQL schema errors when WordPress is bypassed by providing a fallback WpMediaItem type and updating field references
 
 ## Changes Made
 
@@ -14,6 +15,8 @@
    - Fixed duplicate resolver for File type
    - Added proper null check for relativePath
    - Added url field alias
+   - Added fallback WpMediaItem type definition
+   - Changed audioFile field references to use generic File type
 
 2. In `package.json`:
    - Added dedicated `build:netlify` script for Netlify deployment

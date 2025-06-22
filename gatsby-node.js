@@ -1113,7 +1113,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       genre: String
       soundcloudUrl: String
       purchaseUrl: String
-      audioFile: WpMediaItem @link
+      audioFile: File @link
     }
 
     type WpMix_Mixfields {
@@ -1121,7 +1121,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       mixType: String
       spotifyUrl: String
       soundcloudUrl: String
-      audioFile: WpMediaItem @link
+      audioFile: File @link
     }
 
     type WpBeat implements Node @dontInfer {
@@ -1172,6 +1172,18 @@ exports.createSchemaCustomization = async ({ actions }) => {
       count: Int
     }
   `)
+
+  // Add a type for WpMediaItem to ensure compatibility when WordPress is bypassed
+  // This is used when BYPASS_WORDPRESS=true
+  actions.createTypes(/* GraphQL */ `
+    type WpMediaItem implements Node @dontInfer {
+      id: ID!
+      title: String
+      altText: String
+      sourceUrl: String
+      localFile: File @link
+    }
+  `);
 }
 
 // Add resolvers for fields that can't be handled by gatsby-transformer-sharp
