@@ -16,7 +16,7 @@ const BeatList = () => (
   frameBorder="0"
    width="100%"
   height="400"
-  allowTransparency="true"
+  allowtransparency="true"
   style={{ maxWidth: "1024px" }}
 ></iframe>
 

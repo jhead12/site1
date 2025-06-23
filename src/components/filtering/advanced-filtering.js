@@ -24,13 +24,17 @@ const AdvancedFiltering = ({
   // Load persisted filters on mount
   useEffect(() => {
     if (persistFilters && typeof window !== 'undefined') {
-      const savedFilters = localStorage.getItem(filterStorageKey)
-      if (savedFilters) {
-        try {
-          setActiveFilters(JSON.parse(savedFilters))
-        } catch (e) {
-          console.warn('Failed to parse saved filters')
+      try {
+        const savedFilters = localStorage.getItem(filterStorageKey)
+        if (savedFilters) {
+          try {
+            setActiveFilters(JSON.parse(savedFilters))
+          } catch (e) {
+            console.warn('Failed to parse saved filters')
+          }
         }
+      } catch (error) {
+        console.error("Browser storage not available:", error)
       }
     }
   }, [persistFilters, filterStorageKey])
@@ -38,7 +42,11 @@ const AdvancedFiltering = ({
   // Save filters to localStorage
   useEffect(() => {
     if (persistFilters && typeof window !== 'undefined') {
-      localStorage.setItem(filterStorageKey, JSON.stringify(activeFilters))
+      try {
+        localStorage.setItem(filterStorageKey, JSON.stringify(activeFilters))
+      } catch (error) {
+        console.error("Browser storage not available:", error)
+      }
     }
   }, [activeFilters, persistFilters, filterStorageKey])
 

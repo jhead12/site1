@@ -127,7 +127,14 @@ export const PersistentPlayerProvider = ({ children }) => {
       }
       
       // Save to localStorage for persistence
-      localStorage.setItem('jeldon_player_current_track', JSON.stringify(track));
+      const isBrowser = typeof window !== 'undefined';
+      if (isBrowser) {
+        try {
+          localStorage.setItem('jeldon_player_current_track', JSON.stringify(track));
+        } catch (error) {
+          console.error("Browser storage not available:", error);
+        }
+      }
     }
   };
   
@@ -265,14 +272,21 @@ export const PersistentPlayerProvider = ({ children }) => {
   
   // Restore state from localStorage when component mounts
   useEffect(() => {
-    const savedTrack = localStorage.getItem('jeldon_player_current_track');
-    if (savedTrack) {
+    const isBrowser = typeof window !== 'undefined';
+    if (isBrowser) {
       try {
-        const parsedTrack = JSON.parse(savedTrack);
-        setCurrentTrack(parsedTrack);
-        setIsVisible(true);
+        const savedTrack = localStorage.getItem('jeldon_player_current_track');
+        if (savedTrack) {
+          try {
+            const parsedTrack = JSON.parse(savedTrack);
+            setCurrentTrack(parsedTrack);
+            setIsVisible(true);
+          } catch (error) {
+            console.error("Error parsing saved track:", error);
+          }
+        }
       } catch (error) {
-        console.error("Error parsing saved track:", error);
+        console.error("Browser storage not available:", error);
       }
     }
     

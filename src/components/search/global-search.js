@@ -293,7 +293,13 @@ const GlobalSearch = ({ allData, onResultsChange }) => {
       // Add to search history
       const newHistory = [searchTerm, ...searchHistory.filter(h => h !== searchTerm)].slice(0, 10)
       setSearchHistory(newHistory)
-      localStorage.setItem('search_history', JSON.stringify(newHistory))
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('search_history', JSON.stringify(newHistory))
+        } catch (error) {
+          console.error("Browser storage not available:", error)
+        }
+      }
       setShowSuggestions(false)
     }
   }
@@ -321,9 +327,17 @@ const GlobalSearch = ({ allData, onResultsChange }) => {
   // Load search history on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedHistory = localStorage.getItem('search_history')
-      if (savedHistory) {
-        setSearchHistory(JSON.parse(savedHistory))
+      try {
+        const savedHistory = localStorage.getItem('search_history')
+        if (savedHistory) {
+          try {
+            setSearchHistory(JSON.parse(savedHistory))
+          } catch (error) {
+            console.error("Error parsing search history:", error)
+          }
+        }
+      } catch (error) {
+        console.error("Browser storage not available:", error)
       }
     }
   }, [])
@@ -338,7 +352,6 @@ const GlobalSearch = ({ allData, onResultsChange }) => {
             placeholder="Search across all content..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setShowSuggestions(true)}
             style={{
               width: "100%",
               padding: "1rem 3rem 1rem 1rem",

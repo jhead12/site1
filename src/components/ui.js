@@ -80,6 +80,23 @@ export function FlexList(props) {
   return <Flex as="ul" cx={[styles.list]} {...props} />
 }
 
+export function Grid({ columns = [1, 2, 3], gap = 3, children, ...props }) {
+  return (
+    <Base
+      cx={[
+        {
+          display: "grid",
+          gridTemplateColumns: columns.map(col => `repeat(${col}, 1fr)`).join(", "),
+          gridGap: gap && styles.space[gap],
+        },
+      ]}
+      {...props}
+    >
+      {children}
+    </Base>
+  )
+}
+
 export function List(props) {
   return <Base as="ul" cx={[styles.list]} {...props} />
 }
@@ -140,19 +157,19 @@ export function Kicker({ ...props }) {
   return <Text variant="kicker" {...props} />
 }
 
-export function Link({ to, href, ...props }) {
+export function Link({ to, href, className, ...props }) {
   const url = href || to || ""
   if (isAbsoluteURL(url)) {
     return (
       // eslint-disable-next-line jsx-a11y/anchor-has-content
-      <a href={url} className={styles.link} {...props} />
+      <a href={url} className={cx(styles.link, className)} {...props} />
     )
   }
-  return <GatsbyLink to={url} className={styles.link} {...props} />
+  return <GatsbyLink to={url} className={cx(styles.link, className)} {...props} />
 }
 
-export function NavLink({ ...props }) {
-  return <Base as={Link} cx={[styles.navlink]} {...props} />
+export function NavLink({ className, ...props }) {
+  return <Link className={cx(styles.navlink, className)} {...props} />
 }
 
 export function NavButtonLink({ ...props }) {

@@ -40,7 +40,7 @@ const EmbedPage = () => {
       <iframe
         src="https://samply.app/embed/gR2wVgSEYQrr5UkzrY7N"
         frameBorder="0"
-        allowTransparency="true"
+        allowtransparency="true"
         title="Samply App Embed"
         style={{
           width: '100%',

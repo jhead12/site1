@@ -14,10 +14,16 @@ const InstagramFeed = ({ feedCount = 6, showLoadMore = false }) => {
 
   useEffect(() => {
     // Check for stored access token
-    const storedToken = typeof window !== "undefined" ? 
-      localStorage.getItem('instagram_access_token') : null
-    setAccessToken(storedToken)
-    fetchInstagramPosts(storedToken)
+    let storedToken = null;
+    if (typeof window !== "undefined") {
+      try {
+        storedToken = localStorage.getItem('instagram_access_token');
+      } catch (error) {
+        console.error("Browser storage not available:", error);
+      }
+    }
+    setAccessToken(storedToken);
+    fetchInstagramPosts(storedToken);
   }, [])
 
   const fetchInstagramPosts = async (token = null) => {

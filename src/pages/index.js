@@ -5,71 +5,74 @@ import * as sections from "../components/sections"
 import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 import RotatingHeroBanner from "../components/hero/rotating-hero-banner"
+import { getDemoBlogPosts } from "../utils/fallback-data"
 
 export default function Homepage(props) {
-  const { homepage, allWpPost } = props.data
+  // Get WordPress posts or fallback to demo data
+  const wpPosts = props.data.allWpPost?.nodes
+  const wpBypassMode = !wpPosts
+  const blogPosts = wpBypassMode 
+    ? { nodes: getDemoBlogPosts(5) }  // Use 5 demo posts when WordPress is bypassed
+    : props.data.allWpPost
+
+  // Check if homepage data exists (won't exist in bypass mode)
+  const homepage = props.data.homepage || { blocks: [] }
 
   return (
     <Layout>
       {/* Dynamic Rotating Hero Banner */}
       <RotatingHeroBanner />
       
-      {/* Contentful blocks */}
-      {homepage.blocks.map((block) => {
+      {/* Contentful blocks - only render if they exist */}
+      {homepage.blocks && homepage.blocks.length > 0 && homepage.blocks.map((block) => {
         const { id, blocktype, ...componentProps } = block
         const Component = sections[blocktype] || Fallback
         return <Component key={id} {...componentProps} />
       })}
 
       <sections.BeatsStatList />
-      <sections.BlogFeature data={{ allWpPost }} />
+      <sections.BlogFeature data={{ allWpPost: blogPosts }} />
+      
+      {wpBypassMode && (
+        <div style={{ 
+          textAlign: "center", 
+          padding: "20px", 
+          background: "#fff8e1", 
+          margin: "20px auto",
+          maxWidth: "800px",
+          borderRadius: "8px"
+        }}>
+          <p style={{ margin: 0 }}>
+            <strong>WordPress Bypass Mode:</strong> Sample content is being displayed. 
+            Connect to WordPress to see actual content.
+          </p>
+        </div>
+      )}
     </Layout>
     
   )
 }
 export const Head = (props) => {
-  const { homepage } = props.data
-  return <SEOHead {...homepage} />
+  const { site } = props.data
+  return <SEOHead title={site.siteMetadata.title} description={site.siteMetadata.description} />
 }
 export const query = graphql`
-  {
-    homepage {
-      id
-      title
-      description
-      image {
-        id
-        url
+  query HomePageQuery($BYPASS_WORDPRESS: Boolean = false) {
+    site {
+      siteMetadata {
+        title
+        description
       }
-      blocks: content {
-        id
-        blocktype
-        ...HomepageHeroContent
-        ...HomepageFeatureListContent
-        ...HomepageCtaContent
-        ...HomepageLogoListContent
-        ...HomepageTestimonialListContent
-        ...HomepageBenefitListContent
-        ...HomepageStatListContent
-        ...HomepageProductListContent
-        
-           }
     }
-    allWpPost(sort: { date: DESC}, limit: 5) {
+    allWpPost(sort: { date: DESC }, limit: 3) @skip(if: $BYPASS_WORDPRESS) {
       nodes {
         id
         title
-        excerpt
-        uri
         slug
+        excerpt
         date(formatString: "MMMM DD, YYYY")
-        featuredImage {
-          node {
-            sourceUrl
-            altText
-          }
-        }
       }
     }
+    # Only query homepage blocks if you have robust mocks for them
   }
 `

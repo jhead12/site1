@@ -1,5 +1,5 @@
 [build]
-  command = "yarn build:netlify"
+  command = "BYPASS_WORDPRESS=true yarn build:netlify"
   publish = "public"
   
   # The build:netlify script automatically ensures directories exist
@@ -8,6 +8,7 @@
 
 [build.environment]
   NODE_VERSION = "20.19.0"
+  BYPASS_WORDPRESS = "true"
   NPM_FLAGS = "--prefer-offline --no-audit"
   YARN_FLAGS = "--prefer-offline --no-audit"
   NODE_OPTIONS = "--max_old_space_size=4096"

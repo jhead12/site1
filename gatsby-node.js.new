@@ -1,8 +1,4 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
-const webpackConfig = require("./webpack.config")
-
-// Import webpack configuration to handle CSS chunk ordering issues
-exports.onCreateWebpackConfig = webpackConfig.onCreateWebpackConfig;
 
 exports.createSchemaCustomization = async ({ actions }) => {
   actions.createFieldExtension({
@@ -70,25 +66,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       }
     },
   })
-
-  actions.createFieldExtension({
-    name: "proxy",
-    args: {
-      from: {
-        type: "String!",
-      },
-    },
-    extend(options) {
-      return {
-        resolve(source) {
-          if (source[options.from]) {
-            return source[options.from];
-          }
-          return null;
-        },
-      };
-    },
-  });
 
   // abstract interfaces
   actions.createTypes(/* GraphQL */ `
@@ -206,71 +183,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `);
 
-  // Define ContentfulLayout types needed for header and footer components
-  actions.createTypes(`
-    type ContentfulLayout {
-      header: ContentfulLayoutHeader
-      footer: ContentfulLayoutFooter
-    }
-
-    type ContentfulLayoutHeader {
-      id: ID
-      navItems: [ContentfulNavItem]
-    }
-
-    type ContentfulLayoutFooter {
-      id: ID
-      links: [ContentfulNavItem]
-    }
-
-    type ContentfulNavItem implements Node & HeaderNavItem & NavItem & NavItemGroup {
-      id: ID!
-      navItemType: String
-      text: String
-      href: String @proxy(from: "url")
-      page: ContentfulPage
-      submenu: [ContentfulNavItem]
-      username: String
-      service: String
-      description: String
-      icon: HomepageImage
-      name: String
-      navItems: [NavItem]
-    }
-
-    interface NavItem {
-      id: ID!
-      navItemType: String
-      href: String
-      text: String
-    }
-
-    interface NavItemGroup {
-      id: ID!
-      navItemType: String
-      name: String
-      navItems: [NavItem]
-    }
-
-    type ContentfulPage {
-      id: ID
-      slug: String
-      title: String
-    }
-  `);
-
   // Create comprehensive WordPress mock types when BYPASS_WORDPRESS is true
   if (process.env.BYPASS_WORDPRESS === "true") {
     console.log("📝 Creating WordPress mock types for BYPASS_WORDPRESS mode");
-    actions.createTypes(`
-      type WpContentNode_Videodetails {
-        videoViews: String
-        videoDuration: String
-        videoPublishedAt: Date
-        youtubeUrl: String
-        youtubeVideoId: String
-      }
-      
+    actions.createTypes(/* GraphQL */ `
       # Core WordPress Types
       type WpMediaItem implements Node @dontInfer {
         id: ID!
@@ -316,11 +232,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
         date: Date @dateformat
         featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
         acfBeats: WpBeatAcfBeats
-        beatFields: WpBeatAcfBeats
         databaseId: Int
       }
 
-      type WpBeatAcfBeats @dontInfer {
+      type WpBeatAcfBeats {
         audioFile: WpMediaItem
         price: Float
         genre: String
@@ -329,7 +244,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
         soundcloudUrl: String
         purchaseUrl: String
         keySignature: String
-        musicalKey: String
       }
 
       type WpMix implements Node @dontInfer {
@@ -340,20 +254,16 @@ exports.createSchemaCustomization = async ({ actions }) => {
         date: Date @dateformat
         featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
         acfMixes: WpMixAcfMixes
-        mixFields: WpMixAcfMixes
         databaseId: Int
       }
 
-      type WpMixAcfMixes @dontInfer {
+      type WpMixAcfMixes {
         audioFile: WpMediaItem
         genre: String
         tracklist: String
         audioUrl: String
         soundcloudUrl: String
         duration: String
-        spotifyUrl: String
-        mixDuration: String
-        mixType: String
       }
 
       type WpTutorial implements Node @dontInfer {
@@ -431,44 +341,31 @@ exports.createSchemaCustomization = async ({ actions }) => {
       }
       
       # Input types needed for filtering in queries
-      input WpPostFilter {
+      input WpPostFilterInput {
         slug: StringQueryOperatorInput
         date: DateQueryOperatorInput
-        categories: WpPostToCategoryConnectionFilter
+        categories: WpPostToCategoryConnectionFilterInput
         title: StringQueryOperatorInput
         content: StringQueryOperatorInput
         excerpt: StringQueryOperatorInput
       }
       
-      input WpCategoryFilter {
-        id: StringQueryOperatorInput
-        slug: StringQueryOperatorInput
-        name: StringQueryOperatorInput
-        count: IntQueryOperatorInput
-      }
-      
-      input IntQueryOperatorInput {
-        eq: Int
-        ne: Int
-        gt: Int
-        gte: Int
-        lt: Int
-        lte: Int
-        in: [Int]
-        nin: [Int]
-      }
-      
-      input WpTagFilter {
+      input WpCategoryFilterInput {
         slug: StringQueryOperatorInput
         name: StringQueryOperatorInput
       }
       
-      input WpPostToCategoryConnectionFilter {
-        nodes: WpCategoryFilterList
+      input WpTagFilterInput {
+        slug: StringQueryOperatorInput
+        name: StringQueryOperatorInput
       }
       
-      input WpCategoryFilterList {
-        elemMatch: WpCategoryFilter
+      input WpPostToCategoryConnectionFilterInput {
+        nodes: WpCategoryFilterListInput
+      }
+      
+      input WpCategoryFilterListInput {
+        elemMatch: WpCategoryFilterInput
       }
       
       input StringQueryOperatorInput {
@@ -535,65 +432,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
       type WpMixConnection {
         nodes: [WpMix]
       }
-
-      # Add ContentfulAsset type implementing HomepageImage
-      type ContentfulAsset implements HomepageImage {
-        id: ID!
-        alt: String
-        gatsbyImageData: GatsbyImageData
-        url: String
-      }
-
-      # Add SitePage type extension with slug field 
-      extend type SitePage {
-        slug: String
-      }
-
-      # Define interfaces for navigation items
-      interface NavItem {
-        id: ID!
-        navItemType: String
-        href: String
-        text: String
-      }
-
-      interface NavItemGroup {
-        id: ID!
-        navItemType: String
-        name: String
-        navItems: [NavItem]
-      }
-
-      # Make ContentfulNavItem implement both interfaces
-      type ContentfulNavItem implements NavItem & NavItemGroup {
-        id: ID!
-        navItemType: String
-        href: String
-        text: String
-        name: String
-        navItems: [NavItem]
-        description: String
-        icon: ContentfulAsset
-      }
-
-      # Add allWpVideoCategory to Query
-      extend type Query {
-        allWpVideoCategory(filter: WpCategoryFilter): WpCategoryConnection
-      }
     `);
     
     // Add type extensions for query root fields
     actions.createTypes(/* GraphQL */ `
-      input WpPostSort {
-        fields: [String]
-        order: SortOrderEnum
-      }
-
-      enum SortOrderEnum {
-        ASC
-        DESC
-      }
-      
       extend type Query {
         wpPage(id: String, slug: String): WpPage
         wpPost(id: String, slug: String): WpPost
@@ -602,18 +444,16 @@ exports.createSchemaCustomization = async ({ actions }) => {
         wpVideo(id: String, slug: String): WpVideo
         wpTutorial(id: String, slug: String): WpTutorial
         allWpPost(
-          filter: WpPostFilter
-          sort: WpPostSort
+          filter: WpPostFilterInput
+          sort: { fields: [Date], order: DESC }
           limit: Int
         ): WpPostConnection
-        allWpCategory(filter: WpCategoryFilter): WpCategoryConnection
-        allWpTag(filter: WpTagFilter): WpTagConnection
+        allWpCategory(filter: WpCategoryFilterInput): WpCategoryConnection
+        allWpTag(filter: WpTagFilterInput): WpTagConnection
         allWpTutorial: WpTutorialConnection
         allWpVideo: WpVideoConnection
         allWpBeat: WpBeatConnection
         allWpMix: WpMixConnection
-        allPage: SitePageConnection
-        layout: ContentfulLayout
       }
     `);
   }
@@ -621,15 +461,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
 // Add resolvers for fields that can't be handled by gatsby-transformer-sharp
 exports.createResolvers = ({ createResolvers }) => {
-  // Only add resolvers in bypass mode
-  if (process.env.BYPASS_WORDPRESS !== "true") {
-    return;
-  }
-  
-  // If we're here, we're in bypass mode and need resolvers
-  console.log("📝 Adding mock data resolvers for BYPASS_WORDPRESS mode");
-  
-  // Create resolvers that don't conflict with existing WordPress types
   const resolvers = {
     File: {
       // Make the publicURL field available for all File nodes
@@ -697,7 +528,6 @@ exports.createResolvers = ({ createResolvers }) => {
         }
       },
       featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
         resolve() {
           // Return a mock featuredImage structure in bypass mode
           return {
@@ -714,7 +544,6 @@ exports.createResolvers = ({ createResolvers }) => {
         }
       },
       categories: {
-        type: 'WpPostToCategoryConnection',
         resolve() {
           // Return mock categories in bypass mode
           return {
@@ -726,7 +555,6 @@ exports.createResolvers = ({ createResolvers }) => {
         }
       },
       tags: {
-        type: 'WpPostToTagConnection',
         resolve() {
           return {
             nodes: [
@@ -737,7 +565,6 @@ exports.createResolvers = ({ createResolvers }) => {
         }
       },
       author: {
-        type: 'WpPostToUserConnectionEdge',
         resolve() {
           return {
             node: {
@@ -770,7 +597,6 @@ exports.createResolvers = ({ createResolvers }) => {
         }
       },
       featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
         resolve() {
           // Return a mock featuredImage structure in bypass mode
           return {
@@ -787,7 +613,6 @@ exports.createResolvers = ({ createResolvers }) => {
         }
       },
       videoCategories: {
-        type: 'WpVideoToVideoCategoryConnection',
         resolve() {
           // Return mock categories in bypass mode
           return {
@@ -797,24 +622,11 @@ exports.createResolvers = ({ createResolvers }) => {
             ]
           };
         }
-      },
-      videoDetails: {
-        type: 'WpContentNode_Videodetails',
-        resolve() {
-          return {
-            videoViews: '12,345',
-            videoDuration: '10:30',
-            videoPublishedAt: new Date().toISOString(),
-            youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            youtubeVideoId: 'dQw4w9WgXcQ'
-          };
-        }
       }
     },
     // Enhance WpBeat resolvers
     WpBeat: {
       featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
         resolve() {
           // Return a mock featuredImage structure in bypass mode
           return {
@@ -832,7 +644,6 @@ exports.createResolvers = ({ createResolvers }) => {
       },
       // Add mock acfBeats fields
       acfBeats: {
-        type: 'WpBeatAcfBeats',
         resolve() {
           return {
             audioFile: {
@@ -846,30 +657,7 @@ exports.createResolvers = ({ createResolvers }) => {
             bpm: 95,
             audioUrl: '/static/audio/demo-track-1.mp3',
             soundcloudUrl: '#',
-            keySignature: 'C Minor',
-            musicalKey: 'C Minor'
-          };
-        }
-      },
-      beatFields: {
-        type: 'WpBeatAcfBeats',
-        resolve(source) {
-          // Simply pass through or delegate to the acfBeats resolver
-          return {
-            audioFile: {
-              localFile: {
-                publicURL: '/static/audio/demo-track-1.mp3',
-                url: '/static/audio/demo-track-1.mp3'
-              }
-            },
-            price: 29.99,
-            genre: 'Hip-Hop',
-            bpm: 95,
-            audioUrl: '/static/audio/demo-track-1.mp3',
-            soundcloudUrl: '#',
-            keySignature: 'C Minor',
-            musicalKey: 'C Minor',
-            purchaseUrl: 'https://example.com/buy'
+            keySignature: 'C Minor'
           };
         }
       }
@@ -877,12 +665,11 @@ exports.createResolvers = ({ createResolvers }) => {
     // Enhance WpMix resolvers
     WpMix: {
       featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
         resolve() {
           // Return a mock featuredImage structure in bypass mode
           return {
             node: {
-              sourceUrl: '/static/images/demo-cover-1.jpg',
+              sourceUrl: '/static/images/demo-cover-2.jpg',
               altText: 'Demo mix cover',
               localFile: {
                 childImageSharp: {
@@ -893,10 +680,9 @@ exports.createResolvers = ({ createResolvers }) => {
           };
         }
       },
-      mixFields: {
-        type: 'WpMixAcfMixes',
-        resolve(source) {
-          // Simply pass through or delegate to the acfMixes resolver
+      // Add mock acfMixes fields
+      acfMixes: {
+        resolve() {
           return {
             audioFile: {
               localFile: {
@@ -908,119 +694,9 @@ exports.createResolvers = ({ createResolvers }) => {
             tracklist: '1. Track One\n2. Track Two\n3. Track Three',
             audioUrl: '/static/audio/demo-track-2.mp3',
             soundcloudUrl: '#',
-            spotifyUrl: 'https://spotify.com/track',
-            mixDuration: '45:30',
-            mixType: 'DJ Mix'
+            duration: '45:30'
           };
         }
-      },
-    },
-    Query: {
-      // Mock allPage resolver for bypass mode
-      allPage: {
-        type: "SitePageConnection",
-        resolve() {
-          // Return mock pages in bypass mode instead of using nodeModel.runQuery
-          return {
-            nodes: [
-              { id: 'page-1', path: '/', slug: 'home', title: 'Home' },
-              { id: 'page-2', path: '/about', slug: 'about', title: 'About' },
-              { id: 'page-3', path: '/contact', slug: 'contact', title: 'Contact' }
-            ]
-          };
-        },
-      },
-      layout: {
-        type: 'ContentfulLayout',
-        resolve() {
-          return {
-            header: {
-              id: 'header-1',
-              navItems: [
-                { id: 'nav-1', navItemType: 'LINK', text: 'Home', url: '/' },
-                { id: 'nav-2', navItemType: 'LINK', text: 'Blog', url: '/blog' },
-                { id: 'nav-3', navItemType: 'LINK', text: 'Music', url: '/music' },
-                { id: 'nav-4', navItemType: 'LINK', text: 'Videos', url: '/videos' },
-                { id: 'nav-5', navItemType: 'LINK', text: 'Contact', url: '/contact' }
-              ]
-            },
-            footer: {
-              id: 'footer-1',
-              links: [
-                { id: 'social-1', navItemType: 'SOCIAL', text: 'YouTube', url: 'https://youtube.com', username: 'jeldonmusic', service: 'youtube' },
-                { id: 'social-2', navItemType: 'SOCIAL', text: 'Instagram', url: 'https://instagram.com', username: 'jeldonmusic', service: 'instagram' },
-                { id: 'social-3', navItemType: 'SOCIAL', text: 'Twitter', url: 'https://twitter.com', username: 'jeldonmusic', service: 'twitter' },
-                { id: 'social-4', navItemType: 'SOCIAL', text: 'SoundCloud', url: 'https://soundcloud.com', username: 'jeldonmusic', service: 'soundcloud' }
-              ]
-            }
-          };
-        }
-      },
-      allWpVideoCategory: {
-        type: 'WpCategoryConnection',
-        args: {
-          filter: 'WpCategoryFilter'
-        },
-        resolve() {
-          return {
-            nodes: [
-              { 
-                id: 'video-cat-1', 
-                name: 'Tutorials', 
-                slug: 'tutorials',
-                count: 5,
-                uri: '/video-category/tutorials/'
-              },
-              { 
-                id: 'video-cat-2', 
-                name: 'Behind the Scenes', 
-                slug: 'behind-the-scenes',
-                count: 3,
-                uri: '/video-category/behind-the-scenes/'
-              },
-              { 
-                id: 'video-cat-3', 
-                name: 'Live Performances', 
-                slug: 'live-performances',
-                count: 2,
-                uri: '/video-category/live-performances/'
-              }
-            ]
-          };
-        }
-      },
-    },
-    ContentfulAsset: {
-      id: {
-        type: 'ID!',
-        resolve: (source) => source.id || `mock-contentful-asset-${Math.random().toString(36).substring(2, 9)}`
-      },
-      alt: {
-        type: 'String',
-        resolve: (source) => source.alt || source.title || 'Asset image'
-      },
-      gatsbyImageData: {
-        type: 'GatsbyImageData',
-        resolve: (source) => {
-          // Return mock GatsbyImageData structure if actual data is not available
-          return source.gatsbyImageData || {
-            layout: "constrained",
-            width: 800,
-            height: 600,
-            images: {
-              sources: [],
-              fallback: {
-                src: source.url || `/static/fallback-image.jpg`,
-                srcSet: "",
-                sizes: ""
-              }
-            }
-          };
-        }
-      },
-      url: {
-        type: 'String',
-        resolve: (source) => source.url || source.file?.url || `/static/fallback-image.jpg`
       }
     }
   };
@@ -1237,115 +913,3 @@ exports.createPages = async ({ graphql, actions }) => {
     component: require.resolve("./src/components/footer.js"),
   });
 };
-
-// Force client-only routes for development in bypass mode
-exports.onCreatePage = ({ page, actions }) => {
-  const { createPage, deletePage } = actions;
-  
-  // Only apply these changes in bypass mode
-  if (process.env.BYPASS_WORDPRESS === "true") {
-    // Skip if the page is already marked as client-only
-    if (page.mode === 'SSR' && page.path.match(/^\/(music|videos|blog|beats|mixes)/)) {
-      deletePage(page);
-      createPage({
-        ...page,
-        mode: 'SSG', // Switch to static site generation mode
-      });
-    }
-  }
-}
-
-// Create mock data files for static queries in bypass mode
-exports.onPostBuild = ({ store }) => {
-  const { program } = store.getState();
-  const fs = require('fs');
-  const path = require('path');
-  
-  if (process.env.BYPASS_WORDPRESS === "true") {
-    const publicPath = path.join(program.directory, 'public');
-    const dataPath = path.join(publicPath, 'page-data', 'sq', 'd');
-    
-    // Ensure the directory exists
-    if (!fs.existsSync(dataPath)) {
-      fs.mkdirSync(dataPath, { recursive: true });
-    }
-    
-    // Mock data for layout query used in header (ID: 860043902)
-    const headerData = {
-      data: {
-        layout: {
-          header: {
-            id: "header-mock",
-            navItems: [
-              { id: "home", navItemType: "LINK", href: "/", text: "Home" },
-              { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
-              { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
-              { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" }
-            ]
-          }
-        }
-      }
-    };
-    
-    // Mock data for layout query used in footer
-    const footerData = {
-      data: {
-        layout: {
-          footer: {
-            id: "footer-mock",
-            copyright: "© 2025 J. Eldon Music",
-            links: [
-              { id: "home", href: "/", text: "Home" },
-              { id: "about", href: "/about", text: "About" },
-              { id: "contact", href: "/contact", text: "Contact" }
-            ],
-            meta: [
-              { id: "privacy", href: "/privacy", text: "Privacy Policy" },
-              { id: "terms", href: "/terms", text: "Terms of Service" }
-            ],
-            socialLinks: [
-              { id: "yt", service: "YOUTUBE", username: "jeldonmusic" },
-              { id: "ig", service: "INSTAGRAM", username: "jeldonmusic" },
-              { id: "tw", service: "TWITTER", username: "jeldonmusic" },
-              { id: "sc", service: "SOUNDCLOUD", username: "jeldonmusic" }
-            ]
-          }
-        }
-      }
-    };
-    
-    // Hero banner data
-    const { getDemoBlogPosts } = require('./src/utils/fallback-data');
-    const heroBannerData = {
-      data: {
-        allWpPost: { nodes: getDemoBlogPosts(5) },
-        allWpVideo: { nodes: [] },
-        allWpBeat: { nodes: [] },
-        allWpMix: { nodes: [] },
-        allContentfulHomepageHero: {
-          nodes: [
-            {
-              heading: "J. Eldon Music",
-              subheading: "Music Producer | Artist | Engineer",
-              image: {
-                gatsbyImageData: {},
-                alt: "J. Eldon Music"
-              },
-              links: [
-                { href: "/music", text: "Explore Music" },
-                { href: "/videos", text: "Watch Videos" }
-              ]
-            }
-          ]
-        }
-      }
-    };
-    
-    // Write the mock data files
-    fs.writeFileSync(path.join(dataPath, '860043902.json'), JSON.stringify(headerData));
-    fs.writeFileSync(path.join(dataPath, '3235098977.json'), JSON.stringify(footerData));
-    fs.writeFileSync(path.join(dataPath, '3265857146.json'), JSON.stringify(heroBannerData));
-    
-    console.log('📝 Created mock static query data files for bypass mode');
-  }
-}

@@ -249,8 +249,6 @@ export const query = graphql`
           slug
         }
       }
-      # ACF fields - these will only work if WPGraphQL for ACF is properly configured
-      # If these fields are not available, we'll extract YouTube ID from content
       videoDetails {
         youtubeVideoId
         videoDuration
@@ -258,7 +256,6 @@ export const query = graphql`
         youtubeUrl
       }
     }
-    # Get related videos
     allWpVideo(
       filter: { 
         slug: { ne: $slug }
@@ -287,6 +284,7 @@ export const query = graphql`
         videoDetails {
           youtubeVideoId
           videoDuration
+          youtubeUrl
         }
         videoCategories {
           nodes {

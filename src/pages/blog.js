@@ -14,14 +14,32 @@ import {
   Flex
 } from "../components/ui"
 import "../components/blog-mobile-fix.css"
+import { getDemoBlogPosts, getDemoCategories } from "../utils/fallback-data"
 
 const BlogPage = ({ data, location }) => {
-  const posts = data.allWpPost.nodes
-  const categories = data.allWpCategory.nodes
+  const wpBypassMode = !data.allWpPost?.nodes
+  
+  // First, memoize the source data based on wpBypassMode
+  const postsData = useMemo(() => {
+    return wpBypassMode ? getDemoBlogPosts() : (data.allWpPost?.nodes || [])
+  }, [wpBypassMode, data.allWpPost?.nodes])
+  
+  const categoriesData = useMemo(() => {
+    return wpBypassMode ? getDemoCategories() : (data.allWpCategory?.nodes || [])
+  }, [wpBypassMode, data.allWpCategory?.nodes])
+  
+  // Then use these memoized values for further processing
+  const posts = postsData
   
   // Get category from URL params
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchFilteredPosts, setSearchFilteredPosts] = useState(posts)
+  // Initialize searchFilteredPosts with posts, but do not directly depend on posts
+  const [searchFilteredPosts, setSearchFilteredPosts] = useState([])
+  
+  // Update searchFilteredPosts when posts change
+  useEffect(() => {
+    setSearchFilteredPosts(posts)
+  }, [posts])
   
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -35,12 +53,12 @@ const BlogPage = ({ data, location }) => {
   
   // Filter posts based on selected category
   const categoryFilteredPosts = useMemo(() => {
-    if (selectedCategory === "all") return posts
+    if (selectedCategory === "all") return postsData
     
-    return posts.filter(post => 
+    return postsData.filter(post => 
       post.categories.nodes.some(category => category.slug === selectedCategory)
     )
-  }, [posts, selectedCategory])
+  }, [postsData, selectedCategory])
   
   // Combine category and search filters
   const finalFilteredPosts = useMemo(() => {
@@ -55,13 +73,13 @@ const BlogPage = ({ data, location }) => {
   
   // Add post counts to categories
   const categoriesWithCounts = useMemo(() => {
-    return categories.map(category => ({
+    return categoriesData.map(category => ({
       ...category,
-      count: posts.filter(post => 
+      count: postsData.filter(post => 
         post.categories.nodes.some(postCategory => postCategory.slug === category.slug)
       ).length
     })).filter(category => category.count > 0)
-  }, [categories, posts])
+  }, [categoriesData, postsData])
 
   const handleCategoryChange = (categorySlug) => {
     setSelectedCategory(categorySlug)
@@ -86,6 +104,25 @@ const BlogPage = ({ data, location }) => {
           <Text center variant="lead">
             Latest thoughts on music production, tutorials, and industry insights.
           </Text>
+          
+          {wpBypassMode && (
+            <Box 
+              marginY={4} 
+              paddingY={3} 
+              paddingX={4} 
+              style={{ 
+                background: "#fff8e1", 
+                borderRadius: "8px", 
+                border: "1px solid #ffecb3",
+                textAlign: "center"
+              }}
+            >
+              <Text>
+                <strong>WordPress Bypass Mode:</strong> Sample content is being displayed. 
+                Connect to WordPress to see actual content.
+              </Text>
+            </Box>
+          )}
           
           {/* Search */}
           <Box marginBottom={7}>
@@ -168,14 +205,14 @@ const BlogPage = ({ data, location }) => {
 }
 
 export const query = graphql`
-  query BlogArchive {
-    allWpPost(sort: { date: DESC }) {
+  query BlogArchive($BYPASS_WORDPRESS: Boolean = false) {
+    allWpPost(sort: { date: DESC }) @skip(if: $BYPASS_WORDPRESS) {
       nodes {
         id
         title
         excerpt
         slug
-        date(formatString: "MMMM DD, YYYY")
+        date
         author {
           node {
             name
@@ -196,7 +233,7 @@ export const query = graphql`
         }
       }
     }
-    allWpCategory(filter: { count: { gt: 0 } }) {
+    allWpCategory(filter: { count: { gt: 0 } }) @skip(if: $BYPASS_WORDPRESS) {
       nodes {
         id
         name

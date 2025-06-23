@@ -76,7 +76,8 @@ const getSocialName = ({ service }) => {
 }
 
 export default function Footer() {
-  const data = useStaticQuery(graphql`
+  // Always call useStaticQuery unconditionally to satisfy React Hooks rules
+  const queryData = useStaticQuery(graphql`
     query {
       layout {
         footer {
@@ -102,6 +103,39 @@ export default function Footer() {
     }
   `)
 
+  // Check if we're in bypass mode - define outside the rendering
+  const isBypassMode = React.useMemo(() => {
+    return typeof window !== "undefined" 
+      ? window.BYPASS_WORDPRESS === "true" 
+      : process.env.BYPASS_WORDPRESS === "true";
+  }, []);
+  
+  // Define mock data outside any conditional
+  const mockData = React.useMemo(() => ({
+    layout: {
+      footer: {
+        id: "footer-1",
+        links: [
+          { id: "link-1", href: "/", text: "Home" },
+          { id: "link-2", href: "/about", text: "About" },
+          { id: "link-3", href: "/contact", text: "Contact" }
+        ],
+        meta: [
+          { id: "meta-1", href: "/privacy", text: "Privacy" },
+          { id: "meta-2", href: "/terms", text: "Terms" }
+        ],
+        copyright: "© 2025 J. Eldon Music",
+        socialLinks: [
+          { id: "social-1", service: "INSTAGRAM", username: "jeldonmusic" },
+          { id: "social-2", service: "YOUTUBE", username: "jeldonmusic" },
+          { id: "social-3", service: "TWITTER", username: "jeldonmusic" }
+        ]
+      }
+    }
+  }), []);
+
+  // Use the appropriate data source
+  const data = isBypassMode ? mockData : queryData;
   const { links, meta, socialLinks, copyright } = data.layout.footer
 
   return (

@@ -1,5 +1,6 @@
 import * as React from "react"
 import { graphql, useStaticQuery } from "gatsby"
+import { isBypassWordpressEnabled } from "../utils/bypass-helper"
 import { Menu, X } from "react-feather"
 import {
   Container,
@@ -25,7 +26,28 @@ import BrandLogo from "./brand-logo"
 
 
 export default function Header() {
-  const data = useStaticQuery(graphql`
+  const bypassWordpress = isBypassWordpressEnabled();
+  const mockData = {
+    layout: {
+      header: {
+        id: "header-mock",
+        navItems: [
+          { id: "home", navItemType: "LINK", href: "/", text: "Home" },
+          { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
+          { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
+          { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" }
+        ],
+        cta: {
+          id: "contact",
+          href: "/contact",
+          text: "Contact"
+        }
+      }
+    }
+  };
+
+  // This is the actual query - it will be processed normally by Gatsby
+  const queryData = useStaticQuery(graphql`
     query {
       layout {
         header {
@@ -33,22 +55,16 @@ export default function Header() {
           navItems {
             id
             navItemType
-            ... on NavItem {
+            href
+            text
+            name
+            description
+            submenu {
+              id
+              navItemType
               href
               text
-            }
-            ... on NavItemGroup {
-              name
-              navItems {
-                id
-                href
-                text
-                description
-                icon {
-                  alt
-                  gatsbyImageData
-                }
-              }
+              description
             }
           }
           cta {
@@ -61,6 +77,8 @@ export default function Header() {
     }
   `)
 
+  // Use the appropriate data source based on bypass mode
+  const data = bypassWordpress ? mockData : queryData;
   const { navItems, cta } = data.layout.header
   const [isOpen, setOpen] = React.useState(false)
 
@@ -150,7 +168,11 @@ export default function Header() {
                       navItems={navItem.navItems}
                     />
                   ) : (
-                    <NavLink to={navItem.href} className={mobileNavLink}>
+                    <NavLink
+                      to={navItem.href}
+                      className={mobileNavLink}
+                      onClick={() => setOpen(false)}
+                    >
                       {navItem.text}
                     </NavLink>
                   )}

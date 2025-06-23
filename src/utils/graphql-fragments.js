@@ -132,11 +132,7 @@ export const mixFields = graphql`
         }
       }
       mixDuration
-      tracklist {
-        artist
-        title
-        timestamp
-      }
+      tracklist
       mixType
       downloadLink
       spotifyUrl

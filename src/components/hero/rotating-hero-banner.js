@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useStaticQuery, graphql, Link } from 'gatsby';
 import { GatsbyImage } from 'gatsby-plugin-image';
+import isAbsoluteURL from 'is-absolute-url';
 import './rotating-hero-banner.css';
 
 // Import mock data for development when connections fail
@@ -248,38 +249,73 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   return (
     <div className="hero-banner-container">
       <div className={`hero-banner-slide ${fadeClass}`}>
-        <Link to={currentContent.slug} className="hero-banner-link">
-          <div className="hero-banner-corner-ribbon">Featured</div>
-          <div className="hero-banner-date">
-            {new Date().toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}
-          </div>
-          <GatsbyImage
-            image={currentContent.image}
-            alt={currentContent.title}
-            className="hero-banner-image"
-          />
-          <div className="hero-banner-content">
-            <div className="hero-banner-text">
-              {currentContent.type === 'hero' && currentContent.kicker && (
-                <span className="hero-banner-kicker">{currentContent.kicker}</span>
-              )}
-              {currentContent.type === 'video' && (
-                <span className="hero-banner-badge">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px', verticalAlign: 'middle'}}>
-                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                  </svg>
-                  {currentContent.viewCount > 0 
-                    ? `${currentContent.viewCount.toLocaleString()} views` 
-                    : 'Featured Video'}
-                </span>
-              )}
-              <h2>{currentContent.title}</h2>
-              <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
-              <div className="hero-banner-read-more">Read Article <span>→</span></div>
+        {isAbsoluteURL(currentContent.slug) ? (
+          <a href={currentContent.slug} className="hero-banner-link">
+            <div className="hero-banner-corner-ribbon">Featured</div>
+            <div className="hero-banner-date">
+              {new Date().toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}
             </div>
-          </div>
-        </Link>
+            <GatsbyImage
+              image={currentContent.image}
+              alt={currentContent.title}
+              className="hero-banner-image"
+            />
+            <div className="hero-banner-content">
+              <div className="hero-banner-text">
+                {currentContent.type === 'hero' && currentContent.kicker && (
+                  <span className="hero-banner-kicker">{currentContent.kicker}</span>
+                )}
+                {currentContent.type === 'video' && (
+                  <span className="hero-banner-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px', verticalAlign: 'middle'}}>
+                      <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                    {currentContent.viewCount > 0 
+                      ? `${currentContent.viewCount.toLocaleString()} views` 
+                      : 'Featured Video'}
+                  </span>
+                )}
+                <h2>{currentContent.title}</h2>
+                <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
+                <div className="hero-banner-read-more">Read Article <span>→</span></div>
+              </div>
+            </div>
+          </a>
+        ) : (
+          <Link to={currentContent.slug} className="hero-banner-link">
+            <div className="hero-banner-corner-ribbon">Featured</div>
+            <div className="hero-banner-date">
+              {new Date().toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}
+            </div>
+            <GatsbyImage
+              image={currentContent.image}
+              alt={currentContent.title}
+              className="hero-banner-image"
+            />
+            <div className="hero-banner-content">
+              <div className="hero-banner-text">
+                {currentContent.type === 'hero' && currentContent.kicker && (
+                  <span className="hero-banner-kicker">{currentContent.kicker}</span>
+                )}
+                {currentContent.type === 'video' && (
+                  <span className="hero-banner-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px', verticalAlign: 'middle'}}>
+                      <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                    {currentContent.viewCount > 0 
+                      ? `${currentContent.viewCount.toLocaleString()} views` 
+                      : 'Featured Video'}
+                  </span>
+                )}
+                <h2>{currentContent.title}</h2>
+                <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
+                <div className="hero-banner-read-more">Read Article <span>→</span></div>
+              </div>
+            </div>
+          </Link>
+        )}
       </div>
 
       <div className="hero-banner-controls">
