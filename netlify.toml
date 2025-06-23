@@ -8,7 +8,7 @@
 
 [build.environment]
   NODE_VERSION = "20.19.0"
-  BYPASS_WORDPRESS = "true"
+  BYPASS_WORDPRESS = "false"
   NPM_FLAGS = "--prefer-offline --no-audit"
   YARN_FLAGS = "--prefer-offline --no-audit"
   NODE_OPTIONS = "--max_old_space_size=4096"
