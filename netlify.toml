@@ -1,5 +1,5 @@
 [build]
-  command = "BYPASS_WORDPRESS=true yarn build:netlify"
+  command = "yarn build:netlify"
   publish = "public"
   
   # The build:netlify script automatically ensures directories exist
