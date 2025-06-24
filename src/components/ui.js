@@ -157,19 +157,19 @@ export function Kicker({ ...props }) {
   return <Text variant="kicker" {...props} />
 }
 
-export function Link({ to, href, className, ...props }) {
+export function Link({ to, href, ...props }) {
   const url = href || to || ""
   if (isAbsoluteURL(url)) {
     return (
       // eslint-disable-next-line jsx-a11y/anchor-has-content
-      <a href={url} className={cx(styles.link, className)} {...props} />
+      <a href={url} className={styles.link} {...props} />
     )
   }
-  return <GatsbyLink to={url} className={cx(styles.link, className)} {...props} />
+  return <GatsbyLink to={url} className={styles.link} {...props} />
 }
 
-export function NavLink({ className, ...props }) {
-  return <Link className={cx(styles.navlink, className)} {...props} />
+export function NavLink({ ...props }) {
+  return <Base as={Link} cx={[styles.navlink]} {...props} />
 }
 
 export function NavButtonLink({ ...props }) {

@@ -5,6 +5,8 @@ const webpackConfig = require("./webpack.config")
 exports.onCreateWebpackConfig = webpackConfig.onCreateWebpackConfig;
 
 exports.createSchemaCustomization = async ({ actions }) => {
+  const bypassWordpress = process.env.BYPASS_WORDPRESS === "true";
+
   actions.createFieldExtension({
     name: "blocktype",
     extend(options) {
@@ -344,7 +346,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
         databaseId: Int
       }
 
-      type WpMixAcfMixes @dontInfer {
+      # We need to define this type carefully - it must exist in both modes
+      # In WordPress mode, these fields come from ACF
+      # In bypass mode, they come from our mock resolvers
+      type WpMixAcfMixes {
         audioFile: WpMediaItem
         genre: String
         tracklist: String
@@ -354,6 +359,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
         spotifyUrl: String
         mixDuration: String
         mixType: String
+        recordingDate: Date @dateformat
+        equipment: String
+        featured: Boolean
+        playCount: Int
       }
 
       type WpTutorial implements Node @dontInfer {
@@ -578,7 +587,11 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
       # Add allWpVideoCategory to Query
       extend type Query {
-        allWpVideoCategory(filter: WpCategoryFilter): WpCategoryConnection
+        allWpVideoCategory(filter: WpCategoryFilter): WpVideoCategoryConnection
+      }
+
+      type WpVideoCategoryConnection {
+        nodes: [WpCategory]
       }
     `);
     
@@ -621,315 +634,39 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
 // Add resolvers for fields that can't be handled by gatsby-transformer-sharp
 exports.createResolvers = ({ createResolvers }) => {
-  // Only add resolvers in bypass mode
-  if (process.env.BYPASS_WORDPRESS !== "true") {
-    return;
-  }
+  // Always add resolvers, but conditionally return real or mock data
+  const bypassWordpress = process.env.BYPASS_WORDPRESS === "true";
   
-  // If we're here, we're in bypass mode and need resolvers
-  console.log("📝 Adding mock data resolvers for BYPASS_WORDPRESS mode");
-  
-  // Create resolvers that don't conflict with existing WordPress types
-  const resolvers = {
-    File: {
-      // Make the publicURL field available for all File nodes
-      publicURL: {
-        type: `String!`,
-        resolve: (source) => {
-          // Return URL path relative to the website with fallback
-          return source.relativePath ? `/${source.relativePath}` : null;
-        },
-      },
-      // Add url as an alias of publicURL for consistency with contentful
-      url: {
-        type: `String!`,
-        resolve: (source) => {
-          // Return URL path relative to the website with fallback
-          return source.relativePath ? `/${source.relativePath}` : null;
-        },
-      },
-    },
-    // Add WpMediaItem resolvers for backward compatibility
-    WpMediaItem: {
-      localFile: {
-        type: 'File',
-        resolve() {
-          // In bypass mode, return a mock file object
-          return {
-            relativePath: 'static/images/demo-cover-1.jpg',
-            childImageSharp: {
-              gatsbyImageData: {}
-            }
-          };
-        },
-      },
-      sourceUrl: {
-        type: 'String',
-        resolve() {
-          return '/static/images/demo-cover-1.jpg';
-        }
-      },
-      altText: {
-        type: 'String',
-        resolve() {
-          return 'Demo image';
-        }
-      }
-    },
-    // Add WpPost resolvers
-    WpPost: {
-      formattedDate: {
-        type: 'String',
-        resolve(source) {
-          if (!source.date) return '';
-          
-          const dateObj = new Date(source.date);
-          const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-          ];
-          
-          const month = months[dateObj.getMonth()];
-          const day = dateObj.getDate();
-          const year = dateObj.getFullYear();
-          
-          return `${month} ${day < 10 ? '0' + day : day}, ${year}`;
-        }
-      },
-      featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
-        resolve() {
-          // Return a mock featuredImage structure in bypass mode
-          return {
-            node: {
-              sourceUrl: '/static/images/demo-cover-1.jpg',
-              altText: 'Demo featured image',
-              localFile: {
-                childImageSharp: {
-                  gatsbyImageData: {}
-                }
-              }
-            }
-          };
-        }
-      },
-      categories: {
-        type: 'WpPostToCategoryConnection',
-        resolve() {
-          // Return mock categories in bypass mode
-          return {
-            nodes: [
-              { id: 'cat-1', name: 'Music', slug: 'music' },
-              { id: 'cat-2', name: 'Production', slug: 'production' }
-            ]
-          };
-        }
-      },
-      tags: {
-        type: 'WpPostToTagConnection',
-        resolve() {
-          return {
-            nodes: [
-              { id: 'tag-1', name: 'Tutorial', slug: 'tutorial' },
-              { id: 'tag-2', name: 'Tips', slug: 'tips' }
-            ]
-          };
-        }
-      },
-      author: {
-        type: 'WpPostToUserConnectionEdge',
-        resolve() {
-          return {
-            node: {
-              id: 'author-1',
-              name: 'Jeldon',
-              slug: 'jeldon'
-            }
-          };
-        }
-      }
-    },
-    // Add WpVideo resolvers
-    WpVideo: {
-      formattedDate: {
-        type: 'String',
-        resolve(source) {
-          if (!source.date) return '';
-          
-          const dateObj = new Date(source.date);
-          const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-          ];
-          
-          const month = months[dateObj.getMonth()];
-          const day = dateObj.getDate();
-          const year = dateObj.getFullYear();
-          
-          return `${month} ${day < 10 ? '0' + day : day}, ${year}`;
-        }
-      },
-      featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
-        resolve() {
-          // Return a mock featuredImage structure in bypass mode
-          return {
-            node: {
-              sourceUrl: '/static/images/demo-cover-1.jpg',
-              altText: 'Demo video thumbnail',
-              localFile: {
-                childImageSharp: {
-                  gatsbyImageData: {}
-                }
-              }
-            }
-          };
-        }
-      },
-      videoCategories: {
-        type: 'WpVideoToVideoCategoryConnection',
-        resolve() {
-          // Return mock categories in bypass mode
-          return {
-            nodes: [
-              { id: 'vcat-1', name: 'Tutorials', slug: 'tutorials' },
-              { id: 'vcat-2', name: 'Behind the Scenes', slug: 'behind-the-scenes' }
-            ]
-          };
-        }
-      },
-      videoDetails: {
-        type: 'WpContentNode_Videodetails',
-        resolve() {
-          return {
-            videoViews: '12,345',
-            videoDuration: '10:30',
-            videoPublishedAt: new Date().toISOString(),
-            youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            youtubeVideoId: 'dQw4w9WgXcQ'
-          };
-        }
-      }
-    },
-    // Enhance WpBeat resolvers
-    WpBeat: {
-      featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
-        resolve() {
-          // Return a mock featuredImage structure in bypass mode
-          return {
-            node: {
-              sourceUrl: '/static/images/demo-cover-1.jpg',
-              altText: 'Demo beat cover',
-              localFile: {
-                childImageSharp: {
-                  gatsbyImageData: {}
-                }
-              }
-            }
-          };
-        }
-      },
-      // Add mock acfBeats fields
-      acfBeats: {
-        type: 'WpBeatAcfBeats',
-        resolve() {
-          return {
-            audioFile: {
-              localFile: {
-                publicURL: '/static/audio/demo-track-1.mp3',
-                url: '/static/audio/demo-track-1.mp3'
-              }
-            },
-            price: 29.99,
-            genre: 'Hip-Hop',
-            bpm: 95,
-            audioUrl: '/static/audio/demo-track-1.mp3',
-            soundcloudUrl: '#',
-            keySignature: 'C Minor',
-            musicalKey: 'C Minor'
-          };
-        }
-      },
-      beatFields: {
-        type: 'WpBeatAcfBeats',
-        resolve(source) {
-          // Simply pass through or delegate to the acfBeats resolver
-          return {
-            audioFile: {
-              localFile: {
-                publicURL: '/static/audio/demo-track-1.mp3',
-                url: '/static/audio/demo-track-1.mp3'
-              }
-            },
-            price: 29.99,
-            genre: 'Hip-Hop',
-            bpm: 95,
-            audioUrl: '/static/audio/demo-track-1.mp3',
-            soundcloudUrl: '#',
-            keySignature: 'C Minor',
-            musicalKey: 'C Minor',
-            purchaseUrl: 'https://example.com/buy'
-          };
-        }
-      }
-    },
-    // Enhance WpMix resolvers
-    WpMix: {
-      featuredImage: {
-        type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
-        resolve() {
-          // Return a mock featuredImage structure in bypass mode
-          return {
-            node: {
-              sourceUrl: '/static/images/demo-cover-1.jpg',
-              altText: 'Demo mix cover',
-              localFile: {
-                childImageSharp: {
-                  gatsbyImageData: {}
-                }
-              }
-            }
-          };
-        }
-      },
-      mixFields: {
-        type: 'WpMixAcfMixes',
-        resolve(source) {
-          // Simply pass through or delegate to the acfMixes resolver
-          return {
-            audioFile: {
-              localFile: {
-                publicURL: '/static/audio/demo-track-2.mp3',
-                url: '/static/audio/demo-track-2.mp3'
-              }
-            },
-            genre: 'Hip-Hop',
-            tracklist: '1. Track One\n2. Track Two\n3. Track Three',
-            audioUrl: '/static/audio/demo-track-2.mp3',
-            soundcloudUrl: '#',
-            spotifyUrl: 'https://spotify.com/track',
-            mixDuration: '45:30',
-            mixType: 'DJ Mix'
-          };
-        }
-      },
-    },
+  // Log mode for debugging
+  console.log(bypassWordpress 
+    ? "📝 Adding mock data resolvers for BYPASS_WORDPRESS mode" 
+    : "📝 Adding essential resolvers for WordPress mode");
+    
+  // Create a base resolver set that works in both modes
+  const baseResolvers = {
+    // The Query type resolvers (like allPage) work in both modes
     Query: {
-      // Mock allPage resolver for bypass mode
+      // allPage resolver for both bypass mode and live mode
       allPage: {
         type: "SitePageConnection",
-        resolve() {
-          // Return mock pages in bypass mode instead of using nodeModel.runQuery
-          return {
-            nodes: [
-              { id: 'page-1', path: '/', slug: 'home', title: 'Home' },
-              { id: 'page-2', path: '/about', slug: 'about', title: 'About' },
-              { id: 'page-3', path: '/contact', slug: 'contact', title: 'Contact' }
-            ]
-          };
+        resolve(source, args, context) {
+          if (bypassWordpress) {
+            // Return mock pages in bypass mode
+            return {
+              nodes: [
+                { id: 'page-1', path: '/', slug: 'home', title: 'Home' },
+                { id: 'page-2', path: '/about', slug: 'about', title: 'About' },
+                { id: 'page-3', path: '/contact', slug: 'contact', title: 'Contact' }
+              ]
+            };
+          } else {
+            // In live mode, delegate to regular SitePage resolver
+            return context.nodeModel.getAllNodes({ type: "SitePage" });
+          }
         },
       },
+      
+      // Add layout resolver for both modes
       layout: {
         type: 'ContentfulLayout',
         resolve() {
@@ -948,48 +685,24 @@ exports.createResolvers = ({ createResolvers }) => {
               id: 'footer-1',
               links: [
                 { id: 'social-1', navItemType: 'SOCIAL', text: 'YouTube', url: 'https://youtube.com', username: 'jeldonmusic', service: 'youtube' },
-                { id: 'social-2', navItemType: 'SOCIAL', text: 'Instagram', url: 'https://instagram.com', username: 'jeldonmusic', service: 'instagram' },
-                { id: 'social-3', navItemType: 'SOCIAL', text: 'Twitter', url: 'https://twitter.com', username: 'jeldonmusic', service: 'twitter' },
-                { id: 'social-4', navItemType: 'SOCIAL', text: 'SoundCloud', url: 'https://soundcloud.com', username: 'jeldonmusic', service: 'soundcloud' }
+                { id: 'social-2', navItemType: 'SOCIAL', text: 'Instagram', url: 'https://instagram.com', username: 'jeldonmusic', service: 'instagram' }
               ]
             }
           };
         }
-      },
-      allWpVideoCategory: {
-        type: 'WpCategoryConnection',
-        args: {
-          filter: 'WpCategoryFilter'
-        },
-        resolve() {
-          return {
-            nodes: [
-              { 
-                id: 'video-cat-1', 
-                name: 'Tutorials', 
-                slug: 'tutorials',
-                count: 5,
-                uri: '/video-category/tutorials/'
-              },
-              { 
-                id: 'video-cat-2', 
-                name: 'Behind the Scenes', 
-                slug: 'behind-the-scenes',
-                count: 3,
-                uri: '/video-category/behind-the-scenes/'
-              },
-              { 
-                id: 'video-cat-3', 
-                name: 'Live Performances', 
-                slug: 'live-performances',
-                count: 2,
-                uri: '/video-category/live-performances/'
-              }
-            ]
-          };
-        }
-      },
+      }
     },
+    
+    // File resolvers work in both modes
+    File: {
+      publicURL: {
+        resolve(source) {
+          return source.publicURL || source.url || '/static/fallback-file.pdf';
+        }
+      }
+    },
+    
+    // ContentfulAsset works in both modes
     ContentfulAsset: {
       id: {
         type: 'ID!',
@@ -1024,7 +737,266 @@ exports.createResolvers = ({ createResolvers }) => {
       }
     }
   };
-  createResolvers(resolvers);
+  
+  // Only add WordPress-specific resolvers in bypass mode
+  if (bypassWordpress) {
+    // Add all the WordPress mock resolvers
+    const wpResolvers = {
+      WpPost: {
+        formattedDate: {
+          type: 'String',
+          resolve(source) {
+            if (!source.date) return '';
+            
+            const dateObj = new Date(source.date);
+            const months = [
+              'January', 'February', 'March', 'April', 'May', 'June',
+              'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            const month = months[dateObj.getMonth()];
+            const day = dateObj.getDate();
+            const year = dateObj.getFullYear();
+            
+            return `${month} ${day < 10 ? '0' + day : day}, ${year}`;
+          }
+        },
+        featuredImage: {
+          type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
+          resolve() {
+            // Return a mock featuredImage structure in bypass mode
+            return {
+              node: {
+                sourceUrl: '/static/images/demo-cover-1.jpg',
+                altText: 'Demo featured image',
+                localFile: {
+                  childImageSharp: {
+                    gatsbyImageData: {}
+                  }
+                }
+              }
+            };
+          }
+        },
+        categories: {
+          type: 'WpPostToCategoryConnection',
+          resolve() {
+            // Return mock categories in bypass mode
+            return {
+              nodes: [
+                { id: 'cat-1', name: 'Music', slug: 'music' },
+                { id: 'cat-2', name: 'Production', slug: 'production' }
+              ]
+            };
+          }
+        },
+        tags: {
+          type: 'WpPostToTagConnection',
+          resolve() {
+            return {
+              nodes: [
+                { id: 'tag-1', name: 'Tutorial', slug: 'tutorial' },
+                { id: 'tag-2', name: 'Tips', slug: 'tips' }
+              ]
+            };
+          }
+        },
+        author: {
+          type: 'WpPostToUserConnectionEdge',
+          resolve() {
+            return {
+              node: {
+                id: 'author-1',
+                name: 'Jeldon',
+                slug: 'jeldon'
+              }
+            };
+          }
+        }
+      },
+      // Add WpVideo resolvers
+      WpVideo: {
+        formattedDate: {
+          type: 'String',
+          resolve(source) {
+            if (!source.date) return '';
+            
+            const dateObj = new Date(source.date);
+            const months = [
+              'January', 'February', 'March', 'April', 'May', 'June',
+              'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            const month = months[dateObj.getMonth()];
+            const day = dateObj.getDate();
+            const year = dateObj.getFullYear();
+            
+            return `${month} ${day < 10 ? '0' + day : day}, ${year}`;
+          }
+        },
+        featuredImage: {
+          type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
+          resolve() {
+            // Return a mock featuredImage structure in bypass mode
+            return {
+              node: {
+                sourceUrl: '/static/images/demo-cover-1.jpg',
+                altText: 'Demo video thumbnail',
+                localFile: {
+                  childImageSharp: {
+                    gatsbyImageData: {}
+                  }
+                }
+              }
+            };
+          }
+        },
+        videoCategories: {
+          type: 'WpVideoToVideoCategoryConnection',
+          resolve() {
+            // Return mock categories in bypass mode
+            return {
+              nodes: [
+                { id: 'vcat-1', name: 'Tutorials', slug: 'tutorials' },
+                { id: 'vcat-2', name: 'Behind the Scenes', slug: 'behind-the-scenes' }
+              ]
+            };
+          }
+        },
+        videoDetails: {
+          type: 'WpContentNode_Videodetails',
+          resolve() {
+            return {
+              videoViews: '12,345',
+              videoDuration: '10:30',
+              videoPublishedAt: new Date().toISOString(),
+              youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+              youtubeVideoId: 'dQw4w9WgXcQ'
+            };
+          }
+        }
+      },
+      // Enhance WpBeat resolvers
+      WpBeat: {
+        featuredImage: {
+          type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
+          resolve() {
+            // Return a mock featuredImage structure in bypass mode
+            return {
+              node: {
+                sourceUrl: '/static/images/demo-cover-1.jpg',
+                altText: 'Demo beat cover',
+                localFile: {
+                  childImageSharp: {
+                    gatsbyImageData: {}
+                  }
+                }
+              }
+            };
+          }
+        },
+        // Add mock acfBeats fields
+        acfBeats: {
+          type: 'WpBeatAcfBeats',
+          resolve() {
+            return {
+              audioFile: {
+                localFile: {
+                  publicURL: '/static/audio/demo-track-1.mp3',
+                  url: '/static/audio/demo-track-1.mp3'
+                }
+              },
+              price: 29.99,
+              genre: 'Hip-Hop',
+              bpm: 95,
+              audioUrl: '/static/audio/demo-track-1.mp3',
+              soundcloudUrl: '#',
+              keySignature: 'C Minor',
+              musicalKey: 'C Minor'
+            };
+          }
+        },
+        beatFields: {
+          type: 'WpBeatAcfBeats',
+          resolve(source) {
+            // Simply pass through or delegate to the acfBeats resolver
+            return {
+              audioFile: {
+                localFile: {
+                  publicURL: '/static/audio/demo-track-1.mp3',
+                  url: '/static/audio/demo-track-1.mp3'
+                }
+              },
+              price: 29.99,
+              genre: 'Hip-Hop',
+              bpm: 95,
+              audioUrl: '/static/audio/demo-track-1.mp3',
+              soundcloudUrl: '#',
+              keySignature: 'C Minor',
+              musicalKey: 'C Minor',
+              purchaseUrl: 'https://example.com/buy'
+            };
+          }
+        }
+      },
+      // Enhance WpMix resolvers
+      WpMix: {
+        featuredImage: {
+          type: 'WpNodeWithFeaturedImageToMediaItemConnectionEdge',
+          resolve() {
+            // Return a mock featuredImage structure in bypass mode
+            return {
+              node: {
+                sourceUrl: '/static/images/demo-cover-1.jpg',
+                altText: 'Demo mix cover',
+                localFile: {
+                  childImageSharp: {
+                    gatsbyImageData: {}
+                  }
+                }
+              }
+            };
+          }
+        },
+        mixFields: {
+          type: 'WpMixAcfMixes',
+          resolve(source) {
+            // Only use this resolver in bypass mode
+            const bypassWordpress = process.env.BYPASS_WORDPRESS === "true";
+            
+            if (!bypassWordpress && source.acfMixes) {
+              // In WordPress mode, delegate to the actual ACF field
+              return source.acfMixes;
+            }
+            
+            // In bypass mode or if acfMixes is missing, return mock data
+            return {
+              audioFile: {
+                localFile: {
+                  publicURL: '/static/audio/demo-track-2.mp3',
+                  url: '/static/audio/demo-track-2.mp3'
+                }
+              },
+              genre: 'Hip-Hop',
+              tracklist: '1. Track One\n2. Track Two\n3. Track Three',
+              audioUrl: '/static/audio/demo-track-2.mp3',
+              soundcloudUrl: '#',
+              spotifyUrl: 'https://spotify.com/track',
+              mixDuration: '45:30',
+              mixType: 'DJ Mix'
+            };
+          }
+        },
+      },
+    };
+    
+    // Merge the base resolvers with the WordPress resolvers
+    const resolvers = { ...baseResolvers, ...wpResolvers };
+    createResolvers(resolvers);
+  } else {
+    // In WordPress mode, only use the base resolvers to avoid conflicts
+    createResolvers(baseResolvers);
+  }
 };
 
 exports.createPages = async ({ graphql, actions }) => {
@@ -1135,9 +1107,10 @@ exports.createPages = async ({ graphql, actions }) => {
   pages.forEach(page => {
     createPage({
       path: `/${page.slug}/`,
-      component: require.resolve("./src/pages/{Page.slug}.js"),
+      component: require.resolve("./src/templates/wp-page.js"),
       context: {
         id: page.id,
+        slug: page.slug,
       },
     });
   });
@@ -1255,6 +1228,24 @@ exports.onCreatePage = ({ page, actions }) => {
   }
 }
 
+// Add slug field to SitePage nodes
+exports.onCreateNode = ({ node, actions }) => {
+  const { createNodeField } = actions;
+  
+  // Only process SitePage nodes
+  if (node.internal.type === 'SitePage') {
+    // Extract slug from path (remove leading and trailing slashes)
+    const slug = node.path.replace(/^\/|\/$/g, '');
+    
+    // Add slug as a field on the node
+    createNodeField({
+      node,
+      name: 'slug',
+      value: slug || 'home', // Default to 'home' for the root path
+    });
+  }
+};
+
 // Create mock data files for static queries in bypass mode
 exports.onPostBuild = ({ store }) => {
   const { program } = store.getState();
@@ -1280,7 +1271,8 @@ exports.onPostBuild = ({ store }) => {
               { id: "home", navItemType: "LINK", href: "/", text: "Home" },
               { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
               { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
-              { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" }
+              { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" },
+              { id: "contact", navItemType: "LINK", href: "/contact", text: "Contact" }
             ]
           }
         }
@@ -1319,7 +1311,52 @@ exports.onPostBuild = ({ store }) => {
     const heroBannerData = {
       data: {
         allWpPost: { nodes: getDemoBlogPosts(5) },
-        allWpVideo: { nodes: [] },
+        allWpVideo: { 
+          nodes: [
+            {
+              id: "video-1",
+              title: "Beat Making Tutorial",
+              excerpt: "<p>Learn how to create beats with industry standard tools</p>",
+              slug: "beat-making-tutorial",
+              date: "2025-06-10",
+              videoDetails: {
+                youtubeVideoId: "dQw4w9WgXcQ",
+                videoViews: "12345"
+              },
+              featuredImage: {
+                node: {
+                  altText: "Beat Making",
+                  localFile: {
+                    childImageSharp: {
+                      gatsbyImageData: {}
+                    }
+                  }
+                }
+              }
+            },
+            {
+              id: "video-2",
+              title: "Mixing Vocals",
+              excerpt: "<p>Professional vocal mixing techniques</p>",
+              slug: "mixing-vocals",
+              date: "2025-05-20",
+              videoDetails: {
+                youtubeVideoId: "dQw4w9WgXcQ",
+                videoViews: "5432"
+              },
+              featuredImage: {
+                node: {
+                  altText: "Vocal Mixing",
+                  localFile: {
+                    childImageSharp: {
+                      gatsbyImageData: {}
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
         allWpBeat: { nodes: [] },
         allWpMix: { nodes: [] },
         allContentfulHomepageHero: {
@@ -1341,10 +1378,20 @@ exports.onPostBuild = ({ store }) => {
       }
     };
     
+    // Mock data for related posts
+    const relatedPostsData = {
+      data: {
+        allWpPost: {
+          nodes: getDemoBlogPosts(10)  // Use the same helper function to get mock blog posts
+        }
+      }
+    };
+    
     // Write the mock data files
     fs.writeFileSync(path.join(dataPath, '860043902.json'), JSON.stringify(headerData));
     fs.writeFileSync(path.join(dataPath, '3235098977.json'), JSON.stringify(footerData));
     fs.writeFileSync(path.join(dataPath, '3265857146.json'), JSON.stringify(heroBannerData));
+    fs.writeFileSync(path.join(dataPath, '2141841991.json'), JSON.stringify(relatedPostsData));
     
     console.log('📝 Created mock static query data files for bypass mode');
   }

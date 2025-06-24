@@ -168,11 +168,7 @@ export default function Header() {
                       navItems={navItem.navItems}
                     />
                   ) : (
-                    <NavLink
-                      to={navItem.href}
-                      className={mobileNavLink}
-                      onClick={() => setOpen(false)}
-                    >
+                    <NavLink to={navItem.href} className={mobileNavLink}>
                       {navItem.text}
                     </NavLink>
                   )}
