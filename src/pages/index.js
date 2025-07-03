@@ -11,8 +11,8 @@ export default function Homepage(props) {
   // Get WordPress posts or fallback to demo data
   const wpPosts = props.data.allWpPost?.nodes
   const wpBypassMode = !wpPosts
-  const blogPosts = wpBypassMode 
-    ? { nodes: getDemoBlogPosts(5) }  // Use 5 demo posts when WordPress is bypassed
+  const blogPosts = wpBypassMode
+    ? { nodes: getDemoBlogPosts(5) } // Use 5 demo posts when WordPress is bypassed
     : props.data.allWpPost
 
   // Check if homepage data exists (won't exist in bypass mode)
@@ -22,39 +22,60 @@ export default function Homepage(props) {
     <Layout>
       {/* Dynamic Rotating Hero Banner */}
       <RotatingHeroBanner />
-      
+
       {/* Contentful blocks - only render if they exist */}
-      {homepage.blocks && homepage.blocks.length > 0 && homepage.blocks.map((block) => {
-        const { id, blocktype, ...componentProps } = block
-        const Component = sections[blocktype] || Fallback
-        return <Component key={id} {...componentProps} />
-      })}
+      {homepage.blocks &&
+        homepage.blocks.length > 0 &&
+        homepage.blocks.map((block) => {
+          const { id, blocktype, ...componentProps } = block
+          const Component = sections[blocktype] || Fallback
+          return <Component key={id} {...componentProps} />
+        })}
+
+      {/* Always render these core sections */}
+      <sections.HomepageFeatureList />
 
       <sections.BeatsStatList />
+
       <sections.BlogFeature data={{ allWpPost: blogPosts }} />
-      
+
+      {/* Shopify section - only show if products exist */}
+      <sections.ShopFeature
+        data={{
+          allShopifyProduct: props.data.allShopifyProduct || { nodes: [] },
+        }}
+      />
+
       {wpBypassMode && (
-        <div style={{ 
-          textAlign: "center", 
-          padding: "20px", 
-          background: "#fff8e1", 
-          margin: "20px auto",
-          maxWidth: "800px",
-          borderRadius: "8px"
-        }}>
+        <div
+          style={{
+            textAlign: "center",
+            padding: "20px",
+            background: "#fff8e1",
+            margin: "20px auto",
+            maxWidth: "800px",
+            borderRadius: "8px",
+          }}
+        >
           <p style={{ margin: 0 }}>
-            <strong>WordPress Bypass Mode:</strong> Sample content is being displayed. 
-            Connect to WordPress to see actual content.
+            <strong>WordPress Bypass Mode:</strong> Sample content is being
+            displayed. Connect to WordPress to see actual content.
           </p>
         </div>
       )}
     </Layout>
-    
   )
 }
 export const Head = (props) => {
   const { site } = props.data
-  return <SEOHead title={site.siteMetadata.title} description={site.siteMetadata.description} />
+  return (
+    <SEOHead
+      title={site.siteMetadata.title}
+      description={site.siteMetadata.description}
+      image={props.data.homepage.image ? props.data.homepage.image.url : null}
+      pathname="/"
+    />
+  )
 }
 export const query = graphql`
   query HomePageQuery($BYPASS_WORDPRESS: Boolean = false) {
@@ -64,6 +85,33 @@ export const query = graphql`
         description
       }
     }
+
+    # Single homepage query combining both approaches
+    homepage: contentfulHomepage {
+      id
+      title
+      description
+      image {
+        id
+        url
+        title
+        description
+        gatsbyImageData(width: 1200)
+      }
+      blocks: content {
+        id
+        blocktype
+        ...HomepageHeroContent
+        ...HomepageFeatureListContent
+        ...HomepageCtaContent
+        ...HomepageLogoListContent
+        ...HomepageTestimonialListContent
+        ...HomepageBenefitListContent
+        ...HomepageStatListContent
+        ...HomepageProductListContent
+      }
+    }
+
     allWpPost(sort: { date: DESC }, limit: 3) @skip(if: $BYPASS_WORDPRESS) {
       nodes {
         id
@@ -73,6 +121,175 @@ export const query = graphql`
         date(formatString: "MMMM DD, YYYY")
       }
     }
-    # Only query homepage blocks if you have robust mocks for them
+
+    # Shopify products (commented out until properly configured)
+    # allShopifyProduct(limit: 6) {
+    #   nodes {
+    #     id
+    #     title
+    #     handle
+    #     description
+    #     images {
+    #       url
+    #       altText
+    #     }
+    #     priceRangeV2 {
+    #       maxVariantPrice {
+    #         amount
+    #         currencyCode
+    #       }
+    #       minVariantPrice {
+    #         amount
+    #         currencyCode
+    #       }
+    #     }
+    #     onlineStoreUrl
+    #   }
+    # }
+  }
+
+  # GraphQL fragments for Contentful content types
+  fragment HomepageHeroContent on ContentfulHomepageHero {
+    id
+    heroHeading: heading
+    kicker
+    subhead
+    text
+    image {
+      id
+      gatsbyImageData
+      alt
+      title
+      description
+    }
+    links {
+      id
+      href
+      text
+    }
+  }
+
+  fragment HomepageLogoListContent on ContentfulHomepageLogoList {
+    id
+    logoHeading: name
+    text
+    logos {
+      id
+      alt
+      link
+      image {
+        id
+        gatsbyImageData
+        title
+        description
+      }
+    }
+  }
+
+  fragment HomepageFeatureListContent on ContentfulHomepageFeatureList {
+    id
+    featureHeading: heading
+    text
+    content {
+      id
+      featureItemHeading: heading
+      text
+      image {
+        id
+        alt
+        title
+        description
+        gatsbyImageData
+      }
+    }
+  }
+
+  fragment HomepageCtaContent on ContentfulHomepageCta {
+    id
+    ctaHeading: heading
+    text
+    image {
+      id
+      alt
+      title
+      description
+      gatsbyImageData
+    }
+    links {
+      id
+      href
+      text
+    }
+  }
+
+  fragment HomepageTestimonialListContent on ContentfulHomepageTestimonialList {
+    id
+    testimonialHeading: heading
+    kicker
+    content {
+      id
+      quote
+      source
+      avatar {
+        id
+        alt
+        title
+        description
+        gatsbyImageData
+      }
+    }
+  }
+
+  fragment HomepageBenefitListContent on ContentfulHomepageBenefitList {
+    id
+    benefitHeading: heading
+    text
+    content {
+      id
+      benefitItemHeading: heading
+      text
+      image {
+        id
+        alt
+        title
+        description
+        gatsbyImageData
+      }
+    }
+  }
+
+  fragment HomepageStatListContent on ContentfulHomepageStatList {
+    id
+    statHeading: heading
+    text
+    content {
+      id
+      value
+      label
+      statItemHeading: heading
+    }
+  }
+
+  fragment HomepageProductListContent on ContentfulHomepageProductList {
+    id
+    productHeading: heading
+    text
+    content {
+      id
+      productItemHeading: heading
+      text
+      image {
+        id
+        alt
+        title
+        description
+        gatsbyImageData
+      }
+      links {
+        id
+        href
+        text
+      }
+    }
   }
 `

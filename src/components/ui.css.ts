@@ -1,14 +1,10 @@
 import { style, styleVariants } from "@vanilla-extract/css"
 import { calc } from "@vanilla-extract/css-utils"
 import { theme } from "../theme.css"
+import { media } from "./media.css"
 
-const breakpoints = ["40em", "52em", "64em"]
-
-export const media = {
-  small: `screen and (min-width: ${breakpoints[0]})`,
-  medium: `screen and (min-width: ${breakpoints[1]})`,
-  large: `screen and (min-width: ${breakpoints[2]})`,
-}
+// Re-export media for other components
+export { media }
 
 export const container = style({
   maxWidth: theme.sizes.container,
@@ -591,8 +587,6 @@ export const icons: Record<IconSizes, string> = styleVariants(
   })
 )
 
-
-
 export const iconLink = style({
   color: theme.colors.text,
   marginRight: theme.space[3],
@@ -625,7 +619,6 @@ export const visuallyHidden = style({
   whiteSpace: "nowrap",
   width: "1px",
 })
-
 
 // for debugging only
 export const debug = style({

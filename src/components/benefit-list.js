@@ -22,7 +22,9 @@ function Benefit(props) {
         />
       )}
       <Space size={2} />
-      <Heading variant="subheadSmall">{props.heading}</Heading>
+      <Heading variant="subheadSmall">
+        {props.benefitHeading || props.benefitListHeading || props.heading}
+      </Heading>
       <Text>{props.text}</Text>
     </Box>
   )
@@ -33,7 +35,15 @@ export default function BenefitList(props) {
     <Section>
       <Container>
         <Box center>
-          {props.heading && <Heading>{props.heading}</Heading>}
+          {props.benefitHeading ||
+            (props.benefitListHeading && (
+              <Heading>
+                {props.benefitHeading || props.benefitListHeading}
+              </Heading>
+            ))}
+          {!props.benefitHeading &&
+            !props.benefitListHeading &&
+            props.heading && <Heading>{props.heading}</Heading>}
           {props.text && <Text variant="lead">{props.text}</Text>}
         </Box>
         <Space size={3} />
@@ -46,21 +56,3 @@ export default function BenefitList(props) {
     </Section>
   )
 }
-
-export const query = graphql`
-  fragment HomepageBenefitListContent on HomepageBenefitList {
-    id
-    heading
-    text
-    content {
-      id
-      heading
-      text
-      image {
-        id
-        gatsbyImageData
-        alt
-      }
-    }
-  }
-`

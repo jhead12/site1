@@ -252,7 +252,6 @@ export const query = graphql`
       videoDetails {
         youtubeVideoId
         videoDuration
-        videoViews
         youtubeUrl
       }
     }

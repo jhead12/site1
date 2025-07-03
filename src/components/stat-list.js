@@ -35,7 +35,7 @@ export default function StatList(props) {
             )}
             <Heading>
               {props.kicker && <Kicker>{props.kicker}</Kicker>}
-              {props.heading}
+              {props.statHeading || props.statListHeading || props.heading}
             </Heading>
             {props.text && <Text variant="lead">{props.text}</Text>}
             <FlexList wrap gap={4}>
@@ -62,33 +62,3 @@ export default function StatList(props) {
     </Container>
   )
 }
-
-export const query = graphql`
-  fragment HomepageStatListContent on HomepageStatList {
-    id
-    kicker
-    heading
-    text
-    image {
-      id
-      alt
-      gatsbyImageData
-    }
-    icon {
-      id
-      alt
-      gatsbyImageData
-    }
-    content {
-      id
-      value
-      label
-      heading
-    }
-    links {
-      id
-      href
-      text
-    }
-  }
-`

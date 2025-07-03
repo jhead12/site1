@@ -1,6 +1,6 @@
 import { style, styleVariants } from "@vanilla-extract/css"
 import { theme } from "../theme.css"
-import { media } from "./ui.css"
+import { media } from "./media.css"
 import { mobileNavLink } from "./header.css"
 
 export const navGroupWrapper = style({

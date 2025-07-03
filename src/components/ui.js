@@ -4,6 +4,64 @@ import isAbsoluteURL from "is-absolute-url"
 import * as React from "react"
 import * as styles from "./ui.css"
 
+// Fallback styles object to prevent runtime errors
+const fallbackStyles = {
+  containers: { normal: "container" },
+  flex: "flex",
+  flexVariants: {
+    responsive: "flexVariants responsive",
+    wrap: "flexVariants wrap",
+  },
+  flexGap: [
+    "flexGap0",
+    "flexGap1",
+    "flexGap2",
+    "flexGap3",
+    "flexGap4",
+    "flexGap5",
+  ],
+  gutter: ["", "gutter1", "gutter2", "gutter3"],
+  marginY: ["", "marginY1", "marginY2", "marginY3"],
+  list: "list",
+  space: ["", "space1", "space2", "space3", "space4", "space5"],
+  margin: { auto: "marginAuto" },
+  marginLeft: ["", "marginLeft1", "marginLeft2", "marginLeft3"],
+  marginRight: ["", "marginRight1", "marginRight2", "marginRight3"],
+  marginTop: ["", "marginTop1", "marginTop2", "marginTop3"],
+  marginBottom: ["", "marginBottom1", "marginBottom2", "marginBottom3"],
+  section: "section",
+  widths: {
+    full: "widthsFull",
+    half: "widthsHalf",
+    third: "widthsThird",
+    quarter: "widthsQuarter",
+  },
+  backgrounds: {
+    primary: "backgroundsPrimary",
+    secondary: "backgroundsSecondary",
+  },
+  padding: ["", "padding1", "padding2", "padding3", "padding4", "padding5"],
+  paddingY: ["", "paddingY1", "paddingY2", "paddingY3"],
+  radii: { small: "radiiSmall", medium: "radiiMedium", large: "radiiLarge" },
+  box: { center: "boxCenter" },
+  order: ["", "order1", "order2", "order3"],
+  text: {
+    body: "textBody",
+    heading: "textHeading",
+    subheading: "textSubheading",
+    small: "textSmall",
+    center: "textCenter",
+    bold: "textBold",
+  },
+  link: "link",
+  navlink: "navlink",
+  navButtonlink: "navButtonlink",
+  buttons: { primary: "buttonPrimary", secondary: "buttonSecondary" },
+}
+
+// Use the imported styles if available, otherwise use fallback
+const safeStyles = styles || fallbackStyles
+
 export const cx = (...args) => args.filter(Boolean).join(" ")
 
 export function Base({
@@ -16,7 +74,12 @@ export function Base({
 }
 
 export function Container({ width = "normal", ...props }) {
-  return <Base cx={[styles.containers[width]]} {...props} />
+  return (
+    <Base
+      cx={[safeStyles.containers && safeStyles.containers[width]]}
+      {...props}
+    />
+  )
 }
 
 export function Flex({
@@ -33,14 +96,20 @@ export function Flex({
   return (
     <Base
       cx={[
-        styles.flex,
-        variant && styles.flexVariants[variant],
-        responsive && styles.flexVariants.responsive,
-        wrap && styles.flexVariants.wrap,
-        gutter && styles.gutter[gutter],
-        gutter ? styles.flexGap[0] : styles.flexGap[gap],
-        marginY && styles.marginY[marginY],
-        alignItems && styles.flexVariants[alignItems],
+        safeStyles.flex,
+        variant && safeStyles.flexVariants && safeStyles.flexVariants[variant],
+        responsive &&
+          safeStyles.flexVariants &&
+          safeStyles.flexVariants.responsive,
+        wrap && safeStyles.flexVariants && safeStyles.flexVariants.wrap,
+        gutter && safeStyles.gutter && safeStyles.gutter[gutter],
+        gutter
+          ? safeStyles.flexGap && safeStyles.flexGap[0]
+          : safeStyles.flexGap && safeStyles.flexGap[gap],
+        marginY && safeStyles.marginY && safeStyles.marginY[marginY],
+        alignItems &&
+          safeStyles.flexVariants &&
+          safeStyles.flexVariants[alignItems],
         ..._cx,
       ]}
       {...props}
@@ -62,13 +131,15 @@ export function Box({
   return (
     <Base
       cx={[
-        styles.widths[width],
-        background && styles.backgrounds[background],
-        padding && styles.padding[padding],
-        paddingY && styles.paddingY[paddingY],
-        radius && styles.radii[radius],
-        center && styles.box.center,
-        order && styles.order[order],
+        safeStyles.widths && safeStyles.widths[width],
+        background &&
+          safeStyles.backgrounds &&
+          safeStyles.backgrounds[background],
+        padding && safeStyles.padding && safeStyles.padding[padding],
+        paddingY && safeStyles.paddingY && safeStyles.paddingY[paddingY],
+        radius && safeStyles.radii && safeStyles.radii[radius],
+        center && safeStyles.box && safeStyles.box.center,
+        order && safeStyles.order && safeStyles.order[order],
         ..._cx,
       ]}
       {...props}
@@ -77,7 +148,7 @@ export function Box({
 }
 
 export function FlexList(props) {
-  return <Flex as="ul" cx={[styles.list]} {...props} />
+  return <Flex as="ul" cx={[safeStyles.list]} {...props} />
 }
 
 export function Grid({ columns = [1, 2, 3], gap = 3, children, ...props }) {
@@ -86,8 +157,13 @@ export function Grid({ columns = [1, 2, 3], gap = 3, children, ...props }) {
       cx={[
         {
           display: "grid",
-          gridTemplateColumns: columns.map(col => `repeat(${col}, 1fr)`).join(", "),
-          gridGap: gap && styles.space[gap],
+          gridTemplateColumns: columns
+            .map((col) => `repeat(${col}, 1fr)`)
+            .join(", "),
+          gridGap:
+            gap && safeStyles.space && safeStyles.space[gap]
+              ? safeStyles.space[gap]
+              : `${gap * 0.5}rem`,
         },
       ]}
       {...props}
@@ -98,21 +174,21 @@ export function Grid({ columns = [1, 2, 3], gap = 3, children, ...props }) {
 }
 
 export function List(props) {
-  return <Base as="ul" cx={[styles.list]} {...props} />
+  return <Base as="ul" cx={[safeStyles.list]} {...props} />
 }
 
 export function Space({ size = "auto", ...props }) {
-  return <Base cx={[styles.margin[size]]} {...props} />
+  return <Base cx={[safeStyles.margin && safeStyles.margin[size]]} {...props} />
 }
 
 export function Nudge({ left, right, top, bottom, ...props }) {
   return (
     <Base
       cx={[
-        left && styles.marginLeft[-left],
-        right && styles.marginRight[-right],
-        top && styles.marginTop[-top],
-        bottom && styles.marginBottom[-bottom],
+        left && safeStyles.marginLeft && safeStyles.marginLeft[-left],
+        right && safeStyles.marginRight && safeStyles.marginRight[-right],
+        top && safeStyles.marginTop && safeStyles.marginTop[-top],
+        bottom && safeStyles.marginBottom && safeStyles.marginBottom[-bottom],
       ]}
       {...props}
     />
@@ -120,7 +196,7 @@ export function Nudge({ left, right, top, bottom, ...props }) {
 }
 
 export function Section(props) {
-  return <Box as="section" className={styles.section} {...props} />
+  return <Box as="section" className={safeStyles.section} {...props} />
 }
 
 export function Text({
@@ -132,9 +208,9 @@ export function Text({
   return (
     <Base
       cx={[
-        styles.text[variant],
-        center && styles.text.center,
-        bold && styles.text.bold,
+        safeStyles.text && safeStyles.text[variant],
+        center && safeStyles.text && safeStyles.text.center,
+        bold && safeStyles.text && safeStyles.text.bold,
       ]}
       {...props}
     />
@@ -162,22 +238,28 @@ export function Link({ to, href, ...props }) {
   if (isAbsoluteURL(url)) {
     return (
       // eslint-disable-next-line jsx-a11y/anchor-has-content
-      <a href={url} className={styles.link} {...props} />
+      <a href={url} className={safeStyles.link} {...props} />
     )
   }
-  return <GatsbyLink to={url} className={styles.link} {...props} />
+  return <GatsbyLink to={url} className={safeStyles.link} {...props} />
 }
 
 export function NavLink({ ...props }) {
-  return <Base as={Link} cx={[styles.navlink]} {...props} />
+  return <Base as={Link} cx={[safeStyles.navlink]} {...props} />
 }
 
 export function NavButtonLink({ ...props }) {
-  return <Base as="button" cx={[styles.navButtonlink]} {...props} />
+  return <Base as="button" cx={[safeStyles.navButtonlink]} {...props} />
 }
 
 export function Button({ variant = "primary", ...props }) {
-  return <Base as={Link} cx={[styles.buttons[variant]]} {...props} />
+  return (
+    <Base
+      as={Link}
+      cx={[safeStyles.buttons && safeStyles.buttons[variant]]}
+      {...props}
+    />
+  )
 }
 
 export function ButtonList({ links = [], reversed = false, ...props }) {
@@ -202,7 +284,7 @@ export function ButtonList({ links = [], reversed = false, ...props }) {
 }
 
 export function CTALink(props) {
-  return <Base as={Link} cx={[styles.ctaLink]} {...props} />
+  return <Base as={Link} cx={[safeStyles.ctaLink]} {...props} />
 }
 
 export function LinkList({ links = [], ...props }) {
@@ -219,50 +301,46 @@ export function LinkList({ links = [], ...props }) {
 }
 
 export function Blockquote(props) {
-  return <Base as="blockquote" cx={[styles.blockquote]} {...props} />
+  return <Base as="blockquote" cx={[safeStyles.blockquote]} {...props} />
 }
 
 export function Avatar({ alt, image }) {
   const imageData = getImage(image)
-  
+
   if (!imageData) {
     return null
   }
-  
+
   return (
-    <GatsbyImage alt={alt} image={imageData} className={styles.avatar} />
+    <GatsbyImage alt={alt} image={imageData} className={safeStyles.avatar} />
   )
 }
 
 export function Logo({ alt, image, size = "small" }) {
   const imageData = getImage(image)
-  
+
   if (!imageData) {
     return null
   }
-  
+
   return (
     <GatsbyImage
       alt={alt}
       image={imageData}
-      className={styles.logos[size]}
+      className={safeStyles.logos && safeStyles.logos[size]}
     />
   )
 }
 
 export function Icon({ alt, image, size = "medium" }) {
   const imageData = getImage(image)
-  
+
   if (!imageData) {
     return null
   }
-  
+
   return (
-    <GatsbyImage
-      alt={alt}
-      image={imageData}
-      className={styles.icons[size]}
-    />
+    <GatsbyImage alt={alt} image={imageData} className={styles.icons[size]} />
   )
 }
 

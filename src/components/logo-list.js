@@ -25,7 +25,9 @@ export default function LogoList(props) {
             (logo) =>
               logo && (
                 <li key={logo.id}>
-                <a href={logo.link} >  <LogoItem {...logo} />
+                  <a href={logo.link}>
+                    {" "}
+                    <LogoItem {...logo} />
                   </a>
                 </li>
               )
@@ -37,19 +39,12 @@ export default function LogoList(props) {
 }
 
 export const query = graphql`
-  fragment HomepageLogoListContent on HomepageLogoList {
+  fragment LogoListComponentContent on ContentfulHomepageLogoList {
     id
-    text
     logos {
       id
       alt
-      link
-      image {
-        id
-        gatsbyImageData
-        alt
-        
-      }
+      gatsbyImageData
     }
   }
 `

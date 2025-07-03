@@ -40,7 +40,7 @@ export default function TestimonialList(props) {
         <Box center>
           <Heading>
             {props.kicker && <Kicker>{props.kicker}</Kicker>}
-            {props.heading}
+            {props.testimonialHeading || props.heading}
           </Heading>
         </Box>
         <FlexList gutter={3} variant="start" responsive wrap>
@@ -54,22 +54,3 @@ export default function TestimonialList(props) {
     </Section>
   )
 }
-
-export const query = graphql`
-  fragment HomepageTestimonialListContent on HomepageTestimonialList {
-    id
-    kicker
-    heading
-    content {
-      id
-      quote
-      source
-      avatar {
-        id
-        gatsbyImageData
-        alt
-      }
-    }
-  }
-  
-`

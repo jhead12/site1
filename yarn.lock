@@ -12773,6 +12773,19 @@ gatsby-source-filesystem@^5.0.0, gatsby-source-filesystem@^5.14.0:
     valid-url "^1.0.9"
     xstate "^4.38.0"
 
+gatsby-source-shopify@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/gatsby-source-shopify/-/gatsby-source-shopify-10.0.0.tgz#8fc4b8a95c8b8ac40dc50121ad6755b33af57167"
+  integrity sha512-x/iIb2Nrp+6MmmyniaA1NZgdI4XTBz2RuLRpcfB4u4Bxgn1AeEI2BzwlFRmDTid4bp8sViWokBZy1GSvYmJqHg==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    gatsby-core-utils "^4.14.0"
+    gatsby-plugin-utils "^4.14.0"
+    gatsby-source-filesystem "^5.14.0"
+    node-fetch "^2.6.11"
+    sharp "^0.32.6"
+    shift-left "^0.1.5"
+
 gatsby-source-wordpress@^7.15.0:
   version "7.15.0"
   resolved "https://registry.yarnpkg.com/gatsby-source-wordpress/-/gatsby-source-wordpress-7.15.0.tgz#8905f15fb71560e2238a80e90e7958b6d9506667"
@@ -19866,6 +19879,11 @@ shell-quote@^1.6.1, shell-quote@^1.7.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.8.3.tgz#55e40ef33cf5c689902353a3d8cd1a6725f08b4b"
   integrity sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==
+
+shift-left@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/shift-left/-/shift-left-0.1.5.tgz#4a61a9d0412b1b32f9abbd97f72466c9c74a6be1"
+  integrity sha512-55d8QaP1YmuL1D52fhgq8CT1tXksM/2WPZ6980RtkMbl0Cze++kuJy50GLMnXwostk/YG9hasaJmP3r+d3yUtQ==
 
 side-channel-list@^1.0.0:
   version "1.0.0"
