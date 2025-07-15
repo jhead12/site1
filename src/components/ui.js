@@ -2,7 +2,7 @@ import { Link as GatsbyLink } from "gatsby"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import isAbsoluteURL from "is-absolute-url"
 import * as React from "react"
-import * as styles from "./ui.css"
+import * as styles from "./ui.css.ts"
 
 // Fallback styles object to prevent runtime errors
 const fallbackStyles = {

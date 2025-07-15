@@ -5,7 +5,10 @@ import Caret from "./caret"
 import * as styles from "./nav-item-group.css"
 import { media } from "./media.css"
 
-export default function NavItemGroup({ name, navItems }) {
+export default function NavItemGroup({ name, navItems = [], onItemClick }) {
+  // Defensive check to ensure navItems is always an array
+  const safeNavItems = Array.isArray(navItems) ? navItems : []
+  
   const [isOpen, setIsOpen] = React.useState(false)
   const [popupVisible, setPopupVisible] = React.useState(false)
   const isSmallScreen = () => {
@@ -90,9 +93,13 @@ export default function NavItemGroup({ name, navItems }) {
             gap={2}
             className={styles.navLinkListWrapperInner}
           >
-            {navItems.map((navItem) => (
+            {safeNavItems && safeNavItems.length > 0 && safeNavItems.map((navItem) => (
               <li key={navItem.id}>
-                <NavLink to={navItem.href} className={styles.navLinkListLink}>
+                <NavLink 
+                  to={navItem.href} 
+                  className={styles.navLinkListLink}
+                  onClick={onItemClick}
+                >
                   <Flex variant="start" gap={3}>
                     {navItem.icon && (
                       <GatsbyImage

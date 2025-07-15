@@ -11,6 +11,9 @@ export function LogoItem(props) {
 }
 
 export default function LogoList(props) {
+  // Defensive: handle missing logos array
+  const logos = props.logos || [];
+  
   return (
     <Section paddingY={4}>
       <Container width="narrow">
@@ -21,7 +24,7 @@ export default function LogoList(props) {
         )}
         <Space size={4} />
         <FlexList gap={4} variant="center">
-          {props.logos.map(
+          {logos.map(
             (logo) =>
               logo && (
                 <li key={logo.id}>

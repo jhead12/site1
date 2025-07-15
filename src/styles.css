@@ -1,0 +1,200 @@
+/* Main Styles for Jeldon Music */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for consistent theming */
+:root {
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --accent-color: #10b981;
+  --background-color: #0f172a;
+  --surface-color: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --border-color: #334155;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Layout improvements */
+.main-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1 0 auto; /* This allows content to grow and pushes footer to bottom */
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 0 1rem; /* Added top padding for spacing from header */
+}
+
+/* Improved section spacing and layout */
+.ui_section__1mstrgk2p {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+/* Ensure footer sticks to bottom */
+footer {
+  margin-top: auto;
+}
+
+/* Blog section spacing improvements */
+.ui_backgrounds_muted__1mstrgk5f {
+  margin-bottom: 3rem !important;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1 { font-size: 3rem; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 2rem; }
+h4 { font-size: 1.5rem; }
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+}
+
+/* Button improvements */
+.btn {
+  @apply px-6 py-3 rounded-lg font-medium transition-all duration-200 cursor-pointer border-0;
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl;
+}
+
+.btn-secondary {
+  @apply bg-slate-700 text-white hover:bg-slate-600 border border-slate-600;
+}
+
+/* Card improvements */
+.card {
+  @apply bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-700;
+}
+
+.card:hover {
+  @apply shadow-xl border-slate-600;
+  transform: translateY(-2px);
+}
+
+/* Navigation improvements */
+.nav-link {
+  @apply text-slate-300 hover:text-white transition-colors duration-200 px-3 py-2 rounded-md;
+}
+
+.nav-link.active {
+  @apply text-white bg-slate-700;
+}
+
+/* Section spacing */
+.section {
+  @apply py-16;
+}
+
+.section-sm {
+  @apply py-8;
+}
+
+/* Image improvements */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Music player area */
+.player-area {
+  @apply fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 z-50;
+  backdrop-filter: blur(10px);
+}
+
+/* Contact page specific styles */
+.contact-section {
+  @apply bg-gradient-to-br from-slate-900 to-slate-800 min-h-screen py-12;
+}
+
+.contact-card {
+  @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 shadow-2xl;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1.5rem 0.75rem 0 0.75rem; /* Added top padding for mobile */
+  }
+  
+  .section {
+    @apply py-8;
+  }
+  
+  .card {
+    @apply p-4;
+  }
+}
+
+/* Fix for matrix rain background */
+.matrix-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Content should always be above background */
+.content-overlay {
+  position: relative;
+  z-index: 1;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(2px);
+}

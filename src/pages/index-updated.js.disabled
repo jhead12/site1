@@ -1,0 +1,155 @@
+import * as React from "react"
+import { graphql } from "gatsby"
+import Layout from "../components/layout"
+import * as sections from "../components/sections"
+import Fallback from "../components/fallback"
+import SEOHead from "../components/head"
+import RotatingHeroBanner from "../components/hero/rotating-hero-banner"
+import HeroSection from "../components/hero-section"
+import LogoList from "../components/logo-list"
+import { getDemoBlogPosts } from "../utils/fallback-data"
+
+export default function Homepage(props) {
+  // Get WordPress posts or fallback to demo data
+  const wpPosts = props.data.allWpPost?.nodes
+  const wpBypassMode = !wpPosts
+  const blogPosts = wpBypassMode 
+    ? { nodes: getDemoBlogPosts(5) }  // Use 5 demo posts when WordPress is bypassed
+    : props.data.allWpPost
+
+  // Check if homepage data exists (won't exist in bypass mode)
+  const homepage = props.data.homepage || { blocks: [] }
+
+  // Mock data for the new Hero section (Music + Technology)
+  const heroSectionData = {
+    kicker: "Innovation",
+    h1: "Music + Technology",
+    subhead: "Where creativity meets cutting-edge innovation",
+    text: "Discover how modern technology is revolutionizing music production, from AI-assisted composition to immersive audio experiences that push the boundaries of sonic creativity.",
+    links: [
+      { id: "services", href: "/services", text: "Explore Services" },
+      { id: "consultation", href: "/consultation", text: "Get Consultation" }
+    ],
+    image: {
+      alt: "Music technology setup with modern equipment",
+      gatsbyImageData: null // Will be replaced with actual Contentful image
+    }
+  }
+
+  // Mock data for the Logo List section (Music Platforms)
+  const logoListData = {
+    text: "Available on all major platforms",
+    logos: [
+      {
+        id: "spotify",
+        alt: "Spotify",
+        link: "https://open.spotify.com/artist/jeldonmusic",
+        image: { gatsbyImageData: null } // Will be replaced with actual logos
+      },
+      {
+        id: "apple-music",
+        alt: "Apple Music", 
+        link: "https://music.apple.com/artist/jeldonmusic",
+        image: { gatsbyImageData: null }
+      },
+      {
+        id: "youtube-music",
+        alt: "YouTube Music",
+        link: "https://music.youtube.com/channel/jeldonmusic",
+        image: { gatsbyImageData: null }
+      },
+      {
+        id: "soundcloud",
+        alt: "SoundCloud",
+        link: "https://soundcloud.com/jeldonmusic",
+        image: { gatsbyImageData: null }
+      }
+    ]
+  }
+
+  return (
+    <Layout>
+      {/* 1. Dynamic Rotating Hero Banner (Top) */}
+      <RotatingHeroBanner />
+      
+      {/* 2. Hero Section - Music + Technology (New) */}
+      <HeroSection {...heroSectionData} />
+      
+      {/* 3. Logo List - Music Platforms (Updated) */}
+      <LogoList {...logoListData} />
+
+      {/* 4. Contentful blocks - only render if they exist */}
+      {homepage.blocks && homepage.blocks.length > 0 && homepage.blocks.map((block) => {
+        const { id, blocktype, ...componentProps } = block
+        const Component = sections[blocktype] || Fallback
+        return <Component key={id} {...componentProps} />
+      })}
+
+      {/* 5. Beats Stats Section */}
+      <sections.BeatsStatList />
+      
+      {/* 6. Blog Feature Section */}
+      <sections.BlogFeature data={{ allWpPost: blogPosts }} />
+      
+      {/* WordPress Bypass Mode Indicator */}
+      {wpBypassMode && (
+        <div style={{ 
+          textAlign: "center", 
+          padding: "20px", 
+          background: "rgba(0, 164, 255, 0.1)", // Use brand color instead
+          margin: "20px auto",
+          maxWidth: "800px",
+          borderRadius: "8px",
+          border: "1px solid rgba(0, 164, 255, 0.2)"
+        }}>
+          <p style={{ 
+            margin: 0, 
+            color: "#fcfefe", // Use theme text color
+            fontSize: "14px" 
+          }}>
+            <strong>Content Preview Mode:</strong> Displaying optimized sample content. 
+            Connect to Contentful for live data.
+          </p>
+        </div>
+      )}
+    </Layout>
+  )
+}
+
+export const Head = (props) => {
+  const { site } = props.data
+  return (
+    <SEOHead 
+      title={`${site.siteMetadata.title} - Music + Technology`}
+      description={`${site.siteMetadata.description} Explore the intersection of music and technology with professional production services, innovative beats, and cutting-edge audio experiences.`}
+    />
+  )
+}
+
+export const query = graphql`
+  query HomePageQuery($BYPASS_WORDPRESS: Boolean = false) {
+    site {
+      siteMetadata {
+        title
+        description
+      }
+    }
+    allWpPost(sort: { date: DESC }, limit: 3) @skip(if: $BYPASS_WORDPRESS) {
+      nodes {
+        id
+        title
+        slug
+        excerpt
+        date(formatString: "MMMM DD, YYYY")
+      }
+    }
+    # Future Contentful queries can be added here:
+    # homepage: contentfulHomepage {
+    #   blocks {
+    #     ...HomepageHeroContent
+    #     ...HomepageFeatureListContent
+    #     ...HomepageLogoListContent
+    #   }
+    # }
+  }
+`

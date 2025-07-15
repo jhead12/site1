@@ -178,7 +178,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface HomepageHero implements Node & HomepageBlock {
       id: ID!
       blocktype: String
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: HomepageImage
@@ -198,7 +198,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface BeatsHero implements Node & BeatsBlock {
       id: ID!
       blocktype: String
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: BeatsImage
@@ -309,16 +309,12 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface HomepageTestimonialList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
-      kicker: String
-      heading: String
       content: [HomepageTestimonial]
     }
 
     interface BeatsTestimonialList implements Node & BeatsBlock {
       id: ID!
       blocktype: String
-      kicker: String
-      heading: String
       content: [BeatsTestimonial]
     }
 
@@ -356,38 +352,26 @@ exports.createSchemaCustomization = async ({ actions }) => {
       id: ID!
       value: String
       label: String
-      heading: String
     }
 
     interface BeatsStat implements Node {
       id: ID!
       value: String
       label: String
-      heading: String
     }
 
     interface HomepageStatList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
-      kicker: String
       heading: String
-      text: String
-      image: HomepageImage
-      icon: HomepageImage
       content: [HomepageStat]
-      links: [HomepageLink]
     }
 
     interface BeatsStatList implements Node & BeatsBlock {
       id: ID!
       blocktype: String
-      kicker: String
       heading: String
-      text: String
-      image: BeatsImage
-      icon: BeatsImage
       content: [BeatsStat]
-      links: [BeatsLink]
     }
 
     interface HomepageProduct implements Node {
@@ -622,7 +606,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       blocktype: String @blocktype
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: HomepageImage @link(from: "image___NODE")
@@ -634,7 +618,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       blocktype: String @blocktype
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: BeatsImage @link(from: "image___NODE")
@@ -1831,18 +1815,7 @@ exports.createPages = async ({ graphql, actions }) => {
     console.log(
       "WordPress data fetch bypassed by BYPASS_WORDPRESS environment variable"
     )
-
-    // Create slices
-    createSlice({
-      id: "header",
-      component: require.resolve("./src/components/header.js"),
-    })
-
-    createSlice({
-      id: "footer",
-      component: require.resolve("./src/components/footer.js"),
-    })
-
+    // Slices will be created at the end of this function
     return
   }
 
@@ -2036,7 +2009,7 @@ exports.createPages = async ({ graphql, actions }) => {
     })
   })
 
-  // Create slices
+  // Create slices (both bypass and normal mode need slices)
   createSlice({
     id: "header",
     component: require.resolve("./src/components/header.js"),

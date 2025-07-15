@@ -4,7 +4,7 @@ import { media } from "./media.css"
 
 export const desktopHeaderNavWrapper = style({
   position: "relative",
-  zIndex: 1,
+  zIndex: 10,
   display: "none",
   "@media": {
     [media.small]: {
@@ -17,6 +17,7 @@ export const desktopHeaderNavWrapper = style({
 const mobileHeaderNavWrapperBase = style({
   display: "block",
   position: "relative",
+  zIndex: 10,
   paddingTop: theme.space[3],
   "@media": {
     [media.small]: {
@@ -46,7 +47,7 @@ export const mobileNavOverlay = style({
   height: "100vh",
   paddingTop: theme.space[4],
   background: theme.colors.primary,
-  zIndex: 1,
+  zIndex: 15,
   "@media": {
     [media.small]: {
       display: "none",

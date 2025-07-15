@@ -229,24 +229,31 @@
 /* New magazine-style elements */
 .hero-banner-corner-ribbon {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 15px;
+  right: -10px;
   background: linear-gradient(135deg, #ff4081, #c51162);
   color: white;
-  padding: 8px 30px;
-  transform: rotate(45deg) translate(25%, -50%);
-  transform-origin: top right;
-  font-weight: bold;
+  padding: 10px 35px;
+  transform: rotate(45deg);
+  transform-origin: center;
+  font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 1px;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
   z-index: 3;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(255, 64, 129, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+  white-space: nowrap;
 }
 
 .hero-banner-link:hover .hero-banner-corner-ribbon {
-  transform: rotate(45deg) translate(20%, -45%) scale(1.05);
+  transform: rotate(45deg) scale(1.05);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    0 3px 6px rgba(255, 64, 129, 0.4);
 }
 
 .hero-banner-date {
@@ -381,8 +388,11 @@
   }
 
   .hero-banner-corner-ribbon {
-    font-size: 0.6rem;
-    padding: 5px 20px;
+    font-size: 0.65rem;
+    padding: 8px 25px;
+    top: 12px;
+    right: -8px;
+    letter-spacing: 1px;
   }
 
   .hero-banner-date {
