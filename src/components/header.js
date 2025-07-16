@@ -42,9 +42,27 @@ export default function Header() {
             navItemType: "Group", 
             name: "Services",
             navItems: [
-              { id: "music-production", href: "/music", text: "Music Production" },
-              { id: "mixing", href: "/mixes", text: "Music and Stem Mixing" },
-              { id: "tutorials", href: "/tutorials", text: "Tutorials" }
+              { 
+                id: "music-production", 
+                href: "/music", 
+                text: "Music Production",
+                description: "Professional music production services",
+                icon: null // No icon available in mock data
+              },
+              { 
+                id: "mixing", 
+                href: "/mixes", 
+                text: "Music and Stem Mixing",
+                description: "Professional mixing and mastering",
+                icon: null // No icon available in mock data
+              },
+              { 
+                id: "tutorials", 
+                href: "/tutorials", 
+                text: "Tutorials",
+                description: "Learn music production techniques",
+                icon: null // No icon available in mock data
+              }
             ]
           },
           { id: "about", navItemType: "LINK", href: "/about", text: "About" },
@@ -102,21 +120,79 @@ export default function Header() {
     }
   `)
 
-  // Process navigation data - prioritize mock data until Contentful hrefs are configured
+  // Process navigation data - use Contentful data if available, fallback to mock data
   let navItems = []
   let cta = null
   
-  // For now, use mock data as primary source since Contentful items may not have hrefs set
-  console.log("Using mock navigation data (Contentful hrefs not configured)")
-  if (mockData?.layout?.header?.navItems) {
-    navItems = mockData.layout.header.navItems
+  // Check if we have Contentful data available
+  if (queryData && (queryData.allContentfulNavItem?.nodes?.length > 0 || queryData.allContentfulNavItemGroup?.nodes?.length > 0)) {
+    console.log("Using Contentful navigation data with icons")
+    console.log("Contentful data:", queryData) // Debug log
+    
+    // Combine individual nav items and nav groups
+    const contentfulNavItems = queryData.allContentfulNavItem?.nodes || []
+    const contentfulNavGroups = queryData.allContentfulNavItemGroup?.nodes || []
+    
+    console.log("Nav items:", contentfulNavItems) // Debug log
+    console.log("Nav groups:", contentfulNavGroups) // Debug log
+    
+    // Create a hybrid approach: use mock data structure with Contentful icons
+    const mockNavItems = mockData?.layout?.header?.navItems || []
+    
+    // Map mock navigation with Contentful icons where available
+    navItems = mockNavItems.map(mockItem => {
+      if (mockItem.navItemType === "Group") {
+        // Find matching Contentful group
+        const contentfulGroup = contentfulNavGroups.find(cg => 
+          cg.name?.toLowerCase().includes(mockItem.name?.toLowerCase()) ||
+          cg.text?.toLowerCase().includes(mockItem.name?.toLowerCase())
+        )
+        
+        return {
+          ...mockItem,
+          navItems: mockItem.navItems.map(mockSubItem => {
+            // Find matching Contentful nav item for icons
+            const contentfulItem = contentfulNavItems.find(ci => 
+              ci.text?.toLowerCase().includes(mockSubItem.text?.toLowerCase())
+            ) || (contentfulGroup?.navItems || []).find(cni =>
+              cni.text?.toLowerCase().includes(mockSubItem.text?.toLowerCase())
+            )
+            
+            return {
+              ...mockSubItem,
+              icon: contentfulItem?.icon || null,
+              description: contentfulItem?.description || mockSubItem.description
+            }
+          })
+        }
+      } else {
+        // Find matching Contentful item for regular nav items
+        const contentfulItem = contentfulNavItems.find(ci => 
+          ci.text?.toLowerCase().includes(mockItem.text?.toLowerCase())
+        )
+        
+        return {
+          ...mockItem,
+          icon: contentfulItem?.icon || null,
+          description: contentfulItem?.description || mockItem.description
+        }
+      }
+    })
+    
+    console.log("Processed hybrid navItems:", navItems) // Debug log
+    
+    // Use mock CTA for now
+    cta = mockData?.layout?.header?.cta
+  } else {
+    // Fallback to mock data when Contentful is not available
+    console.log("Using mock navigation data (Contentful not available)")
+    if (mockData?.layout?.header?.navItems) {
+      navItems = mockData.layout.header.navItems
+    }
+    if (mockData?.layout?.header?.cta) {
+      cta = mockData.layout.header.cta
+    }
   }
-  if (mockData?.layout?.header?.cta) {
-    cta = mockData.layout.header.cta
-  }
-  
-  // TODO: Once Contentful navigation items have proper href values, we can switch back to:
-  // if (queryData && (queryData.allContentfulNavItem?.nodes?.length > 0 || queryData.allContentfulNavItemGroup?.nodes?.length > 0)) {
   
   const [isOpen, setOpen] = React.useState(false)
 

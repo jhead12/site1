@@ -4,10 +4,11 @@ import { media } from "./media.css"
 
 export const desktopHeaderNavWrapper = style({
   position: "relative",
-  zIndex: 10,
+  zIndex: 50,
   display: "none",
   backgroundColor: "rgba(0, 0, 0, 0.7)",
   backdropFilter: "blur(8px)",
+  overflow: "visible",
   "@media": {
     [media.small]: {
       display: "block",
@@ -19,7 +20,7 @@ export const desktopHeaderNavWrapper = style({
 const mobileHeaderNavWrapperBase = style({
   display: "block",
   position: "relative",
-  zIndex: 10,
+  zIndex: 50,
   paddingTop: theme.space[3],
   backgroundColor: "rgba(0, 0, 0, 0.7)",
   backdropFilter: "blur(8px)",
@@ -51,7 +52,7 @@ export const mobileNavOverlay = style({
   height: "100vh",
   paddingTop: theme.space[4],
   background: theme.colors.primary,
-  zIndex: 15,
+  zIndex: 100,
   "@media": {
     [media.small]: {
       display: "none",

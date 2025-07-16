@@ -71,6 +71,7 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
       variant="columnStart"
       gap={4}
       className={styles.navGroupWrapper}
+      style={{ position: 'relative', zIndex: 100 }}
     >
       <NavButtonLink
         onClick={onGroupButtonClick}
@@ -87,6 +88,17 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
           className={
             styles.navLinkListWrapper[popupVisible ? "opened" : "closed"]
           }
+          style={{ 
+            zIndex: 200, 
+            position: 'absolute', 
+            top: '100%', 
+            left: 0,
+            backgroundColor: '#000000',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            minWidth: '250px'
+          }}
         >
           <FlexList
             variant="columnStart"
@@ -101,11 +113,12 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
                   onClick={onItemClick}
                 >
                   <Flex variant="start" gap={3}>
-                    {navItem.icon && (
+                    {navItem.icon && navItem.icon.gatsbyImageData && (
                       <GatsbyImage
-                        alt={navItem.icon.alt}
+                        alt={navItem.icon.alt || navItem.text}
                         image={getImage(navItem.icon.gatsbyImageData)}
                         className={styles.navIcon}
+                        style={{ zIndex: 250 }}
                       />
                     )}
                     <Flex variant="columnStart" marginY={1} gap={0}>
