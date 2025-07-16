@@ -48,13 +48,31 @@ export default function MatrixBackground() {
         // Random character
         const char = chars[Math.floor(Math.random() * chars.length)]
         
+        // Create color variations with blue tones
+        const colorVariation = Math.random()
+        let fillColor = '#00ff41' // Default matrix green
+        
+        if (colorVariation > 0.85) {
+          // Bright blue highlights
+          fillColor = '#00bfff'
+        } else if (colorVariation > 0.70) {
+          // Cyan blue
+          fillColor = '#00ffff'
+        } else if (colorVariation > 0.55) {
+          // Electric blue
+          fillColor = '#0080ff'
+        } else if (colorVariation > 0.40) {
+          // Teal blue-green
+          fillColor = '#00ff80'
+        }
+        
         // Draw character at current position
-        ctx.fillStyle = '#00ff41'
+        ctx.fillStyle = fillColor
         ctx.fillText(char, i * fontSize, drops[i])
         
-        // Add some brighter leading characters
+        // Add some brighter leading characters with white/bright blue
         if (Math.random() > 0.98) {
-          ctx.fillStyle = '#ffffff'
+          ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#80dfff'
           ctx.fillText(char, i * fontSize, drops[i])
         }
         
@@ -79,11 +97,12 @@ export default function MatrixBackground() {
   }, [])
 
   return (
-    <div className={matrixContainer}>
+    <div className={matrixContainer} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -999999, pointerEvents: 'none' }}>
       <canvas 
         ref={canvasRef}
         className={matrixCanvas}
         aria-hidden="true"
+        style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -999999, pointerEvents: 'none' }}
       />
     </div>
   )

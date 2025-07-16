@@ -6,6 +6,8 @@ export const desktopHeaderNavWrapper = style({
   position: "relative",
   zIndex: 10,
   display: "none",
+  backgroundColor: "rgba(0, 0, 0, 0.7)",
+  backdropFilter: "blur(8px)",
   "@media": {
     [media.small]: {
       display: "block",
@@ -19,6 +21,8 @@ const mobileHeaderNavWrapperBase = style({
   position: "relative",
   zIndex: 10,
   paddingTop: theme.space[3],
+  backgroundColor: "rgba(0, 0, 0, 0.7)",
+  backdropFilter: "blur(8px)",
   "@media": {
     [media.small]: {
       display: "none",

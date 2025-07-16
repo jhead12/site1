@@ -80,6 +80,10 @@ export default function Header() {
             href
             text
             description
+            icon {
+              alt
+              gatsbyImageData(width: 32, height: 32)
+            }
           }
         }
       }
@@ -89,6 +93,10 @@ export default function Header() {
           href
           text
           description
+          icon {
+            alt
+            gatsbyImageData(width: 32, height: 32)
+          }
         }
       }
     }
