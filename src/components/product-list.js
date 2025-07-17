@@ -23,7 +23,9 @@ function Product(props) {
           size="large"
         />
       )}
-      <Subhead>{props.heading}</Subhead>
+      <Subhead>
+        {props.productHeading || props.productListHeading || props.heading}
+      </Subhead>
       <Text>{props.text}</Text>
       <LinkList links={props.links} />
     </Box>
@@ -37,7 +39,7 @@ export default function ProductList(props) {
         <Box center paddingY={4}>
           <Heading>
             {props.kicker && <Kicker>{props.kicker}</Kicker>}
-            {props.heading}
+            {props.productHeading || props.productListHeading || props.heading}
           </Heading>
           {props.text && <Text>{props.text}</Text>}
         </Box>
@@ -52,27 +54,3 @@ export default function ProductList(props) {
     </Section>
   )
 }
-
-export const query = graphql`
-  fragment HomepageProductListContent on HomepageProductList {
-    id
-    kicker
-    heading
-    text
-    content {
-      id
-      heading
-      text
-      image {
-        alt
-        id
-        gatsbyImageData
-      }
-      links {
-        id
-        href
-        text
-      }
-    }
-  }
-`

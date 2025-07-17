@@ -17,7 +17,7 @@ export default function HomepageCta(props) {
       <Section padding={5} radius="large" background="primary">
         <Heading center>
           {props.kicker && <Kicker center>{props.kicker}</Kicker>}
-          {props.heading}
+          {props.ctaHeading || props.heading}
         </Heading>
         <Text as="p" center variant="lead">
           {props.text}
@@ -35,22 +35,3 @@ export default function HomepageCta(props) {
     </Container>
   )
 }
-
-export const query = graphql`
-  fragment HomepageCtaContent on HomepageCta {
-    id
-    kicker
-    heading
-    text
-    image {
-      alt
-      id
-      gatsbyImageData
-    }
-    links {
-      id
-      href
-      text
-    }
-  }
-`

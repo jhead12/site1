@@ -1,0 +1,359 @@
+import * as React from "react"
+import { graphql, useStaticQuery } from "gatsby"
+import { Menu, X } from "react-feather"
+import {
+  Container,
+  Flex,
+  FlexList,
+  Space,
+  NavLink,
+  Button,
+  InteractiveIcon,
+  Nudge,
+  VisuallyHidden,
+} from "./ui"
+import {
+  mobileNavOverlay,
+  mobileNavLink,
+  desktopHeaderNavWrapper,
+  mobileHeaderNavWrapper,
+  mobileNavSVGColorWrapper,
+} from "./header.css"
+import NavItemGroup from "./nav-item-group"
+import BrandLogo from "./brand-logo"
+
+export default function Header() {
+  // Simple mock data that works
+  const mockData = {
+    layout: {
+      header: {
+        id: "header-mock",
+        navItems: [
+          { id: "home", navItemType: "LINK", href: "/", text: "Home" },
+          { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
+          { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
+          { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" }
+        ],
+        cta: {
+          id: "contact",
+          href: "/contact",
+          text: "Contact"
+        }
+      }
+    }
+  };
+
+  // Simple working query
+  const queryData = useStaticQuery(graphql`
+    query HeaderQuery {
+      layout {
+        header {
+          id
+        cta {
+          id
+          href
+          text
+        }
+        navItems {
+          id
+          __typename
+          ...on ContentfulNavItem {
+            navItemType
+            href
+            text
+            name
+            description
+          }
+          ...on ContentfulNavItemGroup {
+            name
+            description
+            navItems {
+              id
+              navItemType
+              href
+              text
+              name
+              description
+            }
+          }
+        }
+      }
+      
+      # Get all nav items for fallback
+      allContentfulNavItem {
+        nodes {
+          id
+          navItemType
+          text
+          href
+          name
+          description
+        }
+      }
+      
+      # Get nav item groups
+      allContentfulNavItemGroup {
+        nodes {
+          id
+          name
+          description
+          navItems {
+            id
+            navItemType
+            text
+            href
+            name
+            description
+          }
+        }
+      }
+    }
+  `)
+
+  // Use Contentful data if available, otherwise fallback to basic navigation
+  const contentfulHeader = queryData?.contentfulLayoutHeader
+  
+  // Debug: Log the query data to understand what we're getting
+  if (typeof window !== 'undefined') {
+    console.log('Header Query Data:', queryData)
+    console.log('Contentful Header:', contentfulHeader)
+  }
+  
+  // Build navigation items from Contentful data
+  let navItems = []
+  
+  if (contentfulHeader?.navItems && contentfulHeader.navItems.length > 0) {
+    // Use header-specific nav items
+    navItems = contentfulHeader.navItems.map(item => ({
+      id: item.id,
+      navItemType: item.__typename === "ContentfulNavItemGroup" ? "GROUP" : "LINK",
+      href: item.href,
+      text: item.text || item.name,
+      name: item.name,
+      description: item.description,
+      navItems: item.navItems || []
+    }))
+  } else if (queryData?.allContentfulNavItem?.nodes) {
+    // Fallback to all nav items
+    navItems = queryData.allContentfulNavItem.nodes.map(item => ({
+      id: item.id,
+      navItemType: item.navItemType || "LINK",
+      href: item.href,
+      text: item.text || item.name,
+      name: item.name,
+      description: item.description
+    }))
+    
+    // Add nav groups if available
+    if (queryData?.allContentfulNavItemGroup?.nodes) {
+      const groups = queryData.allContentfulNavItemGroup.nodes.map(group => ({
+        id: group.id,
+        navItemType: "GROUP",
+        name: group.name,
+        text: group.name, // Use name as text for groups
+        description: group.description,
+        navItems: group.navItems || []
+      }))
+      navItems = [...navItems, ...groups]
+    }
+  } else {
+    // Final fallback
+    navItems = [
+      { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" },
+      { id: "about", navItemType: "LINK", href: "/about", text: "About" },
+      { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" }
+    ]
+  }
+  
+  // Debug: Log the processed navigation items
+  if (typeof window !== 'undefined') {
+    console.log('Processed Navigation Items:', navItems)
+  }
+  
+  const cta = contentfulHeader?.cta || { 
+    id: "consultation", 
+    href: "/contact", 
+    text: "Get Started" 
+  }
+  const [isOpen, setOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflowY = "hidden"
+    } else {
+      document.body.style.overflowY = "visible"
+    }
+  }, [isOpen])
+
+  return (
+    <header className={enhancedHeaderContainer}>
+      <EmbedPage />
+      <Container className={desktopHeaderNavWrapper}>
+        <div className={enhancedNavWrapper}>
+          {/* Logo section - 1/3 of space */}
+          <div className={navLogoWrapper}>
+            <NavLink 
+              to="/" 
+              className={enhancedLogoContainer}
+            >
+              <VisuallyHidden>Home</VisuallyHidden>
+              <BrandLogo />
+            </NavLink>
+          </div>
+          
+          {/* Navigation section - 2/3 of space */}
+          <nav className={navCenterWrapper}>
+            <FlexList gap={4} className={desktopNavItems}>
+              {navItems &&
+                navItems.map((navItem) => (
+                  <li key={navItem.id}>
+                    {navItem.navItemType === "GROUP" ? (
+                      <NavItemGroup
+                        name={navItem.name || navItem.text}
+                        navItems={navItem.navItems || navItem.submenu || []}
+                      />
+                    ) : (
+                      <NavLink 
+                        to={navItem.href || "/"} 
+                        className={enhancedDesktopNavLink}
+                        activeClassName="active"
+                        // Only open in new tab for external links
+                        {...(navItem.href && navItem.href.startsWith('http') ? {target: "_blank", rel: "noopener noreferrer"} : {})}
+                      >
+                        {navItem.text}
+                      </NavLink>
+                    )}
+                  </li>
+                ))}
+            </FlexList>
+          </nav>
+          
+          {/* CTA section - 1/3 of space */}
+          <div className={navCtaWrapper}>
+            {cta && (
+              <Button 
+                to={cta.href || "/contact"} 
+                className={enhancedCtaButton}
+                activeClassName="active"
+                {...(cta.href && cta.href.startsWith('http') ? {target: "_blank", rel: "noopener noreferrer"} : {})}
+              >
+                {cta.text}
+              </Button>
+            )}
+          </div>
+        </div>
+      </Container>
+      <Container className={mobileHeaderNavWrapper[isOpen ? "open" : "closed"]}>
+        <div className={enhancedNavWrapper}>
+          <span
+            className={
+              mobileNavSVGColorWrapper[isOpen ? "reversed" : "primary"]
+            }
+          >
+            <NavLink 
+              to="/" 
+              className={enhancedLogoContainer}
+              activeClassName="active"
+            >
+              <VisuallyHidden>Home</VisuallyHidden>
+              <BrandLogo />
+            </NavLink>
+          </span>
+          <Flex style={{ marginLeft: 'auto' }}>
+            {/* Show CTA button on mobile when menu is closed */}
+            {!isOpen && cta && (
+              <div className={mobileCTAContainer}>
+                <Button
+                  to={cta.href || "/contact"}
+                  variant="primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {cta.text}
+                </Button>
+              </div>
+            )}
+            <Nudge right={3}>
+              <InteractiveIcon
+                title="Toggle menu"
+                onClick={() => setOpen(!isOpen)}
+                className={`${mobileMenuButton} ${
+                  mobileNavSVGColorWrapper[isOpen ? "reversed" : "primary"]
+                }`}
+                aria-expanded={isOpen}
+                aria-label={isOpen ? "Close menu" : "Open menu"}
+              >
+                {isOpen ? <X /> : <Menu />}
+              </InteractiveIcon>
+            </Nudge>
+          </Flex>
+        </div>
+      </Container>
+      {isOpen && (
+        <div
+          className={mobileNavOverlay}
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
+          <nav>
+            {/* Add content filter dropdown at the top */}
+            <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <ContentFilter
+                options={[
+                  { value: "All Content", label: "All Content" },
+                  { value: "Music", label: "Music" },
+                  { value: "Videos", label: "Videos" },
+                  { value: "Blog", label: "Blog" },
+                  { value: "Beats", label: "Beats" },
+                  { value: "Tutorials", label: "Tutorials" }
+                ]}
+                selectedValue="All Content"
+                onSelect={(value) => {
+                  console.log('Filter selected:', value)
+                  // Add your filter logic here
+                }}
+              />
+            </div>
+            
+            <FlexList responsive variant="stretch" className={mobileNavList}>
+              {navItems?.map((navItem) => (
+                <li key={navItem.id} className={mobileNavListItem}>
+                  {navItem.navItemType === "GROUP" ? (
+                    <NavItemGroup
+                      name={navItem.name || navItem.text}
+                      navItems={navItem.navItems || navItem.submenu || []}
+                    />
+                  ) : (
+                    <NavLink
+                      to={navItem.href || "/"}
+                      className={enhancedMobileNavLink}
+                      activeClassName="active"
+                      onClick={() => setOpen(false)}
+                      {...(navItem.href && navItem.href.startsWith('http') ? {target: "_blank", rel: "noopener noreferrer"} : {})}
+                    >
+                      {navItem.text}
+                    </NavLink>
+                  )}
+                </li>
+              ))}
+              {/* Add CTA button to mobile navigation */}
+              {cta && (
+                <li className={mobileNavListItem}>
+                  <Button
+                    to={cta.href || "/contact"}
+                    className={enhancedMobileCTAButton}
+                    activeClassName="active"
+                    onClick={() => setOpen(false)}
+                    {...(cta.href && cta.href.startsWith('http') ? {target: "_blank", rel: "noopener noreferrer"} : {})}
+                  >
+                    {cta.text}
+                  </Button>
+                </li>
+              )}
+            </FlexList>
+          </nav>
+        </div>
+      )}
+    </header>
+  )
+}

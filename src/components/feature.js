@@ -14,7 +14,6 @@ import {
 
 export default function Feature(props) {
   return (
-    
     <Section padding={4} background="muted">
       <Container>
         <Flex gap={4} variant="responsive">
@@ -41,20 +40,7 @@ export default function Feature(props) {
 }
 
 export const query = graphql`
-  fragment HomepageFeatureContent on HomepageFeature {
+  fragment HomepageFeatureContent on ContentfulHomepageFeature {
     id
-    kicker
-    heading
-    text
-    links {
-      id
-      href
-      text
-    }
-    image {
-      id
-      gatsbyImageData
-      alt
-    }
   }
 `

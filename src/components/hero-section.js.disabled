@@ -1,0 +1,89 @@
+import { graphql } from "gatsby"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
+import * as React from "react"
+import {
+  Box,
+  ButtonList,
+  Container,
+  Flex,
+  Heading,
+  Kicker,
+  Section,
+  Subhead,
+  Text,
+  Space,
+} from "./ui"
+import * as styles from "./hero-section.css"
+
+export default function HeroSection(props) {
+  // Don't render if no content
+  if (!props.h1 && !props.subhead && !props.text) return null
+
+  return (
+    <Section paddingY={5} className={styles.heroSection}>
+      <Container>
+        <Flex gap={5} variant="responsive" className={styles.heroContent}>
+          {/* Content Column - Left side on desktop */}
+          <Box width="half" className={styles.contentColumn}>
+            <div className={styles.contentWrapper}>
+              {props.kicker && (
+                <Kicker className={styles.kicker}>{props.kicker}</Kicker>
+              )}
+              <Heading as="h1" className={styles.heroHeading}>
+                {props.h1}
+              </Heading>
+              {props.subhead && (
+                <Subhead as="h2" className={styles.heroSubhead}>
+                  {props.subhead}
+                </Subhead>
+              )}
+              <Space size={3} />
+              {props.text && (
+                <Text as="p" variant="lead" className={styles.heroText}>
+                  {props.text}
+                </Text>
+              )}
+              <Space size={4} />
+              {props.links && props.links.length > 0 && (
+                <ButtonList links={props.links} className={styles.heroButtons} />
+              )}
+            </div>
+          </Box>
+
+          {/* Image Column - Right side on desktop */}
+          <Box width="half" className={styles.imageColumn}>
+            {props.image && props.image.gatsbyImageData && (
+              <div className={styles.imageWrapper}>
+                <GatsbyImage
+                  alt={props.image.alt || "Hero image"}
+                  image={getImage(props.image.gatsbyImageData)}
+                  className={styles.heroImage}
+                />
+              </div>
+            )}
+          </Box>
+        </Flex>
+      </Container>
+    </Section>
+  )
+}
+
+export const query = graphql`
+  fragment HeroSectionContent on HomepageHero {
+    id
+    kicker
+    h1: heading
+    subhead
+    text
+    links {
+      id
+      href
+      text
+    }
+    image {
+      id
+      gatsbyImageData
+      alt
+    }
+  }
+`

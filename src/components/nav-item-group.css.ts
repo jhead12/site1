@@ -1,6 +1,6 @@
 import { style, styleVariants } from "@vanilla-extract/css"
 import { theme } from "../theme.css"
-import { media } from "./ui.css"
+import { media } from "./media.css"
 import { mobileNavLink } from "./header.css"
 
 export const navGroupWrapper = style({
@@ -32,37 +32,33 @@ export const navGroupTitleInner = style({
 })
 
 const navLinkListWrapperBase = style({
-  position: "relative",
-  whiteSpace: "nowrap",
-  width: "fit-content",
-  "@media": {
-    [media.small]: {
-      position: "absolute",
-      background: theme.colors.background,
-      padding: `${theme.space[3]} ${theme.space[3]} ${theme.space[0]} ${theme.space[3]}`,
-      top: "calc(100% + 20px)",
-      left: "50%",
-      transform: "translateX(-50%)",
-      borderRadius: theme.radii.large,
-      minWidth: theme.sizes.navGroupBoxMin,
-      maxWidth: theme.sizes.navGroupBoxMax,
-      boxShadow: theme.shadows.large,
-      selectors: {
-        "&::before": {
-          content: "",
-          position: "absolute",
-          top: 0,
-          left: "50%",
-          transform: "translateX(-50%) translateY(calc(-100% + 2px))",
-          width: 0,
-          height: 0,
-          borderStyle: "solid",
-          borderWidth: "0 14px 17.3px 14px",
-          borderColor: `transparent transparent ${theme.colors.background} transparent`,
-        },
-      },
-    },
+position: "absolute",
+zIndex: 1000,
+whiteSpace: "nowrap",
+width: "fit-content",
+background: theme.colors.background,
+padding: `${theme.space[3]} ${theme.space[3]} ${theme.space[0]} ${theme.space[3]}`,
+top: "calc(100% + 20px)",
+left: "50%",
+transform: "translateX(-50%)",
+borderRadius: theme.radii.large,
+minWidth: theme.sizes.navGroupBoxMin,
+maxWidth: theme.sizes.navGroupBoxMax,
+boxShadow: theme.shadows.large,
+selectors: {
+  "&::before": {
+    content: "",
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    transform: "translateX(-50%) translateY(calc(-100% + 2px))",
+    width: 0,
+    height: 0,
+    borderStyle: "solid",
+    borderWidth: "0 14px 17.3px 14px",
+    borderColor: `transparent transparent ${theme.colors.background} transparent`,
   },
+},
 })
 
 export const navLinkListWrapper = styleVariants({

@@ -42,17 +42,8 @@ export default function Hero(props) {
 }
 
 export const query = graphql`
-  fragment HomepageHeroContent on HomepageHero {
+  fragment HeroComponentContent on ContentfulHomepageHero {
     id
-    kicker
-    h1: heading
-    subhead
-    text
-    links {
-      id
-      href
-      text
-    }
     image {
       id
       gatsbyImageData

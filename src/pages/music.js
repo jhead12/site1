@@ -26,14 +26,14 @@ const MusicPage = ({ data }) => {
     type: "beat",
     source: "WordPress",
     slug: `/beats/${beat.slug}/`,
-    audioUrl: beat.beatFields?.audioFile?.localFile?.url || null,
-    price: beat.beatFields?.price || null,
-    bpm: beat.beatFields?.bpm || null,
-    key: beat.beatFields?.musicalKey || null,
+    audioUrl: null, // beatFields not available
+    price: null, // beatFields not available
+    bpm: null, // beatFields not available
+    key: null, // beatFields not available
     image: beat.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData || null,
-    genre: beat.beatFields?.genre || null,
+    genre: null, // beatFields not available
     soundcloudUrl: null, // SoundCloud field not yet available in schema
-    purchaseUrl: beat.beatFields?.purchaseUrl || null,
+    purchaseUrl: null, // beatFields not available
     date: beat.date,
   }))
   
@@ -44,11 +44,11 @@ const MusicPage = ({ data }) => {
     type: "mix",
     source: "WordPress",
     slug: `/mixes/${mix.slug}/`,
-    audioUrl: mix.mixFields?.audioFile?.localFile?.url || null,
-    duration: mix.mixFields?.mixDuration || null, // Uses mixDuration instead of duration
+    audioUrl: null, // mixFields not available
+    duration: null, // mixFields not available
     image: mix.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData || null,
-    genre: mix.mixFields?.mixType || null,
-    soundcloudUrl: mix.mixFields?.spotifyUrl || null, // Using spotifyUrl as fallback
+    genre: null, // mixFields not available
+    soundcloudUrl: null, // mixFields not available
     date: mix.date,
   }))
   
@@ -139,16 +139,6 @@ export const query = graphql`
             }
           }
         }
-        beatFields {
-          bpm
-          musicalKey
-          price
-          audioFile {
-            localFile {
-              url
-            }
-          }
-        }
       }
     }
     allWpMix(sort: { date: DESC }) {
@@ -163,16 +153,6 @@ export const query = graphql`
               childImageSharp {
                 gatsbyImageData
               }
-            }
-          }
-        }
-        mixFields {
-          mixDuration
-          mixType
-          spotifyUrl
-          audioFile {
-            localFile {
-              url
             }
           }
         }

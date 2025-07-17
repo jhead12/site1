@@ -3,9 +3,12 @@ import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import { Box, Flex, FlexList, NavButtonLink, NavLink } from "./ui"
 import Caret from "./caret"
 import * as styles from "./nav-item-group.css"
-import { media } from "./ui.css"
+import { media } from "./media.css"
 
-export default function NavItemGroup({ name, navItems }) {
+export default function NavItemGroup({ name, navItems = [], onItemClick }) {
+  // Defensive check to ensure navItems is always an array
+  const safeNavItems = Array.isArray(navItems) ? navItems : []
+  
   const [isOpen, setIsOpen] = React.useState(false)
   const [popupVisible, setPopupVisible] = React.useState(false)
   const isSmallScreen = () => {
@@ -68,6 +71,7 @@ export default function NavItemGroup({ name, navItems }) {
       variant="columnStart"
       gap={4}
       className={styles.navGroupWrapper}
+      style={{ position: 'relative', zIndex: 100 }}
     >
       <NavButtonLink
         onClick={onGroupButtonClick}
@@ -84,21 +88,37 @@ export default function NavItemGroup({ name, navItems }) {
           className={
             styles.navLinkListWrapper[popupVisible ? "opened" : "closed"]
           }
+          style={{ 
+            zIndex: 200, 
+            position: 'absolute', 
+            top: '100%', 
+            left: 0,
+            backgroundColor: '#000000',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            minWidth: '250px'
+          }}
         >
           <FlexList
             variant="columnStart"
             gap={2}
             className={styles.navLinkListWrapperInner}
           >
-            {navItems.map((navItem) => (
+            {safeNavItems && safeNavItems.length > 0 && safeNavItems.map((navItem) => (
               <li key={navItem.id}>
-                <NavLink to={navItem.href} className={styles.navLinkListLink}>
+                <NavLink 
+                  to={navItem.href} 
+                  className={styles.navLinkListLink}
+                  onClick={onItemClick}
+                >
                   <Flex variant="start" gap={3}>
-                    {navItem.icon && (
+                    {navItem.icon && navItem.icon.gatsbyImageData && (
                       <GatsbyImage
-                        alt={navItem.icon.alt}
+                        alt={navItem.icon.alt || navItem.text}
                         image={getImage(navItem.icon.gatsbyImageData)}
                         className={styles.navIcon}
+                        style={{ zIndex: 250 }}
                       />
                     )}
                     <Flex variant="columnStart" marginY={1} gap={0}>

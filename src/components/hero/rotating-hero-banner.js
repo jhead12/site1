@@ -1,88 +1,66 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useStaticQuery, graphql, Link } from 'gatsby';
-import { GatsbyImage } from 'gatsby-plugin-image';
-import isAbsoluteURL from 'is-absolute-url';
-import './rotating-hero-banner.css';
-
-// Import mock data for development when connections fail
-import heroMockData from '../../data/mock/hero-data.json';
+import React, { useState, useEffect, useCallback } from "react"
+import { useStaticQuery, graphql, Link } from "gatsby"
+import { GatsbyImage } from "gatsby-plugin-image"
+import isAbsoluteURL from "is-absolute-url"
+import "./rotating-hero-banner.css"
 
 // Helper function to truncate text to a single sentence
 const truncateToFirstSentence = (text) => {
-  if (!text) return '';
-  
-  // Remove HTML tags
-  const plainText = text.replace(/<[^>]*>/g, '');
-  
-  // Find the first sentence end (period, exclamation, or question mark followed by space)
-  const match = plainText.match(/[^.!?]*[.!?]/);
-  
-  // Return the first sentence or truncate if no sentence end is found
-  return match ? match[0].trim() : plainText.substring(0, 100) + '...';
-};
+  if (!text) return ""
+  const plainText = text.replace(/<[^>]*>/g, "")
+  const match = plainText.match(/[^.!?]*[.!?]/)
+  return match ? match[0].trim() : plainText.substring(0, 100) + "..."
+}
 
 const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [fadeClass, setFadeClass] = useState('fade-in');
-  const [heroData, setHeroData] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(!disableAutoRotate)
+  const [fadeClass, setFadeClass] = useState("fade-in")
+  const [heroData, setHeroData] = useState([])
 
-  // Define functions with useCallback to avoid dependency issues
-  const goToNext = useCallback(() => {
-    if (heroData.length <= 1) return;
-    setFadeClass('fade-out');
-    setTimeout(() => {
-      setCurrentSlide((prev) => 
-        prev === heroData.length - 1 ? 0 : prev + 1
-      );
-      setFadeClass('fade-in');
-    }, 300);
-  }, [heroData.length]);
+  // Consolidated navigation function
+  const navigateToSlide = useCallback(
+    (direction) => {
+      if (heroData.length <= 1) return
 
-  const goToPrevious = useCallback(() => {
-    if (heroData.length <= 1) return;
-    setFadeClass('fade-out');
-    setTimeout(() => {
-      setCurrentSlide((prev) => 
-        prev === 0 ? heroData.length - 1 : prev - 1
-      );
-      setFadeClass('fade-in');
-    }, 300);
-  }, [heroData.length]);
-
-  const handleNext = useCallback(() => {
-    setFadeClass('fade-out');
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroData.length);
-      setFadeClass('fade-in');
-    }, 500);
-  }, [heroData.length]);
-
-  const handlePrev = () => {
-    setFadeClass('fade-out');
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev - 1 + heroData.length) % heroData.length);
-      setFadeClass('fade-in');
-    }, 500);
-  };
-
-  const handleDotClick = (index) => {
-    if (index !== currentSlide) {
-      setFadeClass('fade-out');
+      setFadeClass("fade-out")
       setTimeout(() => {
-        setCurrentSlide(index);
-        setFadeClass('fade-in');
-      }, 500);
-    }
-  };
+        setCurrentSlide((prev) => {
+          if (direction === "next") {
+            return (prev + 1) % heroData.length
+          } else if (direction === "prev") {
+            return (prev - 1 + heroData.length) % heroData.length
+          }
+          return direction // direct index for dot navigation
+        })
+        setFadeClass("fade-in")
+      }, 300)
+    },
+    [heroData.length]
+  )
 
+  const handleNext = useCallback(
+    () => navigateToSlide("next"),
+    [navigateToSlide]
+  )
+  const handlePrev = useCallback(
+    () => navigateToSlide("prev"),
+    [navigateToSlide]
+  )
+  const handleDotClick = useCallback(
+    (index) => {
+      if (index !== currentSlide) {
+        navigateToSlide(index)
+      }
+    },
+    [currentSlide, navigateToSlide]
+  )
+
+  // Updated GraphQL query to get actual Contentful data
   const data = useStaticQuery(graphql`
     query HeroBannerContent {
-      # WordPress Videos - now using direct video post type and sorting by views
-      allWpVideo(
-        sort: { date: DESC }
-        limit: 5
-      ) {
+      # Get WordPress Videos with better error handling
+      allWpVideo(sort: { date: DESC }, limit: 3) {
         nodes {
           id
           title
@@ -91,260 +69,291 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           date
           videoDetails {
             youtubeVideoId
-            videoViews
           }
           featuredImage {
             node {
               altText
               localFile {
                 childImageSharp {
-                  gatsbyImageData
+                  gatsbyImageData(width: 1200, height: 600)
                 }
               }
             }
           }
         }
       }
-      # Contentful Hero Items
-      allContentfulHomepageHero {
+
+      # Get actual Contentful Hero content with available fields only
+      allContentfulHomepageHero(limit: 3) {
         nodes {
           id
-          heading
-          subhead
-          kicker
-          text
           image {
-            gatsbyImageData
+            id
+            gatsbyImageData(width: 1200, height: 600)
             alt
-          }
-          links {
-            href
-            text
           }
         }
       }
+
+      # Fallback static content for when no dynamic content is available
+      site {
+        siteMetadata {
+          title
+          description
+        }
+      }
     }
-  `);
+  `)
 
   useEffect(() => {
     try {
-      // Combine WordPress and Contentful data
-      const wpVideos = data?.allWpVideo?.nodes || [];
-      const contentfulHeros = data?.allContentfulHomepageHero?.nodes || [];
+      const wpVideos = data?.allWpVideo?.nodes || []
+      const contentfulHeros = data?.allContentfulHomepageHero?.nodes || []
 
-      // Transform WordPress videos and parse view counts
-      const wpItems = wpVideos.map(video => {
-        // Parse view count from the videoViews field (default to 0 if not available)
-        const viewCount = parseInt(video.videoDetails?.videoViews || '0', 10);
-        
-        return {
+      // Transform WordPress videos
+      const wpItems = wpVideos
+        .filter(
+          (video) =>
+            video.featuredImage?.node?.localFile?.childImageSharp
+              ?.gatsbyImageData
+        )
+        .map((video) => ({
           id: video.id,
-          title: video.title,
+          title: video.title || "Video Content",
           description: truncateToFirstSentence(video.excerpt),
-          image: video.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData,
+          image:
+            video.featuredImage.node.localFile.childImageSharp.gatsbyImageData,
           slug: `/videos/${video.slug}`,
           date: video.date,
-          type: 'video',
-          viewCount: viewCount // Store view count for sorting
-        };
-      });
+          type: "video",
+          kicker: "Featured Video",
+          priority: 2, // Lower priority than hero content
+        }))
 
-      // Transform Contentful items
-      const contentfulItems = contentfulHeros.map(hero => ({
-        id: hero.id,
-        title: hero.heading,
-        description: truncateToFirstSentence(hero.text || hero.subhead),
-        image: hero.image?.gatsbyImageData,
-        slug: hero.links?.[0]?.href || '/',
-        date: new Date().toISOString(), // Use current date since we don't have updatedAt
-        type: 'hero',
-        kicker: hero.kicker,
-        viewCount: Number.MAX_SAFE_INTEGER // Ensure hero items always have highest priority
-      }));
+      // Transform Contentful heroes with simplified data
+      const contentfulItems = contentfulHeros
+        .filter((hero) => hero.image?.gatsbyImageData)
+        .map((hero, index) => ({
+          id: hero.id,
+          title: `Featured Content ${index + 1}`, // Generate title since heading may not exist
+          description: "Discover our featured content and latest updates",
+          image: hero.image.gatsbyImageData,
+          slug: "/", // Default to homepage
+          date: new Date().toISOString(), // Use current date
+          type: "hero",
+          kicker: "Featured",
+          priority: 1, // Highest priority
+        }))
 
-      // Combine and sort by view count (highest views first)
-      const combinedItems = [...wpItems, ...contentfulItems]
-        .filter(item => item.image) // Only include items with images
-        .sort((a, b) => b.viewCount - a.viewCount) // Sort by view count (highest first)
-        .slice(0, 3); // Keep only the top 3 items
+      // Combine and sort by priority, then by date
+      const combinedItems = [...contentfulItems, ...wpItems]
+        .sort((a, b) => {
+          if (a.priority !== b.priority) {
+            return a.priority - b.priority // Lower number = higher priority
+          }
+          return new Date(b.date) - new Date(a.date) // Newer first
+        })
+        .slice(0, 3) // Keep only top 3
 
       if (combinedItems.length > 0) {
-        setHeroData(combinedItems);
+        setHeroData(combinedItems)
       } else {
-        console.warn('No live data available, falling back to mock data');
-        // Apply truncation to mock data
-        const truncatedMockData = heroMockData.map(item => ({
-          ...item,
-          description: truncateToFirstSentence(item.description)
-        }));
-        setHeroData(truncatedMockData);
+        // Set fallback data when no content is available
+        setHeroData([
+          {
+            id: "fallback",
+            title:
+              data?.site?.siteMetadata?.title || "Welcome to J. Eldon Music",
+            description:
+              data?.site?.siteMetadata?.description ||
+              "Discover amazing music content, beats, and tutorials",
+            image: null, // Will show fallback UI
+            slug: "/",
+            date: new Date().toISOString(),
+            type: "fallback",
+            kicker: "Welcome",
+            priority: 999,
+          },
+        ])
       }
     } catch (error) {
-      console.error('Error processing hero data:', error);
-      // Apply truncation to mock data
-      const truncatedMockData = heroMockData.map(item => ({
-        ...item,
-        description: truncateToFirstSentence(item.description)
-      }));
-      setHeroData(truncatedMockData);
+      console.error("Error processing hero data:", error)
+      // Set fallback data on error
+      setHeroData([
+        {
+          id: "fallback",
+          title: "Welcome to J. Eldon Music",
+          description: "Discover amazing music content, beats, and tutorials",
+          image: null, // Will show fallback UI
+          slug: "/",
+          date: new Date().toISOString(),
+          type: "fallback",
+          kicker: "Welcome",
+          priority: 999,
+        },
+      ])
     }
-  }, [data]);
+  }, [data])
 
-  // Auto-rotation effect
+  // Consolidated auto-rotation effect (single useEffect)
   useEffect(() => {
-    if (!isPlaying || heroData.length <= 1 || disableAutoRotate) return;
+    if (!isPlaying || heroData.length <= 1 || disableAutoRotate) return
 
     const interval = setInterval(() => {
-      setFadeClass('fade-out');
-      
-      setTimeout(() => {
-        setCurrentSlide((prev) => 
-          prev === heroData.length - 1 ? 0 : prev + 1
-        );
-        setFadeClass('fade-in');
-      }, 300);
-    }, 6000); // Change slide every 6 seconds
+      navigateToSlide("next")
+    }, 6000) // 6 seconds interval
 
-    return () => clearInterval(interval);
-  }, [isPlaying, heroData.length, disableAutoRotate]);
+    return () => clearInterval(interval)
+  }, [isPlaying, heroData.length, disableAutoRotate, navigateToSlide])
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (e.key === 'ArrowLeft') {
-        goToPrevious();
-      } else if (e.key === 'ArrowRight') {
-        goToNext();
-      } else if (e.key === ' ') {
-        e.preventDefault();
-        setIsPlaying(!isPlaying);
+      if (e.key === "ArrowLeft") {
+        handlePrev()
+      } else if (e.key === "ArrowRight") {
+        handleNext()
+      } else if (e.key === " ") {
+        e.preventDefault()
+        setIsPlaying(!isPlaying)
       }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isPlaying, goToNext, goToPrevious]);
-
-  useEffect(() => {
-    if (!disableAutoRotate && isPlaying) {
-      const timer = setInterval(handleNext, 5000);
-      return () => clearInterval(timer);
     }
-  }, [currentSlide, isPlaying, disableAutoRotate, handleNext]);
 
-  // Return empty if no hero data
+    window.addEventListener("keydown", handleKeyPress)
+    return () => window.removeEventListener("keydown", handleKeyPress)
+  }, [isPlaying, handleNext, handlePrev])
+
+  // Fallback UI when no data is available
   if (!heroData || heroData.length === 0) {
     return (
-      <div className="hero-banner-placeholder">
-        <div className="placeholder-content">
-          <h2>Hero Banner</h2>
-          <p>Add hero content in WordPress or update mock data</p>
+      <div className="hero-banner-container hero-banner-fallback">
+        <div className="hero-banner-slide fade-in">
+          <div className="hero-banner-placeholder">
+            <div className="hero-banner-content">
+              <div className="hero-banner-text">
+                <span className="hero-banner-kicker">Welcome</span>
+                <h2>Content Loading...</h2>
+                <p>Please check back soon for featured content.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    );
+    )
   }
 
-  const currentContent = heroData[currentSlide];
-  
+  const currentContent = heroData[currentSlide]
+
+  // Fallback for items without images
+  if (!currentContent.image && currentContent.type !== "fallback") {
+    return (
+      <div className="hero-banner-container hero-banner-fallback">
+        <div className="hero-banner-slide fade-in">
+          <div className="hero-banner-placeholder">
+            <div className="hero-banner-content">
+              <div className="hero-banner-text">
+                <span className="hero-banner-kicker">
+                  {currentContent.kicker}
+                </span>
+                <h2>{currentContent.title}</h2>
+                <p>{currentContent.description}</p>
+                <Link
+                  to={currentContent.slug}
+                  className="hero-banner-read-more"
+                >
+                  Learn More <span>→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const LinkComponent = isAbsoluteURL(currentContent.slug) ? "a" : Link
+  const linkProps = isAbsoluteURL(currentContent.slug)
+    ? { href: currentContent.slug }
+    : { to: currentContent.slug }
+
   return (
     <div className="hero-banner-container">
       <div className={`hero-banner-slide ${fadeClass}`}>
-        {isAbsoluteURL(currentContent.slug) ? (
-          <a href={currentContent.slug} className="hero-banner-link">
-            <div className="hero-banner-corner-ribbon">Featured</div>
-            <div className="hero-banner-date">
-              {new Date().toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}
-            </div>
+        <LinkComponent {...linkProps} className="hero-banner-link">
+          <div className="hero-banner-corner-ribbon">
+            {currentContent.type === "hero" ? "Featured" : "Latest"}
+          </div>
+          <div className="hero-banner-date">
+            {new Date(currentContent.date).toLocaleDateString("en-US", {
+              month: "short",
+              year: "numeric",
+            })}
+          </div>
+
+          {currentContent.image && (
             <GatsbyImage
               image={currentContent.image}
               alt={currentContent.title}
               className="hero-banner-image"
             />
-            <div className="hero-banner-content">
-              <div className="hero-banner-text">
-                {currentContent.type === 'hero' && currentContent.kicker && (
-                  <span className="hero-banner-kicker">{currentContent.kicker}</span>
-                )}
-                {currentContent.type === 'video' && (
-                  <span className="hero-banner-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px', verticalAlign: 'middle'}}>
-                      <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                    </svg>
-                    {currentContent.viewCount > 0 
-                      ? `${currentContent.viewCount.toLocaleString()} views` 
-                      : 'Featured Video'}
-                  </span>
-                )}
-                <h2>{currentContent.title}</h2>
-                <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
-                <div className="hero-banner-read-more">Read Article <span>→</span></div>
+          )}
+
+          <div className="hero-banner-content">
+            <div className="hero-banner-text">
+              <span className="hero-banner-kicker">
+                {currentContent.kicker}
+              </span>
+              <h2>{currentContent.title}</h2>
+              <p
+                dangerouslySetInnerHTML={{ __html: currentContent.description }}
+              />
+              <div className="hero-banner-read-more">
+                {currentContent.type === "video" ? "Watch Video" : "Read More"}{" "}
+                <span>→</span>
               </div>
             </div>
-          </a>
-        ) : (
-          <Link to={currentContent.slug} className="hero-banner-link">
-            <div className="hero-banner-corner-ribbon">Featured</div>
-            <div className="hero-banner-date">
-              {new Date().toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}
-            </div>
-            <GatsbyImage
-              image={currentContent.image}
-              alt={currentContent.title}
-              className="hero-banner-image"
-            />
-            <div className="hero-banner-content">
-              <div className="hero-banner-text">
-                {currentContent.type === 'hero' && currentContent.kicker && (
-                  <span className="hero-banner-kicker">{currentContent.kicker}</span>
-                )}
-                {currentContent.type === 'video' && (
-                  <span className="hero-banner-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '4px', verticalAlign: 'middle'}}>
-                      <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                    </svg>
-                    {currentContent.viewCount > 0 
-                      ? `${currentContent.viewCount.toLocaleString()} views` 
-                      : 'Featured Video'}
-                  </span>
-                )}
-                <h2>{currentContent.title}</h2>
-                <p dangerouslySetInnerHTML={{ __html: currentContent.description }} />
-                <div className="hero-banner-read-more">Read Article <span>→</span></div>
-              </div>
-            </div>
-          </Link>
-        )}
+          </div>
+        </LinkComponent>
       </div>
 
-      <div className="hero-banner-controls">
-        <button onClick={handlePrev} aria-label="Previous slide">
-          ‹
-        </button>
-        <div className="hero-banner-dots">
-          {heroData.map((_, index) => (
-            <button
-              key={index}
-              className={`dot ${index === currentSlide ? 'active' : ''}`}
-              onClick={() => handleDotClick(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+      {/* Only show controls if we have multiple slides */}
+      {heroData.length > 1 && (
+        <div className="hero-banner-controls">
+          <button
+            onClick={handlePrev}
+            aria-label="Previous slide"
+            className="hero-nav-btn"
+          >
+            ‹
+          </button>
+          <div className="hero-banner-dots">
+            {heroData.map((_, index) => (
+              <button
+                key={index}
+                className={`dot ${index === currentSlide ? "active" : ""}`}
+                onClick={() => handleDotClick(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={handleNext}
+            aria-label="Next slide"
+            className="hero-nav-btn"
+          >
+            ›
+          </button>
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className={`play-pause ${isPlaying ? "playing" : ""}`}
+            aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+          >
+            {isPlaying ? "⏸" : "▶"}
+          </button>
         </div>
-        <button onClick={handleNext} aria-label="Next slide">
-          ›
-        </button>
-        <button
-          onClick={() => setIsPlaying(!isPlaying)}
-          className={`play-pause ${isPlaying ? 'playing' : ''}`}
-          aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
-        >
-          {isPlaying ? '⏸' : '▶'}
-        </button>
-      </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default RotatingHeroBanner;
+export default RotatingHeroBanner

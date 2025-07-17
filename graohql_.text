@@ -1,0 +1,1935 @@
+yarn run v1.22.22
+$ npm run graphql:inspect && npm run inspect:contentful
+
+> jeldon-music@1.0.0 graphql:inspect
+> node ./scripts/inspect-graphql-schema.js
+
+🔍 GraphQL Schema Inspector
+NaN
+📁 Checking for schema files in: /Volumes/PRO-BLADE/Github/jeldonmusic_com/site1/public
+✅ Page data directory exists
+📄 Available page data:
+   - 404
+   - 404.html
+   - about
+   - app-data.json
+   - beats
+   - blog
+   - contact
+   - dev-404-page
+   - index
+   - mixes
+   - music
+   - privacy
+   - sq
+   - terms
+   - tutorials
+   - videos
+
+📋 Scanning for GraphQL queries in src/
+
+🔎 Found 50 files with GraphQL queries:
+
+📄 /components/about-hero.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutHeroContent
+
+📄 /components/about-leadership.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutLeadershipContent
+
+📄 /components/about-logo-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutLogoListContent
+
+📄 /components/about-stat-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutStatListContent
+
+📄 /components/beats-benefit-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsBenefitListContent
+
+📄 /components/beats-cta.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsCtaContent
+
+📄 /components/beats-feature-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsFeatureListContent
+
+📄 /components/beats-feature.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsFeatureContent
+
+📄 /components/beats-hero.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsHeroContent
+
+📄 /components/beats-logo-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsLogoListContent
+
+📄 /components/beats-product-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsProductListContent
+
+📄 /components/beats-testimonial-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsTestimonialListContent
+
+📄 /components/blog-feature.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BlogFeatureContent
+
+📄 /components/contentful/album-community-section-clean.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/contentful/album-community-section.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/contentful/contentful-footer.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/contentful/contentful-image-urls.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/cta.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: definition, HomepageCtaFields
+
+📄 /components/feature-list.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/feature.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: HomepageFeatureContent
+
+📄 /components/footer.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/header.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/hero/rotating-hero-banner.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/hero-section.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: HeroSectionContent
+
+📄 /components/hero.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: HeroComponentContent
+
+📄 /components/logo-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: LogoListComponentContent
+
+📄 /components/related-posts.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/shopify-product-grid.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: ShopifyProductGridContent
+
+📄 /pages/about.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/beats.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/blog.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/index-updated.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/index.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/mixes.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/music.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/shop.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/terms.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/tutorials.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/videos.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/beat.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/blog-index.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/blog-post.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/mix.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/product.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/tutorial.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/video-new.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/video.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/wordpress-page.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/wp-page.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /utils/graphql-fragments.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: WpContentFields, BeatFields, TutorialFields, MixFields, ContentCardFields, BeatCardFields, TutorialCardFields, MixCardFields
+
+📋 Analyzing gatsby-node.js schema definitions...
+
+🏗️  Schema Definitions Found:
+   - Interfaces: 59
+     • HomepageBlock
+     • BeatsBlock
+     • HomepageLink
+     • BeatsLink
+     • HeaderNavItem
+     • NavItem
+     • NavItemGroup
+     • HomepageImage
+     • BeatsImage
+     • HomepageHero
+     • BlogFeature
+     • BeatsHero
+     • HomepageFeature
+     • BeatsFeature
+     • HomepageFeatureList
+     • BeatsFeatureList
+     • HomepageCta
+     • BeatsCta
+     • HomepageLogo
+     • BeatsLogo
+     • HomepageLogoList
+     • BeatsLogoList
+     • HomepageTestimonial
+     • BeatsTestimonial
+     • HomepageTestimonialList
+     • BeatsTestimonialList
+     • HomepageBenefit
+     • HomepageBenefitList
+     • BeatsBenefit
+     • BeatsBenefitList
+     • HomepageStat
+     • BeatsStat
+     • HomepageStatList
+     • BeatsStatList
+     • HomepageProduct
+     • HomepageProductList
+     • BeatsProduct
+     • BeatsProductList
+     • Beats
+     • Homepage
+     • LayoutHeader
+     • SocialLink
+     • LayoutFooter
+     • Layout
+     • BlogPage
+     • BlogHero
+     • Privacy
+     • Terms
+     • AboutPage
+     • AboutHero
+     • AboutStat
+     • AboutStatList
+     • AboutProfile
+     • AboutLeadership
+     • AboutLogoList
+     • Page
+     • WpNode
+     • WpContentNode
+     • WpTermNode
+   - Types: 108
+     • ContentfulHomepageLink
+     • ContentfulBeatsLink
+     • ContentfulNavItem
+     • ContentfulNavItemGroup
+     • ContentfulAsset
+     • ContentfulHomepageHero
+     • type
+      heading
+     • ContentfulBeatsHero
+     • type
+      heading
+     • ContentfulHomepageFeature
+     ... and 98 more
+
+🚨 Checking for problematic type definitions...
+
+🔍 NavItem definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      icon: HomepageImage
+   Definition 2:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      navItems: [NavItem]
+
+🔍 HeaderNavItem definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+
+🔍 NavItemGroup definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      navItems: [NavItem]
+
+🔍 ContentfulNavItem definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String @navItemType(name: "Link")
+      href: String @linkField(from: "url")
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      icon: HomepageImage @link(from: "icon___NODE")
+   Definition 2:
+     - id: ID!
+      navItemType: String @navItemType(name: "Group")
+      name: String
+      navItems: [NavItem] @link(from: "navItems___NODE")
+      href: String
+      text: String
+      description: String
+      submenu: [HeaderNavItem]
+
+🔍 ContentfulNavItemGroup definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String @navItemType(name: "Group")
+      name: String
+      navItems: [NavItem] @link(from: "navItems___NODE")
+      href: String
+      text: String
+      description: String
+      submenu: [HeaderNavItem]
+
+> jeldon-music@1.0.0 inspect:contentful
+> node ./scripts/inspect-contentful.js
+
+🔍 Contentful Data Inspector
+NaN
+📡 Connected to Contentful space: esrzm688xldd
+
+📋 Available Content Types (26):
+NaN
+
+🎯 SocialLink (socialLink)
+   Description: No description
+   Relevant: ⚪
+   Fields (2):
+     - Service (service): Symbol
+     - Username (username): Symbol
+
+🎯 Link (link)
+   Description: Represents a Link inside a Landing Page Content block.
+   Relevant: ⚪
+   Fields (2):
+     - href (href): Symbol
+     - text (text): Symbol
+
+🎯 Nav Item (navItem)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Text (text): Symbol
+     - Href (href): Symbol
+     - Icon (icon): Link<Asset>
+     - Description (description): Symbol
+
+🎯 NavItemGroup (navItemGroup)
+   Description: A group of nav items with a title
+   Relevant: ✅
+   Fields (2):
+     - Name (name): Symbol
+     - NavItems (navItems): Array<Link>
+
+🎯 Homepage Link Group (homepageLinkGroup)
+   Description: A group of links with a title
+   Relevant: ✅
+   Fields (2):
+     - Name (name): Symbol
+     - Links (links): Array<Link>
+
+🎯 Page (page)
+   Description: No description
+   Relevant: ⚪
+   Fields (5):
+     - title (title): Symbol
+     - slug (slug): Symbol
+     - description (description): Symbol
+     - Image (image): Link<Asset>
+     - Body (body): RichText
+
+🎯 Homepage Product List (homepageProductList)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Heading (heading): Symbol
+     - Kicker (kicker): Symbol
+     - Content (content): Array<Link>
+     - Text (text): Symbol
+
+🎯 Homepage Feature List (homepageFeatureList)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Content (content): Array<Link>
+
+🎯 Homepage Product (homepageProduct)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Heading (heading): Symbol
+     - Image (image): Link<Asset>
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+
+🎯 Homepage Stat List (homepageStatList)
+   Description: No description
+   Relevant: ✅
+   Fields (7):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Content (content): Array<Link>
+     - Image (image): Link<Asset>
+     - Icon (icon): Link<Asset>
+     - Links (links): Array<Link>
+
+🎯 LayoutHeader (layoutHeader)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Name (name): Symbol
+     - CTA (cta): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "homepageLink"
+    ]
+  }
+]
+     - NavItems (navItems): Array<Link>
+
+🎯 Layout (layout)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - name (name): Symbol
+     - Header (header): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "layoutHeader"
+    ]
+  }
+]
+     - Footer (footer): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "layoutFooter"
+    ]
+  }
+]
+
+🎯 LayoutFooter (layoutFooter)
+   Description: No description
+   Relevant: ✅
+   Fields (5):
+     - Name (name): Symbol
+     - Links (links): Array<Link>
+     - Social Links (socialLinks): Array<Link>
+     - Meta (meta): Array<Link>
+     - Copyright (copyright): Symbol
+
+🎯 Homepage Benefit List (homepageBenefitList)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Content (content): Array<Link>
+
+🎯 Homepage CTA (homepageCta)
+   Description: No description
+   Relevant: ✅
+   Fields (5):
+     - Heading (heading): Symbol
+     - Kicker (kicker): Symbol
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+     - Image (image): Link<Asset>
+
+🎯 Homepage Logo List (homepageLogoList)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Name (name): Symbol
+     - Text (text): Symbol
+     - Logos (logos): Array<Link>
+
+🎯 Homepage Benefit (homepageBenefit)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Image (image): Link<Asset>
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+
+🎯 Homepage Testimonial (homepageTestimonial)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Quote (quote): Symbol
+     - Source (source): Symbol
+     - Avatar (avatar): Link<Asset>
+
+🎯 Homepage Feature (homepageFeature)
+   Description: No description
+   Relevant: ✅
+   Fields (5):
+     - Image (image): Link<Asset>
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+
+🎯 Homepage Link (homepageLink)
+   Description: No description
+   Relevant: ✅
+   Fields (2):
+     - Text (text): Symbol
+     - href (href): Symbol
+
+🎯 Homepage Testimonial List (homepageTestimonialList)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Content (content): Array<Link>
+
+🎯 Homepage Hero (homepageHero)
+   Description: No description
+   Relevant: ✅
+   Fields (6):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Subhead (subhead): Symbol
+     - Image (image): Link<Asset>
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+
+🎯 Homepage Logo (homepageLogo)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Image (image): Link<Asset>
+     - Alt (alt): Symbol
+     - Link (link): Symbol
+
+🎯 Blog Post (homepageStat)
+   Description: No description
+   Relevant: ✅
+   Fields (9):
+     - Value (value): Symbol
+     - title (label): Symbol
+     - slug (slug): Symbol
+     - body (body): RichText
+     - exerpt (exerpt): Text
+     - image (image): Link<Asset>
+     - date (date): Date
+     - caategory (caategory): Symbol
+     - author (author): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "homepageFeature"
+    ]
+  }
+]
+
+🎯 Homepage (homepage)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Title (title): Symbol
+     - Description (description): Symbol
+     - Image (image): Link<Asset>
+     - Content (content): Array<Link>
+
+🎯 Music Producer (musicProducer)
+   Description: A music producer selling beats, tutorials, and album project promotions
+   Relevant: ⚪
+   Fields (6):
+     - Name (name): Symbol
+     - Bio (bio): RichText
+     - Avatar (avatar): Link<Asset>
+     - Beats (beats): Array<Link>
+     - Tutorials (tutorials): Array<Link>
+     - Album Promotions (albumPromotions): Array<Link>
+
+NaN
+🎯 HOMEPAGE-RELEVANT CONTENT ANALYSIS
+NaN
+
+📊 Analyzing: Nav Item (navItem)
+   Entries found: 9
+
+   📄 Entry 1
+      text: "School Portfolio"
+      href: "https://jhead12.wixsite.com/myfinalproject"
+
+   📄 Entry 2
+      text: "Videos"
+      href: "/videos"
+
+   📄 Entry 3
+      text: "Blog"
+      href: "/blog"
+      icon: Asset (2NeXSSCyiXaBh82qjHqZJe)
+
+   📄 Entry 4
+      text: "Beats"
+      href: "/beats"
+
+   📄 Entry 5
+      text: "About"
+      href: "/about"
+
+   📄 Entry 6
+      text: "7 Day Personal Power Challenge"
+      href: "https://winning.jeldonmusic.com/l/7-day-challenge-..."
+      icon: Asset (oItNIXulMbf4K1ERM31KO)
+      description: "A Free Training for creativity and self empowermen..."
+
+   📄 Entry 7
+      text: "Music and Stem Mixing"
+      href: "https://winning.jeldonmusic.com/mixing-services/"
+      icon: Asset (oItNIXulMbf4K1ERM31KO)
+
+   📄 Entry 8
+      text: "Music Production"
+      href: "https://winning.jeldonmusic.com/mixing-services/"
+      icon: Asset (dB20mJtrXcJTs59Kq7g1Z)
+
+   📄 Entry 9
+      text: "7 Day Personal Power Challenge!"
+      href: "https://winning.jeldonmusic.com/free-7-day-challen..."
+      description: "Creative and personal power course"
+
+📊 Analyzing: NavItemGroup (navItemGroup)
+   Entries found: 1
+
+   📄 Services
+      name: "Services"
+      navItems: [2 items]
+         Sample: Entry (XoJeDF9z1eEGIrJ06T0z6)
+
+📊 Analyzing: Homepage Link Group (homepageLinkGroup)
+   Entries found: 0
+
+📊 Analyzing: Homepage Product List (homepageProductList)
+   Entries found: 0
+
+📊 Analyzing: Homepage Feature List (homepageFeatureList)
+   Entries found: 0
+
+📊 Analyzing: Homepage Product (homepageProduct)
+   Entries found: 0
+
+📊 Analyzing: Homepage Stat List (homepageStatList)
+   Entries found: 0
+
+📊 Analyzing: LayoutHeader (layoutHeader)
+   Entries found: 1
+
+   📄 Header
+      name: "Header"
+      cta: Entry (1nvEycBAsA7imQxyPPg0ju)
+      navItems: [5 items]
+         Sample: Entry (3HRx4NBErpaUkprPQ8m7Sx)
+
+📊 Analyzing: Layout (layout)
+   Entries found: 1
+
+   📄 Site Layout
+      name: "Site Layout"
+      header: Entry (5rVbCUT6w6Q2595ISWVJXV)
+      footer: Entry (05kuU52BOUENtdoPJO49A)
+
+📊 Analyzing: LayoutFooter (layoutFooter)
+   Entries found: 1
+
+   📄 Footer
+      name: "Footer"
+      links: [4 items]
+         Sample: Entry (5gpn4I7xUQBhBaLtlp1Mug)
+      socialLinks: [6 items]
+         Sample: Entry (46nYH2SuEu663vZZBh4mlt)
+      meta: [2 items]
+         Sample: Entry (7rzbOVPidT6aaj5X69Wag2)
+      copyright: "© 2025 JEH Ventures, LLC All rights reserved."
+
+📊 Analyzing: Homepage Benefit List (homepageBenefitList)
+   Entries found: 0
+
+📊 Analyzing: Homepage CTA (homepageCta)
+   Entries found: 0
+
+📊 Analyzing: Homepage Logo List (homepageLogoList)
+   Entries found: 1
+
+   📄 Feature List
+      name: "Feature List"
+      text: "Join the community of artist who enjoyed the benef..."
+      logos: [3 items]
+         Sample: Entry (2JR3oqAVX1piHeqafX3J0r)
+
+📊 Analyzing: Homepage Benefit (homepageBenefit)
+   Entries found: 1
+
+   📄 Never pay for a homepage again
+      image: Asset (1JSyvUW6IEcZPYdXZMJrjI)
+      heading: "Never pay for a homepage again"
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing..."
+
+📊 Analyzing: Homepage Testimonial (homepageTestimonial)
+   Entries found: 0
+
+📊 Analyzing: Homepage Feature (homepageFeature)
+   Entries found: 0
+
+📊 Analyzing: Homepage Link (homepageLink)
+   Entries found: 10
+
+   📄 Entry 1
+      text: "About"
+      href: "/about"
+
+   📄 Entry 2
+      text: "Future memories"
+      href: "https://music.apple.com/us/album/future-memories/1..."
+
+   📄 Entry 3
+      text: "Read Blog"
+      href: "blog/how-to-sync-an-mpc-with-pro-tools-a-step-by-s..."
+
+   📄 Entry 4
+      text: "Blog"
+      href: "/blog"
+
+   📄 Entry 5
+      text: "Download Free Kit (No Email necessary)"
+      href: "https://www.dropbox.com/scl/fo/vzcwh9qm9fpdh67o08j..."
+
+   📄 Entry 6
+      text: "School Portfolio"
+      href: "https://jhead12.wixsite.com/myfinalproject"
+
+   📄 Entry 7
+      text: "Music Consultation"
+      href: "https://calendly.com/support-xx6/marketing-consula..."
+
+   📄 Entry 8
+      text: "Download"
+      href: "https://samply.app/player/1zlUWDkjpzBo6nDTiyNo"
+
+   📄 Entry 9
+      text: "Watch Now"
+      href: "https://www.youtube.com/watch?v=5XqoOQ3vAus"
+
+   📄 Entry 10
+      text: "Privacy Policy"
+      href: "https://jeldonmusic.com/privacy/"
+
+📊 Analyzing: Homepage Testimonial List (homepageTestimonialList)
+   Entries found: 0
+
+📊 Analyzing: Homepage Hero (homepageHero)
+   Entries found: 3
+
+   📄 Jeldon Music Page
+      kicker: "Music + Technology"
+      heading: "Jeldon Music Page"
+      subhead: "15 Min Masculine Personal Power Sigma Strength Med..."
+      image: Asset (2qkCBunkgBRusPybpZlk6z)
+      text: "15 Min Masculine Personal Power Sigma Strength Med..."
+      links: [2 items]
+         Sample: Entry (5AvpD19DlxroFrt5NnMM4K)
+
+   📄 Mixtape Version of "Chasing Down My Airplane" on Soundcloud!
+      kicker: "News + Release"
+      heading: "Mixtape Version of "Chasing Down My Airplane" on S..."
+      subhead: "Working on cadence."
+      image: Asset (3T1tuZNr5vaQxBuLL3Bqwm)
+      links: [1 items]
+         Sample: Entry (34Q5ia0NMjk1L4k4SDZUoG)
+
+   📄 Synchronizing MPC X & Live II with Pro Tools: Remote Control & Standalone Mode Tutorial
+      kicker: "Beats + Feature"
+      heading: "Synchronizing MPC X & Live II with Pro Tools: Remo..."
+      image: Asset (1dPxaKY6sMzszSfMjHmIzz)
+      text: "Learn from Jeldon Series -  Protools Tutorials"
+      links: [2 items]
+         Sample: Link (lfXRRbpgCoAJ56hcafTt2)
+
+📊 Analyzing: Homepage Logo (homepageLogo)
+   Entries found: 9
+
+   📄 Entry 1
+      image: Asset (4MjlEU1kUPmtk02SkS9HYc)
+      alt: "Future Memories"
+      link: "https://music.apple.com/us/album/future-memories/1..."
+
+   📄 Entry 2
+      image: Asset (4MjlEU1kUPmtk02SkS9HYc)
+      alt: "Future Memories"
+      link: "https://music.apple.com/us/album/future-memories/1..."
+
+   📄 Entry 3
+      image: Asset (JWYz20oDhydMkFxRPhHbh)
+      alt: "Gambling Man"
+      link: "https://music.apple.com/us/album/gambling-man/6875..."
+
+   📄 Entry 4
+      image: Asset (45MvcZFZLCrcDdDEeXjZ0h)
+      alt: "Be with you by Aunyae Heart"
+      link: "https://music.apple.com/us/album/be-with-you-singl..."
+
+   📄 Entry 5
+      image: Asset (FUKEhfTLAag2fYhJTNbwT)
+      alt: "Circuitz"
+
+   📄 Entry 6
+      image: Asset (FUKEhfTLAag2fYhJTNbwT)
+      alt: "circutiz"
+
+   📄 Entry 7
+      image: Asset (6o5bLV5MSbjzOVaQvS54xf)
+      alt: "funtendo"
+
+   📄 Entry 8
+      image: Asset (6o5bLV5MSbjzOVaQvS54xf)
+      alt: "funtendo"
+
+   📄 Entry 9
+      image: Asset (1TvrEUabcbAJWIymVccgcw)
+      alt: "Chatte"
+
+📊 Analyzing: Blog Post (homepageStat)
+   Entries found: 0
+
+📊 Analyzing: Homepage (homepage)
+   Entries found: 1
+
+   📄 Jeldon Music 
+      title: "Jeldon Music "
+      description: "A music producer | Engineer | Developer"
+      image: Asset (7w71aVttWpFparKr5hqqRM)
+      content: [7 items]
+         Sample: Entry (5YY2FiEYKfZOuDIjzw6Vpi)
+
+NaN
+🔍 FRAGMENT VALIDATION
+NaN
+
+NaN
+🖼️ ASSETS SUMMARY
+NaN
+Total assets: 62
+Sample assets:
+   1. Future Memories
+      Type: image/webp
+      URL: //images.ctfassets.net/esrzm688xldd/4MjlEU1kUPmtk02SkS9HYc/6781cd110092da648ca25622e037e0dd/Future_Memories_Logo.webp
+      Size: 75764 bytes
+   2. Clouds Filled Alternative
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/2NeXSSCyiXaBh82qjHqZJe/db3749cd89ae98347905f84b3235079a/Product_SuperApp__Inverted_true__Size_Large.png
+      Size: 4304 bytes
+   3. Umbrella Filled Alternative
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/dB20mJtrXcJTs59Kq7g1Z/9e2cfc012445f90e8d868aca60deecc0/Product_HyperMarket__Inverted_true__Size_Large.png
+      Size: 4642 bytes
+   4. Pulse Filled Alternative
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/oItNIXulMbf4K1ERM31KO/8ceb209c8b34f3c49d9fd79bcf580a1b/Product_AcmeTrack__Inverted_true__Size_Large.png
+      Size: 2550 bytes
+   5. phoenix-baker
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/3jwMPzNptR5bEV32rTjJI5/0b7e96d76ee5eed42d2ca989ae20383a/Fixed_aspect_ratio_cover.png
+      Size: 599264 bytes
+Done in 5.40s.
+yarn run v1.22.22
+$ npm run graphql:inspect && npm run inspect:contentful
+
+> jeldon-music@1.0.0 graphql:inspect
+> node ./scripts/inspect-graphql-schema.js
+
+🔍 GraphQL Schema Inspector
+NaN
+📁 Checking for schema files in: /Volumes/PRO-BLADE/Github/jeldonmusic_com/site1/public
+✅ Page data directory exists
+📄 Available page data:
+   - 404
+   - 404.html
+   - about
+   - app-data.json
+   - beats
+   - blog
+   - contact
+   - contact-us
+   - contact-us-2
+   - dev-404-page
+   - index
+   - index-updated
+   - mixes
+   - music
+   - privacy
+   - reviews
+   - shop
+   - sq
+   - terms
+   - tutorials
+   - videos
+
+📋 Scanning for GraphQL queries in src/
+
+🔎 Found 50 files with GraphQL queries:
+
+📄 /components/about-hero.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutHeroContent
+
+📄 /components/about-leadership.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutLeadershipContent
+
+📄 /components/about-logo-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutLogoListContent
+
+📄 /components/about-stat-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: AboutStatListContent
+
+📄 /components/beats-benefit-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsBenefitListContent
+
+📄 /components/beats-cta.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsCtaContent
+
+📄 /components/beats-feature-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsFeatureListContent
+
+📄 /components/beats-feature.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsFeatureContent
+
+📄 /components/beats-hero.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsHeroContent
+
+📄 /components/beats-logo-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsLogoListContent
+
+📄 /components/beats-product-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsProductListContent
+
+📄 /components/beats-testimonial-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BeatsTestimonialListContent
+
+📄 /components/blog-feature.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: BlogFeatureContent
+
+📄 /components/contentful/album-community-section-clean.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/contentful/album-community-section.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/contentful/contentful-footer.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/contentful/contentful-image-urls.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/cta.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: definition, HomepageCtaFields
+
+📄 /components/feature-list.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/feature.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: HomepageFeatureContent
+
+📄 /components/footer.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/header.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/hero/rotating-hero-banner.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/hero-section.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: HeroSectionContent
+
+📄 /components/hero.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: HeroComponentContent
+
+📄 /components/logo-list.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: LogoListComponentContent
+
+📄 /components/related-posts.js
+   - Has page queries: ✅
+   - Has static queries: ✅
+
+📄 /components/shopify-product-grid.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: ShopifyProductGridContent
+
+📄 /pages/about.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/beats.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/blog.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/index-updated.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/index.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/mixes.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/music.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/shop.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/terms.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/tutorials.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /pages/videos.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/beat.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/blog-index.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/blog-post.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/mix.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/product.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/tutorial.tsx
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/video-new.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/video.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/wordpress-page.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /templates/wp-page.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+
+📄 /utils/graphql-fragments.js
+   - Has page queries: ✅
+   - Has static queries: ❌
+   - Fragments: WpContentFields, BeatFields, TutorialFields, MixFields, ContentCardFields, BeatCardFields, TutorialCardFields, MixCardFields
+
+📋 Analyzing gatsby-node.js schema definitions...
+
+🏗️  Schema Definitions Found:
+   - Interfaces: 59
+     • HomepageBlock
+     • BeatsBlock
+     • HomepageLink
+     • BeatsLink
+     • HeaderNavItem
+     • NavItem
+     • NavItemGroup
+     • HomepageImage
+     • BeatsImage
+     • HomepageHero
+     • BlogFeature
+     • BeatsHero
+     • HomepageFeature
+     • BeatsFeature
+     • HomepageFeatureList
+     • BeatsFeatureList
+     • HomepageCta
+     • BeatsCta
+     • HomepageLogo
+     • BeatsLogo
+     • HomepageLogoList
+     • BeatsLogoList
+     • HomepageTestimonial
+     • BeatsTestimonial
+     • HomepageTestimonialList
+     • BeatsTestimonialList
+     • HomepageBenefit
+     • HomepageBenefitList
+     • BeatsBenefit
+     • BeatsBenefitList
+     • HomepageStat
+     • BeatsStat
+     • HomepageStatList
+     • BeatsStatList
+     • HomepageProduct
+     • HomepageProductList
+     • BeatsProduct
+     • BeatsProductList
+     • Beats
+     • Homepage
+     • LayoutHeader
+     • SocialLink
+     • LayoutFooter
+     • Layout
+     • BlogPage
+     • BlogHero
+     • Privacy
+     • Terms
+     • AboutPage
+     • AboutHero
+     • AboutStat
+     • AboutStatList
+     • AboutProfile
+     • AboutLeadership
+     • AboutLogoList
+     • Page
+     • WpNode
+     • WpContentNode
+     • WpTermNode
+   - Types: 109
+     • ContentfulHomepageLink
+     • ContentfulBeatsLink
+     • ContentfulNavItem
+     • ContentfulNavItemGroup
+     • ContentfulAsset
+     • ContentfulHomepageHero
+     • type
+      heading
+     • ContentfulBeatsHero
+     • type
+      heading
+     • ContentfulHomepageFeature
+     ... and 99 more
+
+🚨 Checking for problematic type definitions...
+
+🔍 NavItem definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      icon: HomepageImage
+   Definition 2:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      navItems: [NavItem]
+
+🔍 HeaderNavItem definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+
+🔍 NavItemGroup definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String
+      href: String
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      navItems: [NavItem]
+
+🔍 ContentfulNavItem definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String @navItemType(name: "Link")
+      href: String @linkField(from: "url")
+      text: String
+      name: String
+      description: String
+      submenu: [HeaderNavItem]
+      icon: HomepageImage @link(from: "icon___NODE")
+   Definition 2:
+     - id: ID!
+      navItemType: String @navItemType(name: "Group")
+      name: String
+      navItems: [NavItem] @link(from: "navItems___NODE")
+      href: String
+      text: String
+      description: String
+      submenu: [HeaderNavItem]
+
+🔍 ContentfulNavItemGroup definitions found:
+   Definition 1:
+     - id: ID!
+      navItemType: String @navItemType(name: "Group")
+      name: String
+      navItems: [NavItem] @link(from: "navItems___NODE")
+      href: String
+      text: String
+      description: String
+      submenu: [HeaderNavItem]
+
+> jeldon-music@1.0.0 inspect:contentful
+> node ./scripts/inspect-contentful.js
+
+🔍 Contentful Data Inspector
+NaN
+📡 Connected to Contentful space: esrzm688xldd
+
+📋 Available Content Types (26):
+NaN
+
+🎯 SocialLink (socialLink)
+   Description: No description
+   Relevant: ⚪
+   Fields (2):
+     - Service (service): Symbol
+     - Username (username): Symbol
+
+🎯 Link (link)
+   Description: Represents a Link inside a Landing Page Content block.
+   Relevant: ⚪
+   Fields (2):
+     - href (href): Symbol
+     - text (text): Symbol
+
+🎯 Nav Item (navItem)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Text (text): Symbol
+     - Href (href): Symbol
+     - Icon (icon): Link<Asset>
+     - Description (description): Symbol
+
+🎯 NavItemGroup (navItemGroup)
+   Description: A group of nav items with a title
+   Relevant: ✅
+   Fields (2):
+     - Name (name): Symbol
+     - NavItems (navItems): Array<Link>
+
+🎯 Homepage Link Group (homepageLinkGroup)
+   Description: A group of links with a title
+   Relevant: ✅
+   Fields (2):
+     - Name (name): Symbol
+     - Links (links): Array<Link>
+
+🎯 Page (page)
+   Description: No description
+   Relevant: ⚪
+   Fields (5):
+     - title (title): Symbol
+     - slug (slug): Symbol
+     - description (description): Symbol
+     - Image (image): Link<Asset>
+     - Body (body): RichText
+
+🎯 Homepage Product List (homepageProductList)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Heading (heading): Symbol
+     - Kicker (kicker): Symbol
+     - Content (content): Array<Link>
+     - Text (text): Symbol
+
+🎯 Homepage Feature List (homepageFeatureList)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Content (content): Array<Link>
+
+🎯 Homepage Product (homepageProduct)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Heading (heading): Symbol
+     - Image (image): Link<Asset>
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+
+🎯 Homepage Stat List (homepageStatList)
+   Description: No description
+   Relevant: ✅
+   Fields (7):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Content (content): Array<Link>
+     - Image (image): Link<Asset>
+     - Icon (icon): Link<Asset>
+     - Links (links): Array<Link>
+
+🎯 LayoutHeader (layoutHeader)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Name (name): Symbol
+     - CTA (cta): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "homepageLink"
+    ]
+  }
+]
+     - NavItems (navItems): Array<Link>
+
+🎯 Layout (layout)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - name (name): Symbol
+     - Header (header): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "layoutHeader"
+    ]
+  }
+]
+     - Footer (footer): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "layoutFooter"
+    ]
+  }
+]
+
+🎯 LayoutFooter (layoutFooter)
+   Description: No description
+   Relevant: ✅
+   Fields (5):
+     - Name (name): Symbol
+     - Links (links): Array<Link>
+     - Social Links (socialLinks): Array<Link>
+     - Meta (meta): Array<Link>
+     - Copyright (copyright): Symbol
+
+🎯 Homepage Benefit List (homepageBenefitList)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Content (content): Array<Link>
+
+🎯 Homepage CTA (homepageCta)
+   Description: No description
+   Relevant: ✅
+   Fields (5):
+     - Heading (heading): Symbol
+     - Kicker (kicker): Symbol
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+     - Image (image): Link<Asset>
+
+🎯 Homepage Logo List (homepageLogoList)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Name (name): Symbol
+     - Text (text): Symbol
+     - Logos (logos): Array<Link>
+
+🎯 Homepage Benefit (homepageBenefit)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Image (image): Link<Asset>
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+
+🎯 Homepage Testimonial (homepageTestimonial)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Quote (quote): Symbol
+     - Source (source): Symbol
+     - Avatar (avatar): Link<Asset>
+
+🎯 Homepage Feature (homepageFeature)
+   Description: No description
+   Relevant: ✅
+   Fields (5):
+     - Image (image): Link<Asset>
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+
+🎯 Homepage Link (homepageLink)
+   Description: No description
+   Relevant: ✅
+   Fields (2):
+     - Text (text): Symbol
+     - href (href): Symbol
+
+🎯 Homepage Testimonial List (homepageTestimonialList)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Content (content): Array<Link>
+
+🎯 Homepage Hero (homepageHero)
+   Description: No description
+   Relevant: ✅
+   Fields (6):
+     - Kicker (kicker): Symbol
+     - Heading (heading): Symbol
+     - Subhead (subhead): Symbol
+     - Image (image): Link<Asset>
+     - Text (text): Symbol
+     - Links (links): Array<Link>
+
+🎯 Homepage Logo (homepageLogo)
+   Description: No description
+   Relevant: ✅
+   Fields (3):
+     - Image (image): Link<Asset>
+     - Alt (alt): Symbol
+     - Link (link): Symbol
+
+🎯 Blog Post (homepageStat)
+   Description: No description
+   Relevant: ✅
+   Fields (9):
+     - Value (value): Symbol
+     - title (label): Symbol
+     - slug (slug): Symbol
+     - body (body): RichText
+     - exerpt (exerpt): Text
+     - image (image): Link<Asset>
+     - date (date): Date
+     - caategory (caategory): Symbol
+     - author (author): Link<Entry>
+       Validations: [
+  {
+    "linkContentType": [
+      "homepageFeature"
+    ]
+  }
+]
+
+🎯 Homepage (homepage)
+   Description: No description
+   Relevant: ✅
+   Fields (4):
+     - Title (title): Symbol
+     - Description (description): Symbol
+     - Image (image): Link<Asset>
+     - Content (content): Array<Link>
+
+🎯 Music Producer (musicProducer)
+   Description: A music producer selling beats, tutorials, and album project promotions
+   Relevant: ⚪
+   Fields (6):
+     - Name (name): Symbol
+     - Bio (bio): RichText
+     - Avatar (avatar): Link<Asset>
+     - Beats (beats): Array<Link>
+     - Tutorials (tutorials): Array<Link>
+     - Album Promotions (albumPromotions): Array<Link>
+
+NaN
+🎯 HOMEPAGE-RELEVANT CONTENT ANALYSIS
+NaN
+
+📊 Analyzing: Nav Item (navItem)
+   Entries found: 9
+
+   📄 Entry 1
+      text: "School Portfolio"
+      href: "https://jhead12.wixsite.com/myfinalproject"
+
+   📄 Entry 2
+      text: "Videos"
+      href: "/videos"
+
+   📄 Entry 3
+      text: "Blog"
+      href: "/blog"
+      icon: Asset (2NeXSSCyiXaBh82qjHqZJe)
+
+   📄 Entry 4
+      text: "Beats"
+      href: "/beats"
+
+   📄 Entry 5
+      text: "About"
+      href: "/about"
+
+   📄 Entry 6
+      text: "7 Day Personal Power Challenge"
+      href: "https://winning.jeldonmusic.com/l/7-day-challenge-..."
+      icon: Asset (oItNIXulMbf4K1ERM31KO)
+      description: "A Free Training for creativity and self empowermen..."
+
+   📄 Entry 7
+      text: "Music and Stem Mixing"
+      href: "https://winning.jeldonmusic.com/mixing-services/"
+      icon: Asset (oItNIXulMbf4K1ERM31KO)
+
+   📄 Entry 8
+      text: "Music Production"
+      href: "https://winning.jeldonmusic.com/mixing-services/"
+      icon: Asset (dB20mJtrXcJTs59Kq7g1Z)
+
+   📄 Entry 9
+      text: "7 Day Personal Power Challenge!"
+      href: "https://winning.jeldonmusic.com/free-7-day-challen..."
+      description: "Creative and personal power course"
+
+📊 Analyzing: NavItemGroup (navItemGroup)
+   Entries found: 1
+
+   📄 Services
+      name: "Services"
+      navItems: [2 items]
+         Sample: Entry (XoJeDF9z1eEGIrJ06T0z6)
+
+📊 Analyzing: Homepage Link Group (homepageLinkGroup)
+   Entries found: 0
+
+📊 Analyzing: Homepage Product List (homepageProductList)
+   Entries found: 0
+
+📊 Analyzing: Homepage Feature List (homepageFeatureList)
+   Entries found: 0
+
+📊 Analyzing: Homepage Product (homepageProduct)
+   Entries found: 0
+
+📊 Analyzing: Homepage Stat List (homepageStatList)
+   Entries found: 0
+
+📊 Analyzing: LayoutHeader (layoutHeader)
+   Entries found: 1
+
+   📄 Header
+      name: "Header"
+      cta: Entry (1nvEycBAsA7imQxyPPg0ju)
+      navItems: [5 items]
+         Sample: Entry (3HRx4NBErpaUkprPQ8m7Sx)
+
+📊 Analyzing: Layout (layout)
+   Entries found: 1
+
+   📄 Site Layout
+      name: "Site Layout"
+      header: Entry (5rVbCUT6w6Q2595ISWVJXV)
+      footer: Entry (05kuU52BOUENtdoPJO49A)
+
+📊 Analyzing: LayoutFooter (layoutFooter)
+   Entries found: 1
+
+   📄 Footer
+      name: "Footer"
+      links: [4 items]
+         Sample: Entry (5gpn4I7xUQBhBaLtlp1Mug)
+      socialLinks: [6 items]
+         Sample: Entry (46nYH2SuEu663vZZBh4mlt)
+      meta: [2 items]
+         Sample: Entry (7rzbOVPidT6aaj5X69Wag2)
+      copyright: "© 2025 JEH Ventures, LLC All rights reserved."
+
+📊 Analyzing: Homepage Benefit List (homepageBenefitList)
+   Entries found: 0
+
+📊 Analyzing: Homepage CTA (homepageCta)
+   Entries found: 0
+
+📊 Analyzing: Homepage Logo List (homepageLogoList)
+   Entries found: 1
+
+   📄 Feature List
+      name: "Feature List"
+      text: "Join the community of artist who enjoyed the benef..."
+      logos: [3 items]
+         Sample: Entry (2JR3oqAVX1piHeqafX3J0r)
+
+📊 Analyzing: Homepage Benefit (homepageBenefit)
+   Entries found: 1
+
+   📄 Never pay for a homepage again
+      image: Asset (1JSyvUW6IEcZPYdXZMJrjI)
+      heading: "Never pay for a homepage again"
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing..."
+
+📊 Analyzing: Homepage Testimonial (homepageTestimonial)
+   Entries found: 0
+
+📊 Analyzing: Homepage Feature (homepageFeature)
+   Entries found: 0
+
+📊 Analyzing: Homepage Link (homepageLink)
+   Entries found: 10
+
+   📄 Entry 1
+      text: "About"
+      href: "/about"
+
+   📄 Entry 2
+      text: "Future memories"
+      href: "https://music.apple.com/us/album/future-memories/1..."
+
+   📄 Entry 3
+      text: "Read Blog"
+      href: "blog/how-to-sync-an-mpc-with-pro-tools-a-step-by-s..."
+
+   📄 Entry 4
+      text: "Blog"
+      href: "/blog"
+
+   📄 Entry 5
+      text: "Download Free Kit (No Email necessary)"
+      href: "https://www.dropbox.com/scl/fo/vzcwh9qm9fpdh67o08j..."
+
+   📄 Entry 6
+      text: "School Portfolio"
+      href: "https://jhead12.wixsite.com/myfinalproject"
+
+   📄 Entry 7
+      text: "Music Consultation"
+      href: "https://calendly.com/support-xx6/marketing-consula..."
+
+   📄 Entry 8
+      text: "Download"
+      href: "https://samply.app/player/1zlUWDkjpzBo6nDTiyNo"
+
+   📄 Entry 9
+      text: "Watch Now"
+      href: "https://www.youtube.com/watch?v=5XqoOQ3vAus"
+
+   📄 Entry 10
+      text: "Privacy Policy"
+      href: "https://jeldonmusic.com/privacy/"
+
+📊 Analyzing: Homepage Testimonial List (homepageTestimonialList)
+   Entries found: 0
+
+📊 Analyzing: Homepage Hero (homepageHero)
+   Entries found: 3
+
+   📄 Jeldon Music Page
+      kicker: "Music + Technology"
+      heading: "Jeldon Music Page"
+      subhead: "15 Min Masculine Personal Power Sigma Strength Med..."
+      image: Asset (2qkCBunkgBRusPybpZlk6z)
+      text: "15 Min Masculine Personal Power Sigma Strength Med..."
+      links: [2 items]
+         Sample: Entry (5AvpD19DlxroFrt5NnMM4K)
+
+   📄 Mixtape Version of "Chasing Down My Airplane" on Soundcloud!
+      kicker: "News + Release"
+      heading: "Mixtape Version of "Chasing Down My Airplane" on S..."
+      subhead: "Working on cadence."
+      image: Asset (3T1tuZNr5vaQxBuLL3Bqwm)
+      links: [1 items]
+         Sample: Entry (34Q5ia0NMjk1L4k4SDZUoG)
+
+   📄 Synchronizing MPC X & Live II with Pro Tools: Remote Control & Standalone Mode Tutorial
+      kicker: "Beats + Feature"
+      heading: "Synchronizing MPC X & Live II with Pro Tools: Remo..."
+      image: Asset (1dPxaKY6sMzszSfMjHmIzz)
+      text: "Learn from Jeldon Series -  Protools Tutorials"
+      links: [2 items]
+         Sample: Link (lfXRRbpgCoAJ56hcafTt2)
+
+📊 Analyzing: Homepage Logo (homepageLogo)
+   Entries found: 9
+
+   📄 Entry 1
+      image: Asset (4MjlEU1kUPmtk02SkS9HYc)
+      alt: "Future Memories"
+      link: "https://music.apple.com/us/album/future-memories/1..."
+
+   📄 Entry 2
+      image: Asset (4MjlEU1kUPmtk02SkS9HYc)
+      alt: "Future Memories"
+      link: "https://music.apple.com/us/album/future-memories/1..."
+
+   📄 Entry 3
+      image: Asset (JWYz20oDhydMkFxRPhHbh)
+      alt: "Gambling Man"
+      link: "https://music.apple.com/us/album/gambling-man/6875..."
+
+   📄 Entry 4
+      image: Asset (45MvcZFZLCrcDdDEeXjZ0h)
+      alt: "Be with you by Aunyae Heart"
+      link: "https://music.apple.com/us/album/be-with-you-singl..."
+
+   📄 Entry 5
+      image: Asset (FUKEhfTLAag2fYhJTNbwT)
+      alt: "Circuitz"
+
+   📄 Entry 6
+      image: Asset (FUKEhfTLAag2fYhJTNbwT)
+      alt: "circutiz"
+
+   📄 Entry 7
+      image: Asset (6o5bLV5MSbjzOVaQvS54xf)
+      alt: "funtendo"
+
+   📄 Entry 8
+      image: Asset (6o5bLV5MSbjzOVaQvS54xf)
+      alt: "funtendo"
+
+   📄 Entry 9
+      image: Asset (1TvrEUabcbAJWIymVccgcw)
+      alt: "Chatte"
+
+📊 Analyzing: Blog Post (homepageStat)
+   Entries found: 0
+
+📊 Analyzing: Homepage (homepage)
+   Entries found: 1
+
+   📄 Jeldon Music 
+      title: "Jeldon Music "
+      description: "A music producer | Engineer | Developer"
+      image: Asset (7w71aVttWpFparKr5hqqRM)
+      content: [7 items]
+         Sample: Entry (5YY2FiEYKfZOuDIjzw6Vpi)
+
+NaN
+🔍 FRAGMENT VALIDATION
+NaN
+
+NaN
+🖼️ ASSETS SUMMARY
+NaN
+Total assets: 62
+Sample assets:
+   1. Future Memories
+      Type: image/webp
+      URL: //images.ctfassets.net/esrzm688xldd/4MjlEU1kUPmtk02SkS9HYc/6781cd110092da648ca25622e037e0dd/Future_Memories_Logo.webp
+      Size: 75764 bytes
+   2. Clouds Filled Alternative
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/2NeXSSCyiXaBh82qjHqZJe/db3749cd89ae98347905f84b3235079a/Product_SuperApp__Inverted_true__Size_Large.png
+      Size: 4304 bytes
+   3. Umbrella Filled Alternative
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/dB20mJtrXcJTs59Kq7g1Z/9e2cfc012445f90e8d868aca60deecc0/Product_HyperMarket__Inverted_true__Size_Large.png
+      Size: 4642 bytes
+   4. Pulse Filled Alternative
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/oItNIXulMbf4K1ERM31KO/8ceb209c8b34f3c49d9fd79bcf580a1b/Product_AcmeTrack__Inverted_true__Size_Large.png
+      Size: 2550 bytes
+   5. phoenix-baker
+      Type: image/png
+      URL: //images.ctfassets.net/esrzm688xldd/3jwMPzNptR5bEV32rTjJI5/0b7e96d76ee5eed42d2ca989ae20383a/Fixed_aspect_ratio_cover.png
+      Size: 599264 bytes
+Done in 3.10s.
