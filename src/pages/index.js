@@ -110,11 +110,36 @@ export const query = graphql`
         # Only query basic fields that exist on all types
         ... on ContentfulHomepageHero {
           id
+          blocktype
+          heading
+          kicker
+          subhead
           text
           image {
             id
             gatsbyImageData
             alt
+          }
+          links {
+            id
+            href
+            text
+          }
+        }
+        ... on ContentfulHomepageLogoList {
+          id
+          blocktype
+          name
+          text
+          logos {
+            id
+            alt
+            link
+            image {
+              id
+              alt
+              gatsbyImageData(height: 80)
+            }
           }
         }
         ... on ContentfulHomepageCta {

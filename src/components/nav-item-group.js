@@ -14,6 +14,15 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
   const isSmallScreen = () => {
     return !window.matchMedia(media.small).matches
   }
+  
+  const handleSubItemClick = React.useCallback(() => {
+    setIsOpen(false)
+    setPopupVisible(false)
+    if (onItemClick) {
+      onItemClick()
+    }
+  }, [onItemClick])
+  
   const onGroupButtonClick = React.useCallback(() => {
     if (!isOpen) {
       setIsOpen(true)
@@ -110,7 +119,7 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
                 <NavLink 
                   to={navItem.href} 
                   className={styles.navLinkListLink}
-                  onClick={onItemClick}
+                  onClick={handleSubItemClick}
                 >
                   <Flex variant="start" gap={3}>
                     {navItem.icon && navItem.icon.gatsbyImageData && (

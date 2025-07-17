@@ -1,6 +1,5 @@
 import * as React from "react"
 import { graphql, useStaticQuery } from "gatsby"
-import { isBypassWordpressEnabled } from "../utils/bypass-helper"
 import { Menu, X } from "react-feather"
 import {
   Container,
@@ -10,7 +9,6 @@ import {
   NavLink,
   Button,
   InteractiveIcon,
-  Nudge,
   VisuallyHidden,
 } from "./ui"
 import {
@@ -18,7 +16,10 @@ import {
   mobileNavLink,
   desktopHeaderNavWrapper,
   mobileHeaderNavWrapper,
-  mobileNavSVGColorWrapper,
+  mobileCTAButton,
+  mobileLogo,
+  mobileMenuButton,
+  desktopNav,
 } from "./header.css"
 import NavItemGroup from "./nav-item-group"
 import BrandLogo from "./brand-logo"
@@ -26,7 +27,6 @@ import BrandLogo from "./brand-logo"
 
 
 export default function Header() {
-  const bypassWordpress = isBypassWordpressEnabled();
   const mockData = {
     layout: {
       header: {
@@ -85,113 +85,20 @@ export default function Header() {
           title
         }
       }
-      # Query navigation items directly from Contentful
-      allContentfulNavItemGroup {
-        nodes {
-          id
-          name
-          href
-          text
-          description
-          navItems {
-            id
-            href
-            text
-            description
-            icon {
-              alt
-              gatsbyImageData(width: 32, height: 32)
-            }
-          }
-        }
-      }
-      allContentfulNavItem {
-        nodes {
-          id
-          href
-          text
-          description
-          icon {
-            alt
-            gatsbyImageData(width: 32, height: 32)
-          }
-        }
-      }
     }
   `)
 
-  // Process navigation data - use Contentful data if available, fallback to mock data
+  // Process navigation data - use mock data for now
   let navItems = []
   let cta = null
   
-  // Check if we have Contentful data available
-  if (queryData && (queryData.allContentfulNavItem?.nodes?.length > 0 || queryData.allContentfulNavItemGroup?.nodes?.length > 0)) {
-    console.log("Using Contentful navigation data with icons")
-    console.log("Contentful data:", queryData) // Debug log
-    
-    // Combine individual nav items and nav groups
-    const contentfulNavItems = queryData.allContentfulNavItem?.nodes || []
-    const contentfulNavGroups = queryData.allContentfulNavItemGroup?.nodes || []
-    
-    console.log("Nav items:", contentfulNavItems) // Debug log
-    console.log("Nav groups:", contentfulNavGroups) // Debug log
-    
-    // Create a hybrid approach: use mock data structure with Contentful icons
-    const mockNavItems = mockData?.layout?.header?.navItems || []
-    
-    // Map mock navigation with Contentful icons where available
-    navItems = mockNavItems.map(mockItem => {
-      if (mockItem.navItemType === "Group") {
-        // Find matching Contentful group
-        const contentfulGroup = contentfulNavGroups.find(cg => 
-          cg.name?.toLowerCase().includes(mockItem.name?.toLowerCase()) ||
-          cg.text?.toLowerCase().includes(mockItem.name?.toLowerCase())
-        )
-        
-        return {
-          ...mockItem,
-          navItems: mockItem.navItems.map(mockSubItem => {
-            // Find matching Contentful nav item for icons
-            const contentfulItem = contentfulNavItems.find(ci => 
-              ci.text?.toLowerCase().includes(mockSubItem.text?.toLowerCase())
-            ) || (contentfulGroup?.navItems || []).find(cni =>
-              cni.text?.toLowerCase().includes(mockSubItem.text?.toLowerCase())
-            )
-            
-            return {
-              ...mockSubItem,
-              icon: contentfulItem?.icon || null,
-              description: contentfulItem?.description || mockSubItem.description
-            }
-          })
-        }
-      } else {
-        // Find matching Contentful item for regular nav items
-        const contentfulItem = contentfulNavItems.find(ci => 
-          ci.text?.toLowerCase().includes(mockItem.text?.toLowerCase())
-        )
-        
-        return {
-          ...mockItem,
-          icon: contentfulItem?.icon || null,
-          description: contentfulItem?.description || mockItem.description
-        }
-      }
-    })
-    
-    console.log("Processed hybrid navItems:", navItems) // Debug log
-    
-    // Use mock CTA for now
-    cta = mockData?.layout?.header?.cta
-  } else {
-    // Fallback to mock data when Contentful is not available
-    console.log("Using mock navigation data (Contentful not available)")
-    if (mockData?.layout?.header?.navItems) {
-      navItems = mockData.layout.header.navItems
-    }
-    if (mockData?.layout?.header?.cta) {
-      cta = mockData.layout.header.cta
-    }
+  // Use mock data for navigation
+  console.log("Using mock navigation data")
+  if (mockData?.layout?.header?.navItems) {
+    navItems = mockData.layout.header.navItems
+  }
+  if (mockData?.layout?.header?.cta) {
+    cta = mockData.layout.header.cta
   }
   
   const [isOpen, setOpen] = React.useState(false)
@@ -207,6 +114,7 @@ export default function Header() {
   return (
     <header>
       {/* <EmbedPage/> */}
+      {/* Desktop Navigation */}
       <Container className={desktopHeaderNavWrapper}>
         <Space size={2} />
         <Flex variant="spaceBetween">
@@ -214,7 +122,7 @@ export default function Header() {
             <VisuallyHidden>Home</VisuallyHidden>
             <BrandLogo />
           </NavLink>
-          <nav>
+          <nav className={desktopNav}>
             <FlexList gap={4}>
               {navItems &&
                 navItems.map((navItem) => (
@@ -231,24 +139,19 @@ export default function Header() {
                 ))}
             </FlexList>
           </nav>
-          <div>{cta && <Button to={cta.href}>{cta.text}</Button>}</div>
+          <div className={desktopNav}>{cta && <Button to={cta.href}>{cta.text}</Button>}</div>
         </Flex>
       </Container>
+      
+      {/* Mobile Navigation Header */}
       <Container className={mobileHeaderNavWrapper[isOpen ? "open" : "closed"]}>
         <Space size={2} />
         <Flex variant="spaceBetween">
-          <span
-            className={
-              mobileNavSVGColorWrapper[isOpen ? "reversed" : "primary"]
-            }
-          >
-            <NavLink to="/">
-              <VisuallyHidden>Home</VisuallyHidden>
-              <BrandLogo />
-            </NavLink>
-          </span>
-          <Flex>
-            <Space />
+          <NavLink to="/" className={mobileLogo}>
+            <VisuallyHidden>Home</VisuallyHidden>
+            <BrandLogo />
+          </NavLink>
+          <Flex gap={3}>
             <div>
               {cta && (
                 <Button to={cta.href} variant={isOpen ? "reversed" : "primary"}>
@@ -256,32 +159,55 @@ export default function Header() {
                 </Button>
               )}
             </div>
-            <Nudge right={3}>
-              <InteractiveIcon
-                title="Toggle menu"
-                onClick={() => setOpen(!isOpen)}
-                className={
-                  mobileNavSVGColorWrapper[isOpen ? "reversed" : "primary"]
-                }
-              >
-                {isOpen ? <X /> : <Menu />}
-              </InteractiveIcon>
-            </Nudge>
+            <InteractiveIcon
+              title="Toggle menu"
+              onClick={() => setOpen(!isOpen)}
+              className={mobileMenuButton}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
+              {isOpen ? <X /> : <Menu />}
+            </InteractiveIcon>
           </Flex>
         </Flex>
       </Container>
+      
+      {/* Mobile Navigation Overlay */}
       {isOpen && (
         <div className={mobileNavOverlay}>
-          <nav>
+          <nav style={{ marginTop: "80px" }}>
             <FlexList responsive variant="stretch">
               {navItems?.map((navItem) => (
                 <li key={navItem.id}>
                   {navItem.navItemType === "Group" ? (
-                    <NavItemGroup
-                      name={navItem.text || navItem.name}
-                      navItems={navItem.navItems}
-                      onItemClick={() => setOpen(false)}
-                    />
+                    <div>
+                      <div style={{ 
+                        color: "#ffffff", 
+                        fontSize: "1.25rem", 
+                        fontWeight: "600",
+                        paddingTop: "1rem",
+                        paddingBottom: "0.5rem",
+                        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                        marginBottom: "0.5rem"
+                      }}>
+                        {navItem.text || navItem.name}
+                      </div>
+                      {navItem.navItems?.map((subItem) => (
+                        <NavLink
+                          key={subItem.id}
+                          to={subItem.href}
+                          className={mobileNavLink}
+                          onClick={() => setOpen(false)}
+                          style={{ 
+                            fontSize: "1rem",
+                            paddingLeft: "1rem",
+                            paddingTop: "0.75rem",
+                            paddingBottom: "0.75rem"
+                          }}
+                        >
+                          {subItem.text}
+                        </NavLink>
+                      ))}
+                    </div>
                   ) : (
                     <NavLink 
                       to={navItem.href} 
@@ -294,6 +220,19 @@ export default function Header() {
                 </li>
               ))}
             </FlexList>
+            
+            {/* Mobile CTA */}
+            {cta && (
+              <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                <NavLink 
+                  to={cta.href}
+                  className={mobileCTAButton}
+                  onClick={() => setOpen(false)}
+                >
+                  {cta.text}
+                </NavLink>
+              </div>
+            )}
           </nav>
         </div>
       )}
