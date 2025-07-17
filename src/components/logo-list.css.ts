@@ -6,29 +6,64 @@ export const logoContainer = style({
   listStyle: "none",
   margin: 0,
   padding: 0,
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+  gap: "1.5rem",
+  maxWidth: "800px",
+  marginLeft: "auto",
+  marginRight: "auto",
+  justifyItems: "center",
+  
+  "@media": {
+    [media.small]: {
+      gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+      gap: "1rem",
+    },
+  },
 })
 
 export const logoItem = style({
-  flex: "0 0 auto",
+  width: "120px",
+  height: "120px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  
+  "@media": {
+    [media.small]: {
+      width: "100px",
+      height: "100px",
+    },
+  },
 })
 
 export const logoLink = style({
   display: "block",
+  width: "120px",
+  height: "120px",
   textDecoration: "none",
   transition: "all 0.2s ease",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
   
   ":hover": {
     transform: "scale(1.05)",
     opacity: 0.8,
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.4)",
   },
   
   ":focus": {
     outline: `2px solid ${theme.colors.primary}`,
     outlineOffset: "2px",
     borderRadius: "8px",
+  },
+  
+  "@media": {
+    [media.small]: {
+      width: "100px",
+      height: "100px",
+    },
   },
 })
 

@@ -1,12 +1,26 @@
 import * as React from "react"
 import { graphql } from "gatsby"
-import { Space, Container, Section, FlexList, Text, Logo } from "./ui"
+import { Space, Container, Section, Text } from "./ui"
+import { GatsbyImage } from "gatsby-plugin-image"
+import { logoContainer, logoItem, logoLink } from "./logo-list.css"
 
 export function LogoItem(props) {
   if (!props.image || !props.image.gatsbyImageData) return null
 
   return (
-    <Logo alt={props.alt} image={props.image.gatsbyImageData} size="medium" />
+    <a href={props.link} className={logoLink} target="_blank" rel="noopener noreferrer">
+      <GatsbyImage
+        image={props.image.gatsbyImageData}
+        alt={props.image.alt || props.alt || "Album cover"}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        imgStyle={{
+          objectFit: "cover",
+        }}
+      />
+    </a>
   )
 }
 
@@ -15,27 +29,29 @@ export default function LogoList(props) {
   const logos = props.logos || [];
   
   return (
-    <Section paddingY={4}>
-      <Container width="narrow">
+    <Section paddingY={5}>
+      <Container>
         {props.text && (
-          <Text center variant="lead">
+          <Text center variant="lead" as="h2" style={{ 
+            marginBottom: "3rem",
+            fontSize: "1.5rem",
+            fontWeight: "400",
+            color: "#ffffff"
+          }}>
             {props.text}
           </Text>
         )}
         <Space size={4} />
-        <FlexList gap={4} variant="center">
+        <ul className={logoContainer}>
           {logos.map(
             (logo) =>
               logo && (
-                <li key={logo.id}>
-                  <a href={logo.link}>
-                    {" "}
-                    <LogoItem {...logo} />
-                  </a>
+                <li key={logo.id} className={logoItem}>
+                  <LogoItem {...logo} />
                 </li>
               )
           )}
-        </FlexList>
+        </ul>
       </Container>
     </Section>
   )
@@ -44,10 +60,17 @@ export default function LogoList(props) {
 export const query = graphql`
   fragment LogoListComponentContent on ContentfulHomepageLogoList {
     id
+    name
+    text
     logos {
       id
       alt
-      gatsbyImageData
+      link
+      image {
+        id
+        alt
+        gatsbyImageData(width: 120, height: 120)
+      }
     }
   }
 `

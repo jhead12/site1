@@ -29,7 +29,7 @@ export default function Hero(props) {
           <Box width="half">
             <Heading as="h1">
               {props.kicker && <Kicker>{props.kicker}</Kicker>}
-              {props.h1}
+              {props.heading}
             </Heading>
             <Subhead as="h2">{props.subhead}</Subhead>
             <Text as="p">{props.text}</Text>
@@ -44,10 +44,20 @@ export default function Hero(props) {
 export const query = graphql`
   fragment HeroComponentContent on ContentfulHomepageHero {
     id
+    blocktype
+    heading
+    kicker
+    subhead
+    text
     image {
       id
       gatsbyImageData
       alt
+    }
+    links {
+      id
+      href
+      text
     }
   }
 `

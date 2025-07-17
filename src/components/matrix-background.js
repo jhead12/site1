@@ -1,5 +1,5 @@
 import * as React from "react"
-import { matrixCanvas, matrixContainer } from "./matrix-background.css"
+import { matrixCanvas, matrixContainer } from "./matrix-background.css.ts"
 
 export default function MatrixBackground() {
   const canvasRef = React.useRef(null)
