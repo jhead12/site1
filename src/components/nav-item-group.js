@@ -1,9 +1,7 @@
 import * as React from "react"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import { Box, Flex, FlexList, NavButtonLink, NavLink } from "./ui"
-import Caret from "./caret"
 import * as styles from "./nav-item-group.css"
-import { media } from "./media.css"
 
 export default function NavItemGroup({ name, navItems = [], onItemClick }) {
   // Defensive check to ensure navItems is always an array
@@ -11,9 +9,6 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
   
   const [isOpen, setIsOpen] = React.useState(false)
   const [popupVisible, setPopupVisible] = React.useState(false)
-  const isSmallScreen = () => {
-    return !window.matchMedia(media.small).matches
-  }
   
   const handleSubItemClick = React.useCallback(() => {
     setIsOpen(false)
@@ -28,10 +23,7 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
       setIsOpen(true)
       setPopupVisible(true)
     } else {
-      // ensures that sub-menu closes when no animation is available
-      if (isSmallScreen()) {
-        setIsOpen(false)
-      }
+      setIsOpen(false)
       setPopupVisible(false)
     }
   }, [isOpen])
@@ -58,21 +50,29 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
       const wrapper = document.querySelector(
         `[data-id="${name}-group-wrapper"]`
       )
-      if (
-        !isSmallScreen() &&
-        isOpen &&
-        wrapper &&
-        !wrapper.contains(event.target)
-      ) {
-        onGroupButtonClick()
+      if (isOpen && wrapper && !wrapper.contains(event.target)) {
+        setIsOpen(false)
+        setPopupVisible(false)
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
+    // Hide menu when pressing escape key
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false)
+        setPopupVisible(false)
+      }
     }
-  }, [name, isOpen, onGroupButtonClick])
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener("keydown", handleEscKey)
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside)
+        document.removeEventListener("keydown", handleEscKey)
+      }
+    }
+  }, [name, isOpen])
 
   return (
     <Flex
@@ -84,12 +84,9 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
     >
       <NavButtonLink
         onClick={onGroupButtonClick}
-        className={styles.navGroupTitle}
+        className={`${styles.navGroupTitle} ${isOpen ? styles.navGroupTitleActive : ''}`}
       >
-        <Flex gap={1} className={styles.navGroupTitleInner}>
-          {name}
-          <Caret direction={isOpen ? "up" : "down"} />
-        </Flex>
+        {name}
       </NavButtonLink>
       {isOpen && (
         <Box
@@ -122,14 +119,31 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
                   onClick={handleSubItemClick}
                 >
                   <Flex variant="start" gap={3}>
-                    {navItem.icon && navItem.icon.gatsbyImageData && (
-                      <GatsbyImage
-                        alt={navItem.icon.alt || navItem.text}
-                        image={getImage(navItem.icon.gatsbyImageData)}
-                        className={styles.navIcon}
-                        style={{ zIndex: 250 }}
-                      />
-                    )}
+                    <div style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      backgroundColor: '#2d3748',
+                      borderRadius: '6px',
+                      fontSize: '16px'
+                    }}>
+                      {navItem.icon && navItem.icon.gatsbyImageData ? (
+                        <GatsbyImage
+                          alt={navItem.icon.alt || navItem.text}
+                          image={getImage(navItem.icon.gatsbyImageData)}
+                          className={styles.navIcon}
+                          style={{ zIndex: 250 }}
+                        />
+                      ) : (
+                        <span style={{ color: '#a0aec0' }}>
+                          {navItem.text === 'Music Production' ? '🎵' :
+                           navItem.text === 'Music and Stem Mixing' ? '🎧' :
+                           navItem.text === 'Tutorials' ? '📚' : '🔧'}
+                        </span>
+                      )}
+                    </div>
                     <Flex variant="columnStart" marginY={1} gap={0}>
                       <Box as="span" className={styles.navLinkTitle}>
                         {navItem.text}

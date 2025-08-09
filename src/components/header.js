@@ -9,24 +9,30 @@ import {
   NavLink,
   Button,
   InteractiveIcon,
+  Nudge,
   VisuallyHidden,
 } from "./ui"
 import {
-  mobileNavOverlay,
-  mobileNavLink,
   desktopHeaderNavWrapper,
   mobileHeaderNavWrapper,
-  mobileCTAButton,
-  mobileLogo,
-  mobileMenuButton,
-  desktopNav,
+  mobileNavSVGColorWrapper,
+  mobileNavOverlay,
+  mobileNavLink,
+  navAlignment,
+  navHover,
+  navItemBase,
+  navListItem,
+  desktopHeaderNavList,
 } from "./header.css"
 import NavItemGroup from "./nav-item-group"
 import BrandLogo from "./brand-logo"
+import { useAuth } from "../hooks/useAuth"
 // import EmbedPage from "../components/header-scripts"
 
 
 export default function Header() {
+  const { isAdmin } = useAuth()
+  
   const mockData = {
     layout: {
       header: {
@@ -37,6 +43,8 @@ export default function Header() {
           { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
           { id: "beats", navItemType: "LINK", href: "/beats", text: "Beats" },
           { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
+          // Only show Analytics for WordPress admin users
+          ...(isAdmin ? [{ id: "analytics", navItemType: "LINK", href: "/auth/user/analytics", text: "Analytics" }] : []),
           { 
             id: "services", 
             navItemType: "Group", 
@@ -47,21 +55,30 @@ export default function Header() {
                 href: "/music", 
                 text: "Music Production",
                 description: "Professional music production services",
-                icon: null // No icon available in mock data
+                icon: {
+                  alt: "Music Production",
+                  gatsbyImageData: null // Will be replaced with actual icon data when available
+                }
               },
               { 
                 id: "mixing", 
                 href: "/mixes", 
                 text: "Music and Stem Mixing",
                 description: "Professional mixing and mastering",
-                icon: null // No icon available in mock data
+                icon: {
+                  alt: "Mixing",
+                  gatsbyImageData: null // Will be replaced with actual icon data when available
+                }
               },
               { 
                 id: "tutorials", 
                 href: "/tutorials", 
                 text: "Tutorials",
                 description: "Learn music production techniques",
-                icon: null // No icon available in mock data
+                icon: {
+                  alt: "Tutorials",
+                  gatsbyImageData: null // Will be replaced with actual icon data when available
+                }
               }
             ]
           },
@@ -94,6 +111,7 @@ export default function Header() {
   
   // Use mock data for navigation
   console.log("Using mock navigation data")
+  console.log("Site title from query:", queryData?.site?.siteMetadata?.title)
   if (mockData?.layout?.header?.navItems) {
     navItems = mockData.layout.header.navItems
   }
@@ -122,24 +140,24 @@ export default function Header() {
             <VisuallyHidden>Home</VisuallyHidden>
             <BrandLogo />
           </NavLink>
-          <nav className={desktopNav}>
-            <FlexList gap={4}>
+          <nav className={navAlignment}>
+            <FlexList gap={4} className={desktopHeaderNavList}>
               {navItems &&
                 navItems.map((navItem) => (
-                  <li key={navItem.id}>
+                  <li key={navItem.id} className={navListItem}>
                     {navItem.navItemType === "Group" ? (
                       <NavItemGroup
                         name={navItem.text || navItem.name}
                         navItems={navItem.navItems}
                       />
                     ) : (
-                      <NavLink to={navItem.href}>{navItem.text}</NavLink>
+                      <NavLink to={navItem.href} className={`${navItemBase} ${navHover}`}>{navItem.text}</NavLink>
                     )}
                   </li>
                 ))}
             </FlexList>
           </nav>
-          <div className={desktopNav}>{cta && <Button to={cta.href}>{cta.text}</Button>}</div>
+          <div>{cta && <Button to={cta.href}>{cta.text}</Button>}</div>
         </Flex>
       </Container>
       
@@ -147,11 +165,18 @@ export default function Header() {
       <Container className={mobileHeaderNavWrapper[isOpen ? "open" : "closed"]}>
         <Space size={2} />
         <Flex variant="spaceBetween">
-          <NavLink to="/" className={mobileLogo}>
-            <VisuallyHidden>Home</VisuallyHidden>
-            <BrandLogo />
-          </NavLink>
-          <Flex gap={3}>
+          <span
+            className={
+              mobileNavSVGColorWrapper[isOpen ? "reversed" : "primary"]
+            }
+          >
+            <NavLink to="/">
+              <VisuallyHidden>Home</VisuallyHidden>
+              <BrandLogo />
+            </NavLink>
+          </span>
+          <Flex>
+            <Space />
             <div>
               {cta && (
                 <Button to={cta.href} variant={isOpen ? "reversed" : "primary"}>
@@ -159,14 +184,17 @@ export default function Header() {
                 </Button>
               )}
             </div>
-            <InteractiveIcon
-              title="Toggle menu"
-              onClick={() => setOpen(!isOpen)}
-              className={mobileMenuButton}
-              aria-label={isOpen ? "Close menu" : "Open menu"}
-            >
-              {isOpen ? <X /> : <Menu />}
-            </InteractiveIcon>
+            <Nudge right={3}>
+              <InteractiveIcon
+                title="Toggle menu"
+                onClick={() => setOpen(!isOpen)}
+                className={
+                  mobileNavSVGColorWrapper[isOpen ? "reversed" : "primary"]
+                }
+              >
+                {isOpen ? <X /> : <Menu />}
+              </InteractiveIcon>
+            </Nudge>
           </Flex>
         </Flex>
       </Container>
@@ -174,40 +202,16 @@ export default function Header() {
       {/* Mobile Navigation Overlay */}
       {isOpen && (
         <div className={mobileNavOverlay}>
-          <nav style={{ marginTop: "80px" }}>
+          <nav>
             <FlexList responsive variant="stretch">
               {navItems?.map((navItem) => (
                 <li key={navItem.id}>
                   {navItem.navItemType === "Group" ? (
-                    <div>
-                      <div style={{ 
-                        color: "#ffffff", 
-                        fontSize: "1.25rem", 
-                        fontWeight: "600",
-                        paddingTop: "1rem",
-                        paddingBottom: "0.5rem",
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                        marginBottom: "0.5rem"
-                      }}>
-                        {navItem.text || navItem.name}
-                      </div>
-                      {navItem.navItems?.map((subItem) => (
-                        <NavLink
-                          key={subItem.id}
-                          to={subItem.href}
-                          className={mobileNavLink}
-                          onClick={() => setOpen(false)}
-                          style={{ 
-                            fontSize: "1rem",
-                            paddingLeft: "1rem",
-                            paddingTop: "0.75rem",
-                            paddingBottom: "0.75rem"
-                          }}
-                        >
-                          {subItem.text}
-                        </NavLink>
-                      ))}
-                    </div>
+                    <NavItemGroup
+                      name={navItem.text || navItem.name}
+                      navItems={navItem.navItems}
+                      onItemClick={() => setOpen(false)}
+                    />
                   ) : (
                     <NavLink 
                       to={navItem.href} 
@@ -220,19 +224,6 @@ export default function Header() {
                 </li>
               ))}
             </FlexList>
-            
-            {/* Mobile CTA */}
-            {cta && (
-              <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                <NavLink 
-                  to={cta.href}
-                  className={mobileCTAButton}
-                  onClick={() => setOpen(false)}
-                >
-                  {cta.text}
-                </NavLink>
-              </div>
-            )}
           </nav>
         </div>
       )}

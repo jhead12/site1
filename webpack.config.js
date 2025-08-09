@@ -3,10 +3,15 @@
 // This file is imported by gatsby-node.js
 
 exports.onCreateWebpackConfig = ({ stage, actions, getConfig }) => {
-  // Only apply in development mode to suppress the warnings
+  const config = getConfig();
+  
+  // Add crypto polyfill fallback for browser compatibility
+  config.resolve = config.resolve || {};
+  config.resolve.fallback = config.resolve.fallback || {};
+  config.resolve.fallback.crypto = require.resolve('crypto-browserify');
+  
+  // Only apply CSS warnings suppression in development mode
   if (stage === 'develop') {
-    const config = getConfig();
-    
     // Find the mini-css-extract-plugin
     const miniCssExtractPlugin = config.plugins.find(
       plugin => plugin.constructor && plugin.constructor.name === 'MiniCssExtractPlugin'
@@ -16,8 +21,8 @@ exports.onCreateWebpackConfig = ({ stage, actions, getConfig }) => {
       // Disable the order warnings
       miniCssExtractPlugin.options.ignoreOrder = true;
     }
-    
-    // Update the configuration
-    actions.replaceWebpackConfig(config);
   }
+  
+  // Update the configuration
+  actions.replaceWebpackConfig(config);
 };

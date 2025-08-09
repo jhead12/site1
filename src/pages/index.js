@@ -161,6 +161,12 @@ export const query = graphql`
         slug
         excerpt
         date(formatString: "MMMM DD, YYYY")
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
       }
     }
   }

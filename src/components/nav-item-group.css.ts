@@ -1,32 +1,37 @@
 import { style, styleVariants } from "@vanilla-extract/css"
 import { theme } from "../theme.css"
 import { media } from "./media.css"
-import { mobileNavLink } from "./header.css"
+import { mobileNavLink, navItemBase, navHover } from "./header.css"
 
 export const navGroupWrapper = style({
   position: "relative",
 })
 
 export const navGroupTitle = style([
-  mobileNavLink,
-  { ":hover": { color: theme.colors.background } },
+  navItemBase,
+  navHover,
   {
+    
     "@media": {
       [media.small]: {
-        padding: 0,
-        alignItems: "baseline",
-        color: "inherit",
-        fontSize: "inherit",
-        ":hover": { color: theme.colors.active },
+        color: "#ffffff",
+        fontSize: theme.fontSizes[5],
+        fontWeight: "500",
+        paddingTop: theme.space[4],
+        paddingBottom: theme.space[4],
+        textAlign: "left",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
       },
     },
-  },
+  }
 ])
 
-export const navGroupTitleInner = style({
+// Add active state for when dropdown is open
+export const navGroupTitleActive = style({
   "@media": {
     [media.small]: {
-      alignItems: "baseline",
+      background: "rgba(59, 130, 246, 0.15)",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
     },
   },
 })
@@ -113,16 +118,47 @@ export const navLinkListLink = style([
   {
     "@media": {
       [media.small]: {
-        padding: theme.space[2],
+        padding: theme.space[3],
         margin: 0,
-        color: "inherit",
+        color: "#ffffff",
         fontSize: theme.fontSizes[2],
         fontWeight: theme.fontWeights.bold,
-        borderRadius: theme.radii.button,
-        ":hover": {
-          background: theme.colors.muted,
-          color: "inherit",
+        borderRadius: "8px",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        position: "relative",
+        overflow: "hidden",
+        
+        "::before": {
+          content: "",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))",
+          opacity: 0,
+          transition: "opacity 0.3s ease",
+          borderRadius: "8px",
+          zIndex: -1,
         },
+        
+        ":hover": {
+          background: "rgba(59, 130, 246, 0.1)",
+          color: "#ffffff",
+          transform: "translateX(8px)",
+          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+        },
+        
+        // Use selectors for hover pseudo-element
+        selectors: {
+          "&:hover::before": {
+            opacity: 1,
+          },
+        },
+        
+        ":active": {
+          transform: "translateX(4px)",
+        }
       },
     },
   },

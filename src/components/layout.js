@@ -4,13 +4,14 @@ import { Slice } from "gatsby";
 import "./page-consistency.css";
 import "./global-fixes.css";
 import MatrixBackground from "./matrix-background";
+import { AuthProvider } from "../hooks/useAuth";
 // import CookieConsent from "react-cookie-consent";
 // import CookieConsent, { Cookies } from "react-cookie-consent";
 
 
 const Layout = ({ children }) => {
   return (
-    <>
+    <AuthProvider>
       {/* Matrix Digital Rain Background - Positioned outside normal flow */}
       <MatrixBackground />
       
@@ -104,7 +105,7 @@ const Layout = ({ children }) => {
           </div>
         </CookieConsent> */}
       </div>
-    </>
+    </AuthProvider>
   );
 };
 

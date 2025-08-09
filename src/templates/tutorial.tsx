@@ -48,7 +48,20 @@ interface TutorialTemplateProps {
 }
 
 const TutorialTemplate: React.FC<TutorialTemplateProps> = ({ data, pageContext }) => {
-  const tutorial = data.wpTutorial
+  const tutorial = data?.wpTutorial
+  
+  // Handle missing data (e.g., in bypass mode)
+  if (!tutorial) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold mb-4">Tutorial Not Found</h1>
+          <p>This tutorial could not be loaded. This might happen in development mode when WordPress is bypassed.</p>
+        </div>
+      </Layout>
+    )
+  }
+  
   const fields = tutorial.tutorialFields || {}
 
   const getDifficultyColor = (difficulty?: string) => {

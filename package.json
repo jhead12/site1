@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=23.3.0"
   },
   "scripts": {
     "start": "GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop",
@@ -164,6 +164,7 @@
     "chalk": "4",
     "contentful-cli": "^1.15.3",
     "contentful-import": "^8.3.2",
+    "crypto-browserify": "^3.12.1",
     "dotenv": "^16.0.3",
     "gatsby-provision-contentful": "^0.0.5",
     "husky": "^7.0.4",

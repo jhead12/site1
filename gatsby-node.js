@@ -1815,9 +1815,42 @@ exports.createPages = async ({ graphql, actions }) => {
     console.log(
       "WordPress data fetch bypassed by BYPASS_WORDPRESS environment variable"
     )
-    // Slices will be created at the end of this function
-    return
-  }
+    
+    // Create minimal mock pages to prevent GraphQL query warnings
+    console.log("Creating mock pages to prevent template query warnings...")
+    
+    // Create a sample beat page
+    createPage({
+      path: `/beats/sample-beat/`,
+      component: require.resolve("./src/templates/beat-page.js"),
+      context: {
+        id: "mock-beat-id",
+        slug: "sample-beat",
+      },
+    })
+    
+    // Create a sample tutorial page
+    createPage({
+      path: `/tutorials/sample-tutorial/`,
+      component: require.resolve("./src/templates/tutorial.tsx"),
+      context: {
+        id: "mock-tutorial-id", 
+        slug: "sample-tutorial",
+      },
+    })
+    
+    // Create a sample WordPress page
+    createPage({
+      path: `/sample-page/`,
+      component: require.resolve("./src/templates/wordpress-page.js"),
+      context: {
+        id: "mock-page-id",
+      },
+    })
+    
+    console.log("Mock pages created successfully")
+    // Continue to slice creation below
+  } else {
 
   // Create WordPress pages
   let result
@@ -1949,7 +1982,7 @@ exports.createPages = async ({ graphql, actions }) => {
   beats.forEach((beat) => {
     createPage({
       path: `/beats/${beat.slug}/`,
-      component: require.resolve("./src/templates/beat.tsx"),
+      component: require.resolve("./src/templates/beat-page.js"),
       context: {
         id: beat.id,
         slug: beat.slug,
@@ -2008,6 +2041,7 @@ exports.createPages = async ({ graphql, actions }) => {
       },
     })
   })
+  } // End of else block for WordPress bypass
 
   // Create slices (both bypass and normal mode need slices)
   createSlice({

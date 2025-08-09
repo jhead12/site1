@@ -1,32 +1,43 @@
-# Development Next Steps - Priority Plan
+# Development Next Steps - UPDATED PRIORITY PLAN
 
-## Current Status (June 16, 2025)
-- ✅ Development warnings resolved (image props, external links, DOM properties, Helmet)
+## Current Status (July 17, 2025)
+- ✅ Navigation styling fixes completed (Services dropdown consistency)
+- ✅ GraphQL template warnings resolved (bypass mode error handling)
+- ✅ Build system functional with mock page generation
+- 🎯 **NEW FOCUS**: E-commerce Integration → AI Marketing Automation
+
+## 🚀 FOCUSED IMPLEMENTATION PLAN
+
+**See:** `/docs/FOCUSED_ECOMMERCE_PLAN.md` for complete details
+
+### Phase 1: Shopify Integration (Week 1) - PRIORITY
+**Goal:** Get core beat sales working
+- [ ] **Create Shopify store** (jeldon-music.myshopify.com)
+- [ ] **Install music apps** (SendOwl, Music Player, License Manager)
+- [ ] **Set up beat catalog** (Individual beats, packs, samples)
+- [ ] **Gatsby-Shopify integration** (shopify-buy, gatsby-source-shopify)
+- [ ] **Audio preview system** (30-60 second previews, waveforms)
+- [ ] **License management** (Basic, Premium, Exclusive tiers)
+- [ ] **Digital delivery** (Instant downloads, email automation)
+
+### Phase 2: ThriveCart Integration (Week 2)
+**Goal:** Add course sales and affiliate program
+- [ ] **ThriveCart account setup** (Beat Masterclass, Production Bootcamp)
+- [ ] **WordPress course system** (Custom post types, ACF fields)
+- [ ] **Student portal** (Progress tracking, certificates)
+- [ ] **Affiliate program** (30% commission, tracking dashboard)
+
+### Phase 3: AI Marketing Automation (Weeks 3-4)
+**Goal:** Automated social media and customer insights
+- [ ] **Marketing research AI** (Customer behavior, pricing optimization)
+- [ ] **Social media automation** (Instagram, Twitter, TikTok posting)
+- [ ] **Content generation** (Beat previews, waveforms, lyric videos)
+- [ ] **Analytics dashboard** (Performance tracking, recommendations)
+
+## Previous WordPress Integration Status
 - ✅ WordPress blog integration completed (templates, pages, internal navigation)
 - ✅ GraphQL image handling fixed for WordPress content
 - ✅ Blog archive and individual post pages functional
-
-## Immediate Priorities (Next 1-2 hours)
-
-### 1. WordPress Content Setup & Testing
-**Priority: HIGH**
-- [ ] Test blog functionality with real WordPress content
-- [ ] Verify ACF field groups import correctly
-- [ ] Create sample content for beats, tutorials, mixes
-- [ ] Test About page integration when ready
-
-### 2. Advanced Feature Enablement
-**Priority: MEDIUM**
-- [ ] Re-enable custom taxonomies (music_genre, mood) once WordPress is running
-- [ ] Re-enable SEO fields in templates
-- [ ] Test advanced ACF fields with real content
-
-### 3. About Page WordPress Integration
-**Priority: MEDIUM**
-- [ ] Import About page ACF field group
-- [ ] Create About page content in WordPress
-- [ ] Replace static About page with WordPress-powered version
-- [ ] Test About page template and routing
 
 ## Medium Term Priorities (Next 1-2 days)
 

@@ -57,7 +57,20 @@ interface BeatTemplateProps {
 }
 
 const BeatTemplate: React.FC<BeatTemplateProps> = ({ data, pageContext }) => {
-  const beat = data.wpBeat
+  const beat = data?.wpBeat
+  
+  // Handle missing data (e.g., in bypass mode)
+  if (!beat) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold mb-4">Beat Not Found</h1>
+          <p>This beat could not be loaded. This might happen in development mode when WordPress is bypassed.</p>
+        </div>
+      </Layout>
+    )
+  }
+  
   const fields = beat.beatsFields || {}
 
   return (
