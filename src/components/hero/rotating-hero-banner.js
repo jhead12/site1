@@ -104,6 +104,24 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         }
       }
 
+      # Get Contentful Hero Background Images (simplified query with error handling)
+      allContentfulAsset(
+        filter: { title: { regex: "/studio_photo|hero|background|welcome/" } }
+        limit: 10
+      ) {
+        nodes {
+          id
+          title
+          description
+          gatsbyImageData(
+            width: 1920
+            height: 800
+            placeholder: BLURRED
+            formats: [AUTO, WEBP, AVIF]
+          )
+        }
+      }
+
       # Fallback static content - this should always be available
       site {
         siteMetadata {
@@ -120,69 +138,204 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
       const wpPosts = data?.allWpPost?.nodes || []
       let heroItems = []
 
-      // Transform WordPress videos with images
+      // Helper function to determine content category
+      const getContentCategory = (date, type) => {
+        const contentDate = new Date(date)
+        const now = new Date()
+        const daysDiff = Math.floor((now - contentDate) / (1000 * 60 * 60 * 24))
+
+        // Define criteria for different categories
+        if (daysDiff <= 7) {
+          return "new-upload" // Content from last 7 days
+        } else if (type === "blog" && daysDiff <= 30) {
+          return "latest-blog" // Blog posts from last 30 days
+        } else if (daysDiff <= 90) {
+          return "popular" // Assume older content that's still being shown is popular
+        }
+        return null // Don't show content older than 90 days
+      }
+
+      // Transform WordPress videos with images and filter by category
       const wpVideoItems = wpVideos
-        .filter(video => video.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData)
-        .map((video) => ({
-          id: `video-${video.id}`,
-          title: video.title || "Featured Video",
-          description: truncateToFirstSentence(video.excerpt) || "Watch our latest video content",
-          image: video.featuredImage.node.localFile.childImageSharp.gatsbyImageData,
-          slug: `/videos/${video.slug}`,
-          date: video.date,
-          type: "video",
-          kicker: "Latest Video",
-          priority: 1,
-        }))
+        .filter(
+          (video) =>
+            video.featuredImage?.node?.localFile?.childImageSharp
+              ?.gatsbyImageData
+        )
+        .map((video) => {
+          const category = getContentCategory(video.date, "video")
+          if (!category) return null // Filter out old content
 
-      // Transform WordPress blog posts with images
+          // Determine kicker text based on category
+          let kicker = "Latest Video"
+          if (category === "new-upload") kicker = "New Upload"
+          else if (category === "popular") kicker = "Popular Video"
+
+          // Determine priority based on category
+          let priority = 3
+          if (category === "new-upload") priority = 1
+          else if (category === "popular") priority = 2
+
+          return {
+            id: `video-${video.id}`,
+            title: video.title || "Featured Video",
+            description:
+              truncateToFirstSentence(video.excerpt) ||
+              "Watch our latest video content",
+            image:
+              video.featuredImage.node.localFile.childImageSharp
+                .gatsbyImageData,
+            slug: `/videos/${video.slug}`,
+            date: video.date,
+            type: "video",
+            category: category,
+            kicker: kicker,
+            priority: priority,
+          }
+        })
+        .filter(Boolean) // Remove null items
+
+      // Transform WordPress blog posts with images and filter by category
       const wpBlogItems = wpPosts
-        .filter(post => post.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData)
-        .map((post) => ({
-          id: `blog-${post.id}`,
-          title: post.title || "Featured Article",
-          description: truncateToFirstSentence(post.excerpt) || "Read our latest blog post",
-          image: post.featuredImage.node.localFile.childImageSharp.gatsbyImageData,
-          slug: `/blog/${post.slug}`,
-          date: post.date,
-          type: "blog",
-          kicker: "Latest Article",
-          priority: 2,
-        }))
+        .filter(
+          (post) =>
+            post.featuredImage?.node?.localFile?.childImageSharp
+              ?.gatsbyImageData
+        )
+        .map((post) => {
+          const category = getContentCategory(post.date, "blog")
+          if (!category) return null // Filter out old content
 
-      // Combine WordPress content
+          // Determine kicker text based on category
+          let kicker = "New Post"
+          if (category === "latest-blog") kicker = "Latest Blog"
+          else if (category === "popular") kicker = "Popular Post"
+
+          // Determine priority based on category
+          let priority = 3
+          if (category === "latest-blog") priority = 1
+          else if (category === "new-upload") priority = 2
+
+          return {
+            id: `blog-${post.id}`,
+            title: post.title || "Featured Article",
+            description:
+              truncateToFirstSentence(post.excerpt) ||
+              "Read our latest blog post",
+            image:
+              post.featuredImage.node.localFile.childImageSharp.gatsbyImageData,
+            slug: `/blog/${post.slug}`,
+            date: post.date,
+            type: "blog",
+            category: category,
+            kicker: kicker,
+            priority: priority,
+          }
+        })
+        .filter(Boolean) // Remove null items
+
+      // Combine WordPress content and sort by priority and date
       const wpContent = [...wpVideoItems, ...wpBlogItems]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .sort((a, b) => {
+          // First sort by priority (lower number = higher priority)
+          if (a.priority !== b.priority) {
+            return a.priority - b.priority
+          }
+          // Then sort by date (newer first)
+          return new Date(b.date) - new Date(a.date)
+        })
+        .slice(0, 5) // Limit to 5 most relevant items
+
+      // Get the welcome slide image from Contentful assets (simplified with error handling)
+      const getWelcomeSlideImage = () => {
+        try {
+          const assets = data?.allContentfulAsset?.nodes || []
+
+          if (assets.length === 0) {
+            console.log("No Contentful assets found")
+            return null
+          }
+
+          // Priority order based on title keywords
+          const titlePriority = ["hero", "welcome", "studio_photo"]
+
+          for (const keyword of titlePriority) {
+            const asset = assets.find((asset) =>
+              asset.title?.toLowerCase().includes(keyword.toLowerCase())
+            )
+            if (asset && asset.gatsbyImageData) {
+              console.log(`Using welcome slide image: ${asset.title}`)
+              return asset.gatsbyImageData
+            }
+          }
+
+          // Fallback: use first available asset with valid image data
+          const validAsset = assets.find((asset) => asset.gatsbyImageData)
+          if (validAsset) {
+            console.log(`Using first available asset: ${validAsset.title}`)
+            return validAsset.gatsbyImageData
+          }
+
+          console.log("No valid Contentful assets with image data found")
+          return null
+        } catch (error) {
+          console.error("Error loading Contentful assets:", error)
+          return null
+        }
+      }
+
+      const welcomeSlideImage = getWelcomeSlideImage()
+
+      // Debug logging for Contentful assets
+      console.log(
+        "Available Contentful assets:",
+        data?.allContentfulAsset?.nodes?.map((asset) => asset.title) || []
+      )
+      console.log("Welcome slide image found:", !!welcomeSlideImage)
 
       // If we have WordPress content with images, use it
       if (wpContent.length > 0) {
-        console.log(`Found ${wpContent.length} WordPress content items with images`)
-        
+        console.log(
+          `Found ${wpContent.length} filtered WordPress content items:`
+        )
+        wpContent.forEach((item) => {
+          console.log(
+            `- ${item.type}: "${item.title}" (${item.category}, priority: ${item.priority})`
+          )
+        })
+
         // Add a welcome slide as the first slide
         heroItems = [
           {
             id: "welcome",
-            title: data?.site?.siteMetadata?.title || "Welcome to J. Eldon Music",
-            description: data?.site?.siteMetadata?.description || "Discover amazing music content, beats, and tutorials. Professional music production and audio engineering services.",
-            image: null, // Will show fallback UI
-            slug: "/",
+            title: data?.site?.siteMetadata?.title || "Welcome to Jeldon Music",
+            description:
+              data?.site?.siteMetadata?.description ||
+              "Discover music content, beats, and tutorials. Professional music production and audio engineering services.",
+            image: welcomeSlideImage, // Use Contentful welcome slide image
+            slug: "/about",
             date: new Date().toISOString(),
             type: "hero",
-            kicker: "Welcome",
+            kicker: "Welcome!",
             priority: 0,
           },
-          ...wpContent
+          ...wpContent,
         ]
       } else {
         // Fallback content when no WordPress content with images is available
-        console.log("No WordPress content with images found, using fallback slides")
+        console.log(
+          "No WordPress content with images found, using fallback slides"
+        )
         heroItems = [
           {
             id: "welcome",
-            title: data?.site?.siteMetadata?.title || "Welcome to J. Eldon Music",
-            description: data?.site?.siteMetadata?.description || "Discover amazing music content, beats, and tutorials. Professional music production and audio engineering services.",
-            image: null,
-            slug: "/",
+            title:
+              data?.site?.siteMetadata?.title || "Welcome to J. Eldon Music",
+            description:
+              data?.site?.siteMetadata?.description ||
+              "Discover amazing music content, beats, and tutorials. Professional music production and audio engineering services.",
+            image: welcomeSlideImage, // Use Contentful welcome slide image
+            slug: "/about",
             date: new Date().toISOString(),
             type: "hero",
             kicker: "Welcome",
@@ -191,7 +344,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           {
             id: "beats",
             title: "Professional Beats & Instrumentals",
-            description: "High-quality beats and instrumentals for your next project. From hip-hop to R&B, find the perfect sound for your musical vision.",
+            description:
+              "High-quality beats and instrumentals for your next project. From hip-hop to R&B, find the perfect sound for your musical vision.",
             image: null,
             slug: "/beats",
             date: new Date(Date.now() - 86400000).toISOString(),
@@ -202,7 +356,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           {
             id: "services",
             title: "Music Production Services",
-            description: "Professional music production, mixing, and mastering services. Let's bring your musical vision to life with industry-standard quality.",
+            description:
+              "Professional music production, mixing, and mastering services. Let's bring your musical vision to life with industry-standard quality.",
             image: null,
             slug: "/music",
             date: new Date(Date.now() - 172800000).toISOString(),
@@ -213,7 +368,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           {
             id: "videos",
             title: "Music Production Tutorials",
-            description: "Learn music production techniques, mixing tips, and industry secrets through our comprehensive video tutorials.",
+            description:
+              "Learn music production techniques, mixing tips, and industry secrets through our comprehensive video tutorials.",
             image: null,
             slug: "/videos",
             date: new Date(Date.now() - 259200000).toISOString(),
@@ -224,14 +380,15 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           {
             id: "blog",
             title: "Music Industry Insights",
-            description: "Stay updated with the latest trends, techniques, and insights from the music production industry through our blog.",
+            description:
+              "Stay updated with the latest trends, techniques, and insights from the music production industry through our blog.",
             image: null,
             slug: "/blog",
             date: new Date(Date.now() - 345600000).toISOString(),
             type: "blog",
             kicker: "Read More",
             priority: 5,
-          }
+          },
         ]
       }
 
@@ -338,14 +495,19 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
 
   return (
     <div className="hero-banner-container">
-      <div className={`hero-banner-slide ${fadeClass}`} data-content-type={currentContent.type}>
+      <div
+        className={`hero-banner-slide ${fadeClass}`}
+        data-content-type={currentContent.type}
+      >
         <LinkComponent {...linkProps} className="hero-banner-link">
           <div className="hero-banner-corner-ribbon">
             {currentContent.type === "hero" && "Featured"}
             {currentContent.type === "video" && "New Video"}
             {currentContent.type === "blog" && "Latest"}
             {currentContent.type === "product" && "Shop"}
-            {!["hero", "video", "blog", "product"].includes(currentContent.type) && "Latest"}
+            {!["hero", "video", "blog", "product"].includes(
+              currentContent.type
+            ) && "Latest"}
           </div>
           <div className="hero-banner-date">
             {new Date(currentContent.date).toLocaleDateString("en-US", {
@@ -376,8 +538,10 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
                 {currentContent.type === "blog" && "Read Article"}
                 {currentContent.type === "product" && "Shop Now"}
                 {currentContent.type === "hero" && "Learn More"}
-                {!["video", "blog", "product", "hero"].includes(currentContent.type) && "Learn More"}
-                {" "}<span>→</span>
+                {!["video", "blog", "product", "hero"].includes(
+                  currentContent.type
+                ) && "Learn More"}{" "}
+                <span>→</span>
               </div>
             </div>
           </div>
@@ -395,9 +559,9 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             ‹
           </button>
           <div className="hero-banner-dots">
-            {heroData.map((_, index) => (
+            {heroData.map((slide, index) => (
               <button
-                key={index}
+                key={slide.id}
                 className={`dot ${index === currentSlide ? "active" : ""}`}
                 onClick={() => handleDotClick(index)}
                 aria-label={`Go to slide ${index + 1}`}

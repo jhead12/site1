@@ -9,15 +9,15 @@ import { getDemoBlogPosts } from "../utils/fallback-data"
 
 export default function Homepage(props) {
   // Defensive: handle missing data
-  const data = props.data || {};
-  const wpPosts = data.allWpPost?.nodes;
-  const wpBypassMode = !wpPosts;
+  const data = props.data || {}
+  const wpPosts = data.allWpPost?.nodes
+  const wpBypassMode = !wpPosts
   const blogPosts = wpBypassMode
     ? { nodes: getDemoBlogPosts(5) } // Use 5 demo posts when WordPress is bypassed
-    : data.allWpPost;
+    : data.allWpPost
 
   // Check if homepage data exists (won't exist in bypass mode)
-  const homepage = data.homepage || { blocks: [] };
+  const homepage = data.homepage || { blocks: [] }
 
   return (
     <Layout>
@@ -43,7 +43,10 @@ export default function Homepage(props) {
       {/* Shopify section - only show if products exist */}
       <sections.ShopFeature
         data={{
-          allShopifyProduct: (props.data && props.data.allShopifyProduct) ? props.data.allShopifyProduct : { nodes: [] },
+          allShopifyProduct:
+            props.data && props.data.allShopifyProduct
+              ? props.data.allShopifyProduct
+              : { nodes: [] },
         }}
       />
 
@@ -69,10 +72,11 @@ export default function Homepage(props) {
 }
 
 export const Head = (props) => {
-  const site = props.data?.site;
-  const title = site?.siteMetadata?.title || "Jeldon Music";
-  const description = site?.siteMetadata?.description || "Music Producer & Audio Engineer";
-  const image = props.data?.homepage?.image?.url || null;
+  const site = props.data?.site
+  const title = site?.siteMetadata?.title || "Jeldon Music"
+  const description =
+    site?.siteMetadata?.description || "Music Producer & Audio Engineer"
+  const image = props.data?.homepage?.image?.url || null
   return (
     <SEOHead
       title={title}
@@ -80,7 +84,7 @@ export const Head = (props) => {
       image={image}
       pathname="/"
     />
-  );
+  )
 }
 
 export const query = graphql`
@@ -161,6 +165,12 @@ export const query = graphql`
         slug
         excerpt
         date(formatString: "MMMM DD, YYYY")
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
       }
     }
   }
