@@ -1,29 +1,29 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import "../styles.css";
-import { Slice } from "gatsby";
-import "./page-consistency.css";
-import "./global-fixes.css";
-import MatrixBackground from "./matrix-background";
-import { ThemeProvider } from "../contexts/ThemeContext";
-
+import * as React from "react"
+import PropTypes from "prop-types"
+import "../styles.css"
+import { Slice } from "gatsby"
+import "./page-consistency.css"
+import "./global-fixes.css"
+import MatrixBackground from "./matrix-background"
+import { ThemeProvider } from "../contexts/ThemeContext"
 
 const Layout = ({ children, pageContext }) => {
-  const locale = pageContext?.langKey || "en"; // Get locale from pageContext or default to 'en'
+  const locale = pageContext?.langKey || "en" // Get locale from pageContext or default to 'en'
   return (
     <ThemeProvider locale={locale}>
       <>
         {/* Matrix Digital Rain Background - Positioned outside normal flow */}
         <MatrixBackground />
-        
+
         {/* Dense gradient overlay - Matrix visible only at edges */}
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: `
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: `
             radial-gradient(ellipse at center, 
               rgba(0, 0, 0, 0.95) 0%,
               rgba(0, 0, 0, 0.85) 50%,
@@ -31,25 +31,35 @@ const Layout = ({ children, pageContext }) => {
               rgba(0, 0, 0, 0.5) 100%
             )
           `,
-          zIndex: -100000,
-          pointerEvents: 'none'
-        }} />
-        
-        <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.6", position: "relative", zIndex: 10 }}>
+            zIndex: -100000,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div
+          style={{
+            fontFamily: "Arial, sans-serif",
+            lineHeight: "1.6",
+            position: "relative",
+            zIndex: 10,
+          }}
+        >
           {/* Header */}
           <Slice alias="header" />
 
           {/* Main Content */}
-          <main style={{ 
-            margin: "0 auto", 
-            padding: "20px", 
-            maxWidth: "1200px",
-            position: "relative",
-            zIndex: "10",
-            backgroundColor: "rgba(255, 255, 255, 0.15)",
-            backdropFilter: "blur(4px)",
-            borderRadius: "8px"
-          }}>
+          <main
+            style={{
+              margin: "0 auto",
+              padding: "20px",
+              maxWidth: "1200px",
+              position: "relative",
+              zIndex: "10",
+              backgroundColor: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(4px)",
+              borderRadius: "8px",
+            }}
+          >
             {children}
           </main>
 
@@ -108,14 +118,14 @@ const Layout = ({ children, pageContext }) => {
         </div>
       </>
     </ThemeProvider>
-  );
-};
+  )
+}
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
   pageContext: PropTypes.shape({
     langKey: PropTypes.string,
   }),
-};
+}
 
-export default Layout;
+export default Layout

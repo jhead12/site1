@@ -12,7 +12,8 @@ const themes = {
     direction: "ltr",
     primaryColor: "#000",
   },
-  ar: { // Example for Arabic
+  ar: {
+    // Example for Arabic
     fontFamily: "Arial, sans-serif",
     direction: "rtl",
     primaryColor: "#000",
