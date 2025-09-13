@@ -1,0 +1,61 @@
+;;
+;; Domain:     jeldonmusic.com.
+;; Exported:   2025-09-09 19:01:52
+;;
+;; This file is intended for use for informational and archival
+;; purposes ONLY and MUST be edited before use on a production
+;; DNS server.  In particular, you must:
+;;   -- update the SOA record with the correct authoritative name server
+;;   -- update the SOA record with the contact e-mail address information
+;;   -- update the NS record(s) with the authoritative name servers for this domain.
+;;
+;; For further information, please consult the BIND documentation
+;; located on the following website:
+;;
+;; http://www.isc.org/
+;;
+;; And RFC 1035:
+;;
+;; http://www.ietf.org/rfc/rfc1035.txt
+;;
+;; Please note that we do NOT offer technical support for any use
+;; of this zone data, the BIND name server, or any other third-party
+;; DNS software.
+;;
+;; Use at your own risk.
+;; SOA Record
+jeldonmusic.com	3600	IN	SOA	bradley.ns.cloudflare.com. dns.cloudflare.com. 2050911111 10000 2400 604800 3600
+
+;; NS Records
+jeldonmusic.com.	86400	IN	NS	bradley.ns.cloudflare.com.
+jeldonmusic.com.	86400	IN	NS	val.ns.cloudflare.com.
+
+;; A Records
+blog.jeldonmusic.com.	1	IN	A	162.213.251.177 ; cf_tags=cf-proxied:true
+jeldonmusic.com.	1	IN	A	75.2.60.5 ; cf_tags=cf-proxied:true
+linkme.jeldonmusic.com.	1	IN	A	52.72.49.79 ; cf_tags=cf-proxied:true
+linkme.jeldonmusic.com.	1	IN	A	44.208.223.82 ; cf_tags=cf-proxied:true
+linkme.jeldonmusic.com.	1	IN	A	44.194.121.173 ; cf_tags=cf-proxied:true
+linkme.jeldonmusic.com.	1	IN	A	3.227.143.66 ; cf_tags=cf-proxied:true
+music.jeldonmusic.com.	1	IN	A	162.213.251.177 ; cf_tags=cf-proxied:true
+
+;; CNAME Records
+_199a82c7d80906e909ed8364b23279ce.jeldonmusic.com.	1	IN	CNAME	ce8c73b13dc97b14131253a676b52b13.85f53748c9c85bae18791af43c559466.6600d52b98b05.comodoca.com. ; Certificate cf_tags=cf-proxied:true
+7daychallenge.jeldonmusic.com.	1	IN	CNAME	alias.thrivecart.com. ; cf_tags=cf-proxied:false
+fde._domainkey.jeldonmusic.com.	3600	IN	CNAME	dkim.d4go1p.fk05.fdske.com. ; cf_tags=cf-proxied:false
+fdesp.jeldonmusic.com.	3600	IN	CNAME	spf.d4go1p.fk05.fdske.com. ; cf_tags=cf-proxied:false
+winning.jeldonmusic.com.	1	IN	CNAME	alias.thrivecart.com. ; cf_tags=cf-proxied:false
+www.jeldonmusic.com.	1	IN	CNAME	animated-starship-8bc163.netlify.app. ; cf_tags=cf-proxied:true
+
+;; MX Records
+jeldonmusic.com.	1	IN	MX	1 smtp.google.com.
+jeldonmusic.com.	1	IN	MX	10 mx2.privateemail.com.
+jeldonmusic.com.	1	IN	MX	10 mx1.privateemail.com.
+
+;; TXT Records
+default._domainkey.jeldonmusic.com.	1	IN	TXT	"v=DKIM1;k=rsa;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxkfFR/WmyEYFECGIa9HMCA2gLmNgEezPdyNkkOp0zzpYmKkLPX6f76KZgzDedUuv7L+yx1JJRrVYJNon3YbAHHrUUBK2S7SbL2PH9Cdsw/VgncS1qO8OlSf3WuRKaOREESCSAOFBygdXsI2bBPLn3EaC8lXDy2dhYMocg5zxauRpXPqP/FEoX/qzekyHTPTTAI5" "zGsM1KIV7kfAIDZ/H/mqa3w3JUYTecqNw2jcWE1AUuomSMlAL2PguMfR20unaiT9kjLUKE6WEpU1rcTHnNlf3iurkezGqqM8/Uqu+FDEtZI+qoshUegCPOiZMPTQiUjVBbJFV9rjpQvrJfPf7DwIDAQAB"
+_dmarc.jeldonmusic.com.	3600	IN	TXT	"v=DMARC1; p=none"
+jeldonmusic.com.	1	IN	TXT	"v=spf1 include:spf.privateemail.com ~all"
+jeldonmusic.com.	1	IN	TXT	"google-site-verification=0RNBC-C2kWUU5FJFOLV5hP3rbsURinU5F_ChVjmu02k"
+resend._domainkey.memberly.jeldonmusic.com.	3600	IN	TXT	"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCmJ33E5ahXkD2V2oqMQgLcvmLgDDf8+C41BEkxnLhUKGlNwUILfxEcZoplmKo7OYyI5SzuK6+q7mGrGBE8wS8l7BsXBtlnCIlkZv19EeOmnWtbiUP9v6RVjiIDTYe9C6/JZfRvaMnC2r9IoDhtt5CbtiqHMnlclKuR1JVZ/a4jQIDAQAB"
+send.memberly.jeldonmusic.com.	3600	IN	TXT	"v=spf1 include:amazonses.com -all"

@@ -96,6 +96,19 @@ module.exports = {
     "gatsby-plugin-sharp",
     "gatsby-plugin-image",
     "gatsby-transformer-sharp", // This transforms image files into usable nodes with fields like publicURL
+    {
+      resolve: `gatsby-plugin-i18n`,
+      options: {
+        langKeyDefault: `en`,
+        useLangKeyLayout: false,
+        prefixDefault: false,
+        langs: [`en`, `es`], // Add more as needed (e.g., `ar` for Arabic)
+        routes: {
+          en: `/`,
+          es: `/es`,
+        },
+      },
+    },
     "gatsby-plugin-vanilla-extract",
     {
       resolve: "gatsby-plugin-manifest",

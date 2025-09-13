@@ -25,82 +25,52 @@ import NavItemGroup from "./nav-item-group"
 import BrandLogo from "./brand-logo"
 // import EmbedPage from "../components/header-scripts"
 
-
 export default function Header() {
-  const mockData = {
-    layout: {
-      header: {
-        id: "header-mock",
-        navItems: [
-          { id: "home", navItemType: "LINK", href: "/", text: "Home" },
-          { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" },
-          { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
-          { id: "beats", navItemType: "LINK", href: "/beats", text: "Beats" },
-          { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
-          { 
-            id: "services", 
-            navItemType: "Group", 
-            name: "Services",
-            navItems: [
-              { 
-                id: "music-production", 
-                href: "/music", 
-                text: "Music Production",
-                description: "Professional music production services",
-                icon: null // No icon available in mock data
-              },
-              { 
-                id: "mixing", 
-                href: "/mixes", 
-                text: "Music and Stem Mixing",
-                description: "Professional mixing and mastering",
-                icon: null // No icon available in mock data
-              },
-              { 
-                id: "tutorials", 
-                href: "/tutorials", 
-                text: "Tutorials",
-                description: "Learn music production techniques",
-                icon: null // No icon available in mock data
-              }
-            ]
-          },
-          { id: "about", navItemType: "LINK", href: "/about", text: "About" },
-          { id: "shop", navItemType: "LINK", href: "/shop", text: "Shop" }
-        ],
-        cta: {
-          id: "contact",
-          href: "/contact",
-          text: "Contact"
-        }
-      }
-    }
-  };
-
-  // This is the actual query - it will be processed normally by Gatsby
-  const queryData = useStaticQuery(graphql`
+  // Query Contentful for navigation data
+  const data = useStaticQuery(graphql`
     query HeaderQuery {
-      site {
-        siteMetadata {
-          title
+      contentfulLayoutHeader {
+        navItems {
+          id
+          navItemType
+          href
+          text
+          name
+          ... on ContentfulNavItemGroup {
+            navItems {
+              id
+              href
+              text
+              name
+              description
+              icon {
+                url
+                title
+                description
+                gatsbyImageData(width: 32, height: 32)
+              }
+            }
+          }
+        }
+        cta {
+          id
+          href
+          text
         }
       }
     }
   `)
 
-  // Process navigation data - use mock data for now
+  // Use Contentful data for navigation
   let navItems = []
   let cta = null
-  
-  // Use mock data for navigation
-  console.log("Using mock navigation data")
-  if (mockData?.layout?.header?.navItems) {
-    navItems = mockData.layout.header.navItems
+  if (data?.contentfulLayoutHeader?.navItems) {
+    navItems = data.contentfulLayoutHeader.navItems
   }
-  if (mockData?.layout?.header?.cta) {
-    cta = mockData.layout.header.cta
+  if (data?.contentfulLayoutHeader?.cta) {
+    cta = data.contentfulLayoutHeader.cta
   }
-  
+
   const [isOpen, setOpen] = React.useState(false)
 
   React.useEffect(() => {
@@ -139,10 +109,12 @@ export default function Header() {
                 ))}
             </FlexList>
           </nav>
-          <div className={desktopNav}>{cta && <Button to={cta.href}>{cta.text}</Button>}</div>
+          <div className={desktopNav}>
+            {cta && <Button to={cta.href}>{cta.text}</Button>}
+          </div>
         </Flex>
       </Container>
-      
+
       {/* Mobile Navigation Header */}
       <Container className={mobileHeaderNavWrapper[isOpen ? "open" : "closed"]}>
         <Space size={2} />
@@ -170,7 +142,7 @@ export default function Header() {
           </Flex>
         </Flex>
       </Container>
-      
+
       {/* Mobile Navigation Overlay */}
       {isOpen && (
         <div className={mobileNavOverlay}>
@@ -180,15 +152,17 @@ export default function Header() {
                 <li key={navItem.id}>
                   {navItem.navItemType === "Group" ? (
                     <div>
-                      <div style={{ 
-                        color: "#ffffff", 
-                        fontSize: "1.25rem", 
-                        fontWeight: "600",
-                        paddingTop: "1rem",
-                        paddingBottom: "0.5rem",
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                        marginBottom: "0.5rem"
-                      }}>
+                      <div
+                        style={{
+                          color: "#ffffff",
+                          fontSize: "1.25rem",
+                          fontWeight: "600",
+                          paddingTop: "1rem",
+                          paddingBottom: "0.5rem",
+                          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                          marginBottom: "0.5rem",
+                        }}
+                      >
                         {navItem.text || navItem.name}
                       </div>
                       {navItem.navItems?.map((subItem) => (
@@ -197,11 +171,11 @@ export default function Header() {
                           to={subItem.href}
                           className={mobileNavLink}
                           onClick={() => setOpen(false)}
-                          style={{ 
+                          style={{
                             fontSize: "1rem",
                             paddingLeft: "1rem",
                             paddingTop: "0.75rem",
-                            paddingBottom: "0.75rem"
+                            paddingBottom: "0.75rem",
                           }}
                         >
                           {subItem.text}
@@ -209,8 +183,8 @@ export default function Header() {
                       ))}
                     </div>
                   ) : (
-                    <NavLink 
-                      to={navItem.href} 
+                    <NavLink
+                      to={navItem.href}
                       className={mobileNavLink}
                       onClick={() => setOpen(false)}
                     >
@@ -220,11 +194,17 @@ export default function Header() {
                 </li>
               ))}
             </FlexList>
-            
+
             {/* Mobile CTA */}
             {cta && (
-              <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                <NavLink 
+              <div
+                style={{
+                  marginTop: "2rem",
+                  paddingTop: "2rem",
+                  borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <NavLink
                   to={cta.href}
                   className={mobileCTAButton}
                   onClick={() => setOpen(false)}
