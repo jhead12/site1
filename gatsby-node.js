@@ -572,7 +572,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       navItemType: String @navItemType(name: "Link")
-      href: String @linkField(from: "url")
+      href: String @navItem(from: "href")
       text: String
       name: String
       description: String

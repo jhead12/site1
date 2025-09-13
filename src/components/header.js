@@ -126,7 +126,7 @@ export default function Header() {
           <Flex gap={3}>
             <div>
               {cta && (
-                <Button to={cta.href} variant={isOpen ? "reversed" : "primary"}>
+                <Button to={cta.Href} variant={isOpen ? "reversed" : "primary"}>
                   {cta.text}
                 </Button>
               )}
@@ -165,6 +165,7 @@ export default function Header() {
                       >
                         {navItem.text || navItem.name}
                       </div>
+                      {console.log("Nav Item:", navItem.text, navItem.href)}
                       {navItem.navItems?.map((subItem) => (
                         <NavLink
                           key={subItem.id}
