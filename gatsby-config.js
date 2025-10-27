@@ -121,5 +121,37 @@ module.exports = {
         icon: "src/favicon.png",
       },
     },
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        trackingIds: [process.env.GATSBY_GA_TRACKING_ID],
+        pluginConfig: {
+          head: true,
+          respectDNT: true,
+          exclude: ["/preview/**", "/do-not-track/me/too/"],
+        },
+      },
+    },
+    {
+      resolve: `gatsby-plugin-gdpr-cookies`,
+      options: {
+        googleAnalytics: {
+          trackingId: process.env.GATSBY_GA_TRACKING_ID,
+          cookieName: 'gatsby-gdpr-google-analytics',
+          anonymize: true,
+          allowAdFeatures: false
+        },
+        googleTagManager: {
+          trackingId: process.env.GATSBY_GA_TAG_MANAGER_TRACKING_ID,
+          cookieName: 'gatsby-gdpr-google-tagmanager',
+          dataLayerName: 'dataLayer',
+        },
+        facebookPixel: {
+          pixelId: process.env.GATSBY_FACEBOOK_PIXEL_ID,
+          cookieName: 'gatsby-gdpr-facebook-pixel',
+        },
+        environments: ['production', 'development']
+      },
+    },
   ],
 }
