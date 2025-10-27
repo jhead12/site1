@@ -32,8 +32,9 @@ export default function Portfolio(props) {
             >
               <Heading as="h1">Portfolio</Heading>
               <Text>
-                The Portfolio page content will be loaded from WordPress once it's configured.
-                Please create a "Portfolio" page in your WordPress admin with slug "portfolio".
+                The Portfolio page content will be loaded from WordPress once
+                it's configured. Please create a "Portfolio" page in your
+                WordPress admin with slug "portfolio".
               </Text>
             </div>
           )}
@@ -45,7 +46,12 @@ export default function Portfolio(props) {
 
 export const Head = (props) => {
   const { wpPage } = props.data
-  return <SEOHead title={wpPage?.title || "Portfolio"} description={wpPage?.excerpt || "Portfolio page"} />
+  return (
+    <SEOHead
+      title={wpPage?.title || "Portfolio"}
+      description={wpPage?.excerpt || "Portfolio page"}
+    />
+  )
 }
 
 export const query = graphql`
