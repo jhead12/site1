@@ -1,13 +1,16 @@
 [build]
   command = "yarn build:netlify"
   publish = "public"
+  # Use the newer Ubuntu Jammy build image (22.04) to avoid end-of-life images
+  image = "ubuntu-jammy"
   
   # The build:netlify script automatically ensures directories exist
   # using the scripts/ensure-directories.js script which creates 
   # static/audio with placeholder files if needed
 
 [build.environment]
-  NODE_VERSION = "20.19.0"
+  # Use Node 22.x (latest patch) for longer support
+  NODE_VERSION = "22"
   BYPASS_WORDPRESS = "false"
   NPM_FLAGS = "--prefer-offline --no-audit"
   YARN_FLAGS = "--prefer-offline --no-audit"
