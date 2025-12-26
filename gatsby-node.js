@@ -22,6 +22,23 @@ exports.createSchemaCustomization = async ({ actions }) => {
     type WpVideoConnection {
       nodes: [WpVideo]
     }
+    # Minimal WpTutorial placeholder to avoid schema errors when the
+    # remote WordPress instance does not expose the type. This mirrors
+    # the fuller definition added in BYPASS_WORDPRESS mode but keeps
+    # the schema valid in preview environments.
+    type WpTutorial implements Node {
+      id: ID!
+      title: String
+      slug: String
+    }
+    type WpTutorialAcfTutorials {
+      videoUrl: String
+      difficulty: String
+      duration: String
+      topic: String
+      software: String
+      tags: [String]
+    }
     type WpTutorialConnection {
       nodes: [WpTutorial]
     }
@@ -123,6 +140,32 @@ exports.createSchemaCustomization = async ({ actions }) => {
             return source[options.from]
           }
           return null
+        },
+      }
+    },
+  })
+
+  // Fallback navItem field extension — some environments/plugins
+  // may not register a specialized `@navItem` extension. Provide
+  // a safe default so schema build doesn't fail when Contentful
+  // types reference `@navItem(from: "...")`.
+  actions.createFieldExtension({
+    name: "navItem",
+    args: {
+      from: {
+        type: "String!",
+      },
+    },
+    extend(options) {
+      return {
+        resolve(source) {
+          // Prefer the explicit source field, then some common fallbacks
+          return (
+            (options && options.from && source[options.from]) ||
+            source.href ||
+            source.url ||
+            null
+          )
         },
       }
     },

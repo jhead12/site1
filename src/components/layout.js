@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useEffect, useRef } from "react"
 import PropTypes from "prop-types"
 import "../styles.css"
 import { Slice } from "gatsby"
@@ -7,7 +7,6 @@ import "./global-fixes.css"
 import MatrixBackground from "./matrix-background"
 import { ThemeProvider } from "../contexts/ThemeContext"
 import "./page-transition.css"
-import React, { useEffect, useRef } from "react"
 
 const Layout = ({ children, pageContext }) => {
   const locale = pageContext?.langKey || "en" // Get locale from pageContext or default to 'en'
