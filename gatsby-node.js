@@ -94,33 +94,9 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
     # Sort input types used in queries — include date so queries that sort
     # by date compile when WP types don't expose full schema in preview.
-    input WpVideoSortInput {
-      date: SortOrderEnum
-      title: SortOrderEnum
-      fields: [String]
-      order: SortOrderEnum
-    }
-
-    input WpBeatSortInput {
-      date: SortOrderEnum
-      title: SortOrderEnum
-      fields: [String]
-      order: SortOrderEnum
-    }
-
-    input WpMixSortInput {
-      date: SortOrderEnum
-      title: SortOrderEnum
-      fields: [String]
-      order: SortOrderEnum
-    }
-
-    input WpTutorialSortInput {
-      date: SortOrderEnum
-      title: SortOrderEnum
-      fields: [String]
-      order: SortOrderEnum
-    }
+    # Note: do not declare custom types ending with FilterInput/SortInput —
+    # Gatsby reserves those suffixes for internal schema generation. Sorting
+    # will use whatever the source plugin exposes at runtime.
     type WpTutorialConnection {
       nodes: [WpTutorial]
     }
