@@ -92,7 +92,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
     }
 
-    # Sort input types used in queries — include `date` so queries that sort
+    # Sort input types used in queries — include date so queries that sort
     # by date compile when WP types don't expose full schema in preview.
     input WpVideoSortInput {
       date: SortOrderEnum
