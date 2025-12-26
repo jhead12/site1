@@ -22,6 +22,85 @@ exports.createSchemaCustomization = async ({ actions }) => {
     type WpVideoConnection {
       nodes: [WpVideo]
     }
+    # Minimal connection type for featured image links used by templates
+    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
+      node: WpMediaItem!
+    }
+    # Minimal WpTutorial placeholder to avoid schema errors when the
+    # remote WordPress instance does not expose the type. This mirrors
+    # the fuller definition added in BYPASS_WORDPRESS mode but keeps
+    # the schema valid in preview environments.
+    type WpTutorial implements Node {
+      id: ID!
+      title: String
+      slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      formattedDate: String
+    }
+
+    type WpTutorialAcfTutorials {
+      videoUrl: String
+      difficulty: String
+      duration: String
+      topic: String
+      software: String
+      tags: [String]
+    }
+
+    # Minimal placeholders for optional WordPress types that may be absent
+    # in preview environments. These keep the schema stable when the remote
+    # WPGraphQL doesn't expose these nodes. Fields mirror those queried in
+    # templates/components so extraction succeeds.
+    type WpBeat implements Node {
+      id: ID!
+      title: String
+      slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      formattedDate: String
+    }
+
+    type WpMix implements Node {
+      id: ID!
+      title: String
+      slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      formattedDate: String
+    }
+
+    type WpVideo implements Node {
+      id: ID!
+      title: String
+      slug: String
+      excerpt: String
+      content: String
+      date: Date
+      formattedDate: String
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      videoDetails: WpContentNode_Videodetails
+    }
+
+    type WpPost implements Node {
+      id: ID!
+      title: String
+      slug: String
+      excerpt: String
+      content: String
+      date: Date
+      formattedDate: String
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+    }
+
+    # Sort input types used in queries — include date so queries that sort
+    # by date compile when WP types don't expose full schema in preview.
+    # Note: do not declare custom types ending with FilterInput/SortInput —
+    # Gatsby reserves those suffixes for internal schema generation. Sorting
+    # will use whatever the source plugin exposes at runtime.
     type WpTutorialConnection {
       nodes: [WpTutorial]
     }
@@ -123,6 +202,32 @@ exports.createSchemaCustomization = async ({ actions }) => {
             return source[options.from]
           }
           return null
+        },
+      }
+    },
+  })
+
+  // Fallback navItem field extension — some environments/plugins
+  // may not register a specialized `@navItem` extension. Provide
+  // a safe default so schema build doesn't fail when Contentful
+  // types reference `@navItem(from: "...")`.
+  actions.createFieldExtension({
+    name: "navItem",
+    args: {
+      from: {
+        type: "String!",
+      },
+    },
+    extend(options) {
+      return {
+        resolve(source) {
+          // Prefer the explicit source field, then some common fallbacks
+          return (
+            (options && options.from && source[options.from]) ||
+            source.href ||
+            source.url ||
+            null
+          )
         },
       }
     },
@@ -1057,7 +1162,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         formattedDate: String
         slug: String
         uri: String
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         categories: WpPostToCategoryConnection
         tags: WpPostToTagConnection
         author: WpNodeWithAuthorToUserConnectionEdge
@@ -1071,7 +1176,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         uri: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         databaseId: Int
       }
 
@@ -1082,7 +1187,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfBeats: WpBeatAcfBeats
         beatFields: WpBeatAcfBeats
         databaseId: Int
@@ -1106,7 +1211,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfMixes: WpMixAcfMixes
         mixFields: WpMixAcfMixes
         databaseId: Int
@@ -1137,7 +1242,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfTutorials: WpTutorialAcfTutorials
         databaseId: Int
       }
@@ -1160,13 +1265,13 @@ exports.createSchemaCustomization = async ({ actions }) => {
         formattedDate: String
         slug: String
         uri: String
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         videoCategories: WpVideoToVideoCategoryConnection
         databaseId: Int
       }
       
-      type WpNodeWithFeaturedImageToMediaItemConnectionEdge {
-        node: WpMediaItem
+      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
+        node: WpMediaItem!
       }
       
       type WpPostToCategoryConnection {
@@ -1581,7 +1686,7 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
@@ -1664,7 +1769,7 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
@@ -1712,7 +1817,7 @@ exports.createResolvers = ({ createResolvers }) => {
       // Enhance WpBeat resolvers
       WpBeat: {
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
@@ -1775,7 +1880,7 @@ exports.createResolvers = ({ createResolvers }) => {
       // Enhance WpMix resolvers
       WpMix: {
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {

@@ -30,11 +30,31 @@ export default function VideoPost({ data, pageContext }) {
     const match = text.match(youtubeRegex);
     return match ? match[1] : null;
   };
+
+  // Sanitize and validate a candidate YouTube ID or URL
+  const cleanYouTubeId = (candidate) => {
+    if (!candidate) return null;
+    // If it's already a plain 11-char ID, accept it
+    const idOnly = candidate.match(/^[A-Za-z0-9_-]{11}$/);
+    if (idOnly) return idOnly[0];
+    // Prefer URL-based extraction first (more precise)
+    const fromUrl = extractYouTubeId(candidate);
+    if (fromUrl) return fromUrl;
+
+    // Last resort: extract any 11-char ID-like sequence
+    const inline = candidate.match(/([A-Za-z0-9_-]{11})/);
+    if (inline) return inline[1];
+
+    return null;
+  };
   
   // Get YouTube video ID for embedding directly from ACF fields or extract from content
-  const youtubeVideoId = video?.videoDetails?.youtubeVideoId || 
-                         extractYouTubeId(video?.content) || 
-                         extractYouTubeId(video?.title);
+  const youtubeVideoId = cleanYouTubeId(
+    video?.videoDetails?.youtubeVideoId ||
+    video?.videoDetails?.youtubeUrl ||
+    video?.content ||
+    video?.title
+  );
   
   return (
     <Layout>
@@ -56,7 +76,8 @@ export default function VideoPost({ data, pageContext }) {
           {/* Video Player */}
           <Box marginY={5}>
             {youtubeVideoId ? (
-              <Box 
+              <Box
+                id={`youtube-wrapper-${youtubeVideoId}`}
                 style={{
                   position: 'relative',
                   paddingBottom: '56.25%', // 16:9 aspect ratio
@@ -65,18 +86,144 @@ export default function VideoPost({ data, pageContext }) {
                   borderRadius: '8px'
                 }}
               >
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-                  title={video?.title || "Video"}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                {/* Render poster + invisible placeholder; YT.Player will create the iframe client-side */}
+                <div
+                  id={`yt-player-div-${youtubeVideoId}`}
                   style={{
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
+                    inset: 0,
                     width: '100%',
-                    height: '100%'
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#000'
+                  }}
+                >
+                  <div
+                    id={`yt-poster-${youtubeVideoId}`}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backgroundImage: `url(https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg)`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      filter: 'brightness(0.6)',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <a
+                    id={`yt-link-${youtubeVideoId}`}
+                    href={`https://www.youtube.com/watch?v=${youtubeVideoId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      zIndex: 10,
+                      color: '#fff',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 84,
+                        height: 84,
+                        borderRadius: 999,
+                        background: 'rgba(0,0,0,0.6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 8
+                      }}
+                    >
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7-11-7z" fill="currentColor"/></svg>
+                    </div>
+                    <div style={{textDecoration: 'underline'}}>Watch video on YouTube</div>
+                  </a>
+                </div>
+
+                <script
+                  dangerouslySetInnerHTML={{
+                    __html: `
+;(function(){
+  try{
+    var videoId = '${youtubeVideoId}';
+    var playerDivId = 'yt-player-div-' + videoId;
+    var wrapperId = 'youtube-wrapper-' + videoId;
+
+    function insertFallback() {
+      var wrapper = document.getElementById(wrapperId);
+      if (!wrapper) return;
+      var thumb = 'https://i.ytimg.com/vi/' + videoId + '/hqdefault.jpg';
+      wrapper.innerHTML = '\\n        <a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:100%;text-decoration:none;color:inherit">\\n          <div style="position:absolute;inset:0;background-image:url(' + thumb + ');background-size:cover;background-position:center;border-radius:8px"></div>\\n          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.6);padding:12px;border-radius:999px;color:#fff;font-weight:700">Watch on YouTube</div>\\n        </a>';
+    }
+
+    function createPlayer() {
+      // If API already loaded, instantiate player into the div (YT will create iframe)
+      if (window.YT && window.YT.Player) {
+        try {
+          new window.YT.Player(playerDivId, {
+            height: '100%',
+            width: '100%',
+            videoId: videoId,
+            playerVars: { origin: window.location?.origin || window.location?.href },
+            events: {
+              onError: function(e) {
+                insertFallback();
+              }
+            }
+          });
+        } catch (err) {
+          insertFallback();
+        }
+        return;
+      }
+
+      // load API if not present
+      var tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var previous = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function() {
+        if (previous) try{ previous(); }catch(e){}
+        try {
+          new window.YT.Player(playerDivId, {
+            height: '100%',
+            width: '100%',
+            videoId: videoId,
+            playerVars: { origin: window.location?.origin || window.location?.href },
+            events: {
+              onError: function(e) {
+                insertFallback();
+              }
+            }
+          });
+        } catch (err) {
+          insertFallback();
+        }
+      };
+
+      // Also set a timeout: if player not ready within 3s, show fallback link (helps when blocked)
+      setTimeout(function(){
+        var playerDiv = document.getElementById(playerDivId);
+        if (!playerDiv) return;
+        // If the poster is still visible after timeout and YT not ready, leave poster (link) visible
+      }, 3000);
+    }
+
+    // Kick off player creation asynchronously
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      createPlayer();
+    } else {
+      document.addEventListener('DOMContentLoaded', createPlayer);
+    }
+  } catch(err){}
+})();
+                    `
                   }}
                 />
               </Box>
@@ -228,9 +375,8 @@ export const query = graphql`
       title
       content
       excerpt
-      date(formatString: "MMMM DD, YYYY")
+      date
       slug
-      uri
       featuredImage {
         node {
           altText
@@ -242,13 +388,7 @@ export const query = graphql`
           }
         }
       }
-      videoCategories {
-        nodes {
-          id
-          name
-          slug
-        }
-      }
+      # videoCategories may not be available on all WPGraphQL schemas; handle in UI via optional chaining
       videoDetails {
         youtubeVideoId
         videoDuration
@@ -268,7 +408,7 @@ export const query = graphql`
         slug
         excerpt
         content
-        date(formatString: "MMMM DD, YYYY")
+        date
         featuredImage {
           node {
             sourceUrl
@@ -285,11 +425,7 @@ export const query = graphql`
           videoDuration
           youtubeUrl
         }
-        videoCategories {
-          nodes {
-            name
-          }
-        }
+        # videoCategories may not be available on all WPGraphQL schemas; handle in UI via optional chaining
       }
     }
   }
