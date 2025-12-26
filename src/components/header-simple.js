@@ -74,8 +74,10 @@ export default function Header() {
     }
   `)
 
-  // Use mock data for now - much more reliable
-  const data = mockData
+  // Prefer GraphQL data when available; fall back to mock data
+  const data = (queryData?.layout?.header && Object.keys(queryData.layout.header).length > 0)
+    ? queryData
+    : mockData
   const { navItems, cta } = data.layout.header
   const [isOpen, setOpen] = React.useState(false)
 

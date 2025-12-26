@@ -13,13 +13,14 @@ module.exports = {
     ],
     // Add this to better handle Gatsby graphql imports
     '^gatsby$': '<rootDir>/__mocks__/gatsby.js',
+    '^is-absolute-url$': '<rootDir>/__mocks__/is-absolute-url.js',
   },
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testPathIgnorePatterns: ['node_modules', '\\.cache', '<rootDir>.*/public'],
   transformIgnorePatterns: [
     // Make sure to transform these modules when running tests
-    'node_modules/(?!(gatsby|gatsby-script|gatsby-link|gatsby-plugin-image|gatsby-plugin-utils)/)',
+    'node_modules/(?!(gatsby|gatsby-script|gatsby-link|gatsby-plugin-image|gatsby-plugin-utils|is-absolute-url)/)',
   ],
   globals: {
     __PATH_PREFIX__: '',

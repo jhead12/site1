@@ -69,3 +69,5 @@ release/
 
 
 ./ptxp_converter/
+# Local Netlify folder
+.netlify
