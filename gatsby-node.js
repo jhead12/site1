@@ -14,16 +14,16 @@ exports.createSchemaCustomization = async ({ actions }) => {
   // This prevents build-time "Cannot query field 'allWpBeat' on type 'Query'" errors.
   actions.createTypes(/* GraphQL */ `
     type WpBeatConnection {
-      nodes: [JSON]
+      nodes: [WpBeat]
     }
     type WpMixConnection {
-      nodes: [JSON]
+      nodes: [WpMix]
     }
     type WpVideoConnection {
-      nodes: [JSON]
+      nodes: [WpVideo]
     }
     type WpTutorialConnection {
-      nodes: [JSON]
+      nodes: [WpTutorial]
     }
 
     extend type Query {
