@@ -22,6 +22,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
     type WpVideoConnection {
       nodes: [WpVideo]
     }
+    # Minimal connection type for featured image links used by templates
+    type WpNodeWithFeaturedImageToMediaItemConnectionEdge {
+      node: WpMediaItem
+    }
     # Minimal WpTutorial placeholder to avoid schema errors when the
     # remote WordPress instance does not expose the type. This mirrors
     # the fuller definition added in BYPASS_WORDPRESS mode but keeps
