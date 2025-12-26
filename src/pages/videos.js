@@ -322,7 +322,7 @@ export const query = graphql`
         title
         excerpt
         slug
-        date(formatString: "MMMM DD, YYYY")
+        date
         # Commenting out author field as it may not be available in WpVideo schema
         # author {
         #   node {
@@ -335,13 +335,7 @@ export const query = graphql`
             altText
           }
         }
-        videoCategories {
-          nodes {
-            id
-            name
-            slug
-          }
-        }
+        # videoCategories may not be available on all WPGraphQL schemas; handle in UI via optional chaining
         # ACF fields - these will only work if WPGraphQL for ACF is properly configured
         # If these fields aren't available, we'll try to extract YouTube IDs from content
         videoDetails {
@@ -351,14 +345,7 @@ export const query = graphql`
         content
       }
     }
-    allWpVideoCategory(filter: { count: { gt: 0 } }) {
-      nodes {
-        id
-        name
-        slug
-        count
-      }
-    }
+    # allWpVideoCategory may not exist on some WPGraphQL schemas — categories will be derived from videos when available
     site {
       siteMetadata {
         title

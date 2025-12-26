@@ -375,9 +375,8 @@ export const query = graphql`
       title
       content
       excerpt
-      date(formatString: "MMMM DD, YYYY")
+      date
       slug
-      uri
       featuredImage {
         node {
           altText
@@ -389,13 +388,7 @@ export const query = graphql`
           }
         }
       }
-      videoCategories {
-        nodes {
-          id
-          name
-          slug
-        }
-      }
+      # videoCategories may not be available on all WPGraphQL schemas; handle in UI via optional chaining
       videoDetails {
         youtubeVideoId
         videoDuration
@@ -415,7 +408,7 @@ export const query = graphql`
         slug
         excerpt
         content
-        date(formatString: "MMMM DD, YYYY")
+        date
         featuredImage {
           node {
             sourceUrl
@@ -432,11 +425,7 @@ export const query = graphql`
           videoDuration
           youtubeUrl
         }
-        videoCategories {
-          nodes {
-            name
-          }
-        }
+        # videoCategories may not be available on all WPGraphQL schemas; handle in UI via optional chaining
       }
     }
   }
