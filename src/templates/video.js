@@ -30,11 +30,29 @@ export default function VideoPost({ data, pageContext }) {
     const match = text.match(youtubeRegex);
     return match ? match[1] : null;
   };
+
+  // Sanitize and validate a candidate YouTube ID or URL
+  const cleanYouTubeId = (candidate) => {
+    if (!candidate) return null;
+    // If it's already a plain 11-char ID, accept it
+    const idOnly = candidate.match(/^[A-Za-z0-9_-]{11}$/);
+    if (idOnly) return idOnly[0];
+
+    // Otherwise try to extract an 11-char ID anywhere in the string
+    const inline = candidate.match(/([A-Za-z0-9_-]{11})/);
+    if (inline) return inline[1];
+
+    // Fall back to trying the URL-based extraction
+    return extractYouTubeId(candidate);
+  };
   
   // Get YouTube video ID for embedding directly from ACF fields or extract from content
-  const youtubeVideoId = video?.videoDetails?.youtubeVideoId || 
-                         extractYouTubeId(video?.content) || 
-                         extractYouTubeId(video?.title);
+  const youtubeVideoId = cleanYouTubeId(
+    video?.videoDetails?.youtubeVideoId ||
+    video?.videoDetails?.youtubeUrl ||
+    video?.content ||
+    video?.title
+  );
   
   return (
     <Layout>
@@ -57,6 +75,7 @@ export default function VideoPost({ data, pageContext }) {
           <Box marginY={5}>
             {youtubeVideoId ? (
               <Box 
+                id={`youtube-wrapper-${youtubeVideoId}`}
                 style={{
                   position: 'relative',
                   paddingBottom: '56.25%', // 16:9 aspect ratio
@@ -65,7 +84,9 @@ export default function VideoPost({ data, pageContext }) {
                   borderRadius: '8px'
                 }}
               >
+                {/* Server-side fallback iframe for SEO; client will attach YT.Player and handle onError */}
                 <iframe
+                  id={`yt-iframe-${youtubeVideoId}`}
                   src={`https://www.youtube.com/embed/${youtubeVideoId}`}
                   title={video?.title || "Video"}
                   frameBorder="0"
@@ -77,6 +98,67 @@ export default function VideoPost({ data, pageContext }) {
                     left: 0,
                     width: '100%',
                     height: '100%'
+                  }}
+                />
+                <script
+                  dangerouslySetInnerHTML={{
+                    __html: `
+;(function(){
+  try{
+    var videoId = '${youtubeVideoId}';
+    var wrapperId = 'youtube-wrapper-' + videoId;
+    var iframeId = 'yt-iframe-' + videoId;
+
+    function insertFallback() {
+      var wrapper = document.getElementById(wrapperId);
+      if (!wrapper) return;
+      var thumb = 'https://i.ytimg.com/vi/' + videoId + '/hqdefault.jpg';
+      wrapper.innerHTML = '\\n        <a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:100%;text-decoration:none;color:inherit">\\n          <div style="position:absolute;inset:0;background-image:url(' + thumb + ');background-size:cover;background-position:center;border-radius:8px"></div>\\n          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.6);padding:12px;border-radius:999px;color:#fff;font-weight:700">Watch on YouTube</div>\\n        </a>';
+    }
+
+    function createPlayer() {
+      // If API already loaded
+      if (window.YT && window.YT.Player) {
+        try {
+          new window.YT.Player(iframeId, {
+            playerVars: { origin: window.location?.origin || window.location?.href },
+            events: {
+              onError: function(e) {
+                insertFallback();
+              }
+            }
+          });
+        } catch (err) {
+          insertFallback();
+        }
+        return;
+      }
+
+    // load API if not present
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var previous = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function() {
+      if (previous) try{ previous(); }catch(e){}
+      try {
+        new window.YT.Player(iframeId, {
+          playerVars: { origin: window.location?.origin || window.location?.href },
+          events: {
+            onError: function(e) {
+              insertFallback();
+            }
+          }
+        });
+      } catch (err) {
+        insertFallback();
+      }
+    };
+  } catch(err){}
+})();
+                    `
                   }}
                 />
               </Box>
