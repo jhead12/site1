@@ -1,0 +1,1 @@
+{"data":{"beat":{"name":"Beat"},"tutorial":{"name":"Tutorial"},"mix":{"name":"Mix"},"video":{"name":"Video"}},"extensions":{"debug":[{"type":"DEBUG_LOGS_INACTIVE","message":"GraphQL Debug logging is not active. To see debug logs, GRAPHQL_DEBUG must be enabled."}]}}
