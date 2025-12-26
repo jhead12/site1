@@ -39,6 +39,33 @@ exports.createSchemaCustomization = async ({ actions }) => {
       software: String
       tags: [String]
     }
+
+    # Minimal placeholders for optional WordPress types that may be absent
+    # in preview environments. These keep the schema stable when the remote
+    # WPGraphQL doesn't expose these nodes.
+    type WpBeat implements Node {
+      id: ID!
+      title: String
+      slug: String
+    }
+
+    type WpMix implements Node {
+      id: ID!
+      title: String
+      slug: String
+    }
+
+    type WpVideo implements Node {
+      id: ID!
+      title: String
+      slug: String
+    }
+
+    type WpPost implements Node {
+      id: ID!
+      title: String
+      slug: String
+    }
     type WpTutorialConnection {
       nodes: [WpTutorial]
     }
