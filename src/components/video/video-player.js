@@ -23,7 +23,9 @@ const VideoPlayer = ({ videoId, title }) => {
   }
 
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`
+  // We'll instantiate the player client-side to allow graceful fallback on errors
+  const playerDivId = `yt-player-div-${videoId}`
+  const wrapperId = `yt-player-wrapper-${videoId}`
 
   const handlePlay = () => {
     setIsLoaded(true)
@@ -34,7 +36,70 @@ const VideoPlayer = ({ videoId, title }) => {
       {!isLoaded ? (
         // Thumbnail with play button
         <div
-          onClick={handlePlay}
+          onClick={() => {
+            handlePlay()
+            // create player after setting loaded
+            if (typeof window !== "undefined") {
+              // small timeout to allow React to render the player div
+              setTimeout(() => {
+                try {
+                  // If YT API is already present
+                  if (window.YT && window.YT.Player) {
+                    try {
+                      new window.YT.Player(playerDivId, {
+                        height: '100%',
+                        width: '100%',
+                        videoId,
+                        playerVars: { origin: window.location?.origin || window.location?.href },
+                        events: {
+                          onError: function() {
+                            var wrapper = document.getElementById(wrapperId)
+                            if (wrapper) {
+                              wrapper.innerHTML = '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:100%;text-decoration:none;color:inherit"><div style="position:absolute;inset:0;background-image:url(https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg);background-size:cover;background-position:center;border-radius:8px"></div><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.6);padding:12px;border-radius:999px;color:#fff;font-weight:700">Watch on YouTube</div></a>'
+                            }
+                          }
+                        }
+                      })
+                    } catch (e) {
+                      // fallback: replace with external link
+                      var wrapper = document.getElementById(wrapperId)
+                      if (wrapper) wrapper.innerHTML = '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>'
+                    }
+                    return
+                  }
+
+                  var tag = document.createElement('script')
+                  tag.src = 'https://www.youtube.com/iframe_api'
+                  var firstScriptTag = document.getElementsByTagName('script')[0]
+                  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+
+                  var previous = window.onYouTubeIframeAPIReady
+                  window.onYouTubeIframeAPIReady = function() {
+                    if (previous) try{ previous(); }catch(e){}
+                    try {
+                      new window.YT.Player(playerDivId, {
+                        height: '100%',
+                        width: '100%',
+                        videoId,
+                        playerVars: { origin: window.location?.origin || window.location?.href },
+                        events: {
+                          onError: function() {
+                            var wrapper = document.getElementById(wrapperId)
+                            if (wrapper) {
+                              wrapper.innerHTML = '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:100%;text-decoration:none;color:inherit"><div style="position:absolute;inset:0;background-image:url(https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg);background-size:cover;background-position:center;border-radius:8px"></div><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.6);padding:12px;border-radius:999px;color:#fff;font-weight:700">Watch on YouTube</div></a>'
+                            }
+                          }
+                        }
+                      })
+                    } catch (err) {
+                      var wrapper = document.getElementById(wrapperId)
+                      if (wrapper) wrapper.innerHTML = '<a href="https://www.youtube.com/watch?v=' + videoId + '" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>'
+                    }
+                  }
+                } catch (e) {}
+              }, 50)
+            }
+          }}
           style={{
             position: "absolute",
             top: 0,
@@ -70,7 +135,7 @@ const VideoPlayer = ({ videoId, title }) => {
               marginLeft: "5px"
             }} />
           </div>
-          
+
           {/* Video title overlay */}
           <div style={{
             position: "absolute",
@@ -87,21 +152,10 @@ const VideoPlayer = ({ videoId, title }) => {
           </div>
         </div>
       ) : (
-        // YouTube iframe
-        <iframe
-          src={embedUrl}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            border: "none"
-          }}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          title={title}
-        />
+        // Player placeholder div — YT.Player will create the iframe client-side
+        <div id={wrapperId} style={{ position: 'absolute', inset: 0 }}>
+          <div id={playerDivId} style={{ width: '100%', height: '100%' }} />
+        </div>
       )}
     </Box>
   )
