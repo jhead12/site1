@@ -30,7 +30,12 @@ exports.createSchemaCustomization = async ({ actions }) => {
       id: ID!
       title: String
       slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      formattedDate: String
     }
+
     type WpTutorialAcfTutorials {
       videoUrl: String
       difficulty: String
@@ -42,29 +47,79 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
     # Minimal placeholders for optional WordPress types that may be absent
     # in preview environments. These keep the schema stable when the remote
-    # WPGraphQL doesn't expose these nodes.
+    # WPGraphQL doesn't expose these nodes. Fields mirror those queried in
+    # templates/components so extraction succeeds.
     type WpBeat implements Node {
       id: ID!
       title: String
       slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      formattedDate: String
     }
 
     type WpMix implements Node {
       id: ID!
       title: String
       slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      formattedDate: String
     }
 
     type WpVideo implements Node {
       id: ID!
       title: String
       slug: String
+      excerpt: String
+      content: String
+      date: Date
+      formattedDate: String
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      videoDetails: WpContentNode_Videodetails
     }
 
     type WpPost implements Node {
       id: ID!
       title: String
       slug: String
+      excerpt: String
+      content: String
+      date: Date
+      formattedDate: String
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+    }
+
+    # Sort input types used in queries — include `date` so queries that sort
+    # by date compile when WP types don't expose full schema in preview.
+    input WpVideoSortInput {
+      date: SortOrderEnum
+      title: SortOrderEnum
+      fields: [String]
+      order: SortOrderEnum
+    }
+
+    input WpBeatSortInput {
+      date: SortOrderEnum
+      title: SortOrderEnum
+      fields: [String]
+      order: SortOrderEnum
+    }
+
+    input WpMixSortInput {
+      date: SortOrderEnum
+      title: SortOrderEnum
+      fields: [String]
+      order: SortOrderEnum
+    }
+
+    input WpTutorialSortInput {
+      date: SortOrderEnum
+      title: SortOrderEnum
+      fields: [String]
+      order: SortOrderEnum
     }
     type WpTutorialConnection {
       nodes: [WpTutorial]
