@@ -3,9 +3,11 @@
 If `allWpMix` or the `Mix` GraphQL type is missing during your Gatsby build, perform the following on the WordPress site (or provide these steps to the site admin):
 
 1. Confirm WPGraphQL plugin is installed and active
+
    - Go to **Plugins → Installed Plugins** and verify `WPGraphQL` is present and active.
 
 2. Install and enable WPGraphQL for Advanced Custom Fields (if you use ACF)
+
    - Install `wp-graphql-acf` (or the current recommended integration) and activate it.
 
 3. Ensure the `mix` custom post type is registered with GraphQL enabled
@@ -17,7 +19,7 @@ If `allWpMix` or the `Mix` GraphQL type is missing during your Gatsby build, per
 'graphql_plural_name' => 'Mixes',
 ```
 
-   - If using a CPT registration plugin (e.g., CPT UI), edit the post type and enable "Show in GraphQL" and set the GraphQL single/plural names accordingly.
+- If using a CPT registration plugin (e.g., CPT UI), edit the post type and enable "Show in GraphQL" and set the GraphQL single/plural names accordingly.
 
 4. Verify ACF field groups are configured with "Show in GraphQL" enabled for the field groups used by `Mix`.
 

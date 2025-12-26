@@ -13,12 +13,18 @@ exports.createSchemaCustomization = async ({ actions }) => {
   // exist on the schema even if the WP source plugin doesn't expose them yet.
   // This prevents build-time "Cannot query field 'allWpBeat' on type 'Query'" errors.
   actions.createTypes(/* GraphQL */ `
-    scalar JSON
-
-    type WpBeatConnection { nodes: [JSON] }
-    type WpMixConnection { nodes: [JSON] }
-    type WpVideoConnection { nodes: [JSON] }
-    type WpTutorialConnection { nodes: [JSON] }
+    type WpBeatConnection {
+      nodes: [JSON]
+    }
+    type WpMixConnection {
+      nodes: [JSON]
+    }
+    type WpVideoConnection {
+      nodes: [JSON]
+    }
+    type WpTutorialConnection {
+      nodes: [JSON]
+    }
 
     extend type Query {
       allWpBeat: WpBeatConnection
