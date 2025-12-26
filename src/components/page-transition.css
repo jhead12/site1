@@ -1,0 +1,19 @@
+/* Lightweight page transition styles: fade + subtle upward motion */
+.page-transition{
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 380ms cubic-bezier(.33,1,.68,1), transform 380ms cubic-bezier(.33,1,.68,1);
+  will-change: opacity, transform;
+}
+.page-transition.is-visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Improve performance on reduced-motion preferences */
+@media (prefers-reduced-motion: reduce){
+  .page-transition{
+    transition: none !important;
+    transform: none !important;
+  }
+}

@@ -6,9 +6,28 @@ import "./page-consistency.css"
 import "./global-fixes.css"
 import MatrixBackground from "./matrix-background"
 import { ThemeProvider } from "../contexts/ThemeContext"
+import "./page-transition.css"
+import React, { useEffect, useRef } from "react"
 
 const Layout = ({ children, pageContext }) => {
   const locale = pageContext?.langKey || "en" // Get locale from pageContext or default to 'en'
+  const pageRef = useRef(null)
+
+  useEffect(() => {
+    // Trigger entry animation on mount
+    const node = pageRef.current
+    if (!node) return
+    // Allow next paint
+    requestAnimationFrame(() => {
+      node.classList.add("is-visible")
+    })
+
+    return () => {
+      // clean up class for unmount
+      try { node.classList.remove("is-visible") } catch (e) {}
+    }
+  }, [locale])
+
   return (
     <ThemeProvider locale={locale}>
       <>
@@ -48,20 +67,22 @@ const Layout = ({ children, pageContext }) => {
           <Slice alias="header" />
 
           {/* Main Content */}
-          <main
-            style={{
-              margin: "0 auto",
-              padding: "20px",
-              maxWidth: "1200px",
-              position: "relative",
-              zIndex: "10",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(4px)",
-              borderRadius: "8px",
-            }}
-          >
-            {children}
-          </main>
+          <div ref={pageRef} className="page-transition">
+            <main
+              style={{
+                margin: "0 auto",
+                padding: "20px",
+                maxWidth: "1200px",
+                position: "relative",
+                zIndex: "10",
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(4px)",
+                borderRadius: "8px",
+              }}
+            >
+              {children}
+            </main>
+          </div>
 
           {/* Footer */}
           <Slice alias="footer" />
