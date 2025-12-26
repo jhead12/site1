@@ -23,8 +23,8 @@ exports.createSchemaCustomization = async ({ actions }) => {
       nodes: [WpVideo]
     }
     # Minimal connection type for featured image links used by templates
-    type WpNodeWithFeaturedImageToMediaItemConnectionEdge {
-      node: WpMediaItem
+    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
+      node: WpMediaItem!
     }
     # Minimal WpTutorial placeholder to avoid schema errors when the
     # remote WordPress instance does not expose the type. This mirrors
@@ -36,7 +36,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       slug: String
       content: String
       date: Date
-      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
       formattedDate: String
     }
 
@@ -59,7 +59,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       slug: String
       content: String
       date: Date
-      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
       formattedDate: String
     }
 
@@ -69,7 +69,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       slug: String
       content: String
       date: Date
-      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
       formattedDate: String
     }
 
@@ -81,7 +81,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: String
       date: Date
       formattedDate: String
-      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
       videoDetails: WpContentNode_Videodetails
     }
 
@@ -93,7 +93,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: String
       date: Date
       formattedDate: String
-      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
     }
 
     # Sort input types used in queries — include date so queries that sort
@@ -1162,7 +1162,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         formattedDate: String
         slug: String
         uri: String
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         categories: WpPostToCategoryConnection
         tags: WpPostToTagConnection
         author: WpNodeWithAuthorToUserConnectionEdge
@@ -1176,7 +1176,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         uri: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         databaseId: Int
       }
 
@@ -1187,7 +1187,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfBeats: WpBeatAcfBeats
         beatFields: WpBeatAcfBeats
         databaseId: Int
@@ -1211,7 +1211,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfMixes: WpMixAcfMixes
         mixFields: WpMixAcfMixes
         databaseId: Int
@@ -1242,7 +1242,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfTutorials: WpTutorialAcfTutorials
         databaseId: Int
       }
@@ -1265,13 +1265,13 @@ exports.createSchemaCustomization = async ({ actions }) => {
         formattedDate: String
         slug: String
         uri: String
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         videoCategories: WpVideoToVideoCategoryConnection
         databaseId: Int
       }
       
-      type WpNodeWithFeaturedImageToMediaItemConnectionEdge {
-        node: WpMediaItem
+      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
+        node: WpMediaItem!
       }
       
       type WpPostToCategoryConnection {
@@ -1686,7 +1686,7 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
@@ -1769,7 +1769,7 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
@@ -1817,7 +1817,7 @@ exports.createResolvers = ({ createResolvers }) => {
       // Enhance WpBeat resolvers
       WpBeat: {
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
@@ -1880,7 +1880,7 @@ exports.createResolvers = ({ createResolvers }) => {
       // Enhance WpMix resolvers
       WpMix: {
         featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
+          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
             // Return a mock featuredImage structure in bypass mode
             return {
