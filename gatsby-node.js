@@ -1272,6 +1272,21 @@ exports.createSchemaCustomization = async ({ actions }) => {
         databaseId: Int
       }
       
+      # Minimal connection/edge interfaces required for BYPASS_WORDPRESS
+      # Ensure any types that `implements` these interfaces have a base
+      # definition to avoid schema extraction errors in preview builds.
+      interface WpOneToOneConnectionType {
+        node: WpMediaItem
+      }
+
+      interface WpEdgeType {
+        node: Node
+      }
+
+      interface WpMediaItemConnectionEdgeType {
+        node: WpMediaItem
+      }
+
       type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
         node: WpMediaItem!
       }
