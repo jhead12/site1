@@ -18,3 +18,8 @@
 
 [[plugins]]
   package = "@netlify/plugin-gatsby"
+
+[context.deploy-preview.environment]
+  # Use bypass mode for Deploy Previews so previews match local development
+  # (local dev often uses BYPASS_WORDPRESS=true to use mock/demo content)
+  BYPASS_WORDPRESS = "true"
