@@ -521,6 +521,22 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: [HomepageProduct]
     }
 
+    /* Minimal WP connection/edge interfaces required for preview schema
+       Some preview environments don't expose the full WPGraphQL schema;
+       declare these interfaces with at least one field so types that
+       `implements` them (declared later) compile successfully. */
+    interface WpOneToOneConnectionType {
+      node: WpMediaItem
+    }
+
+    interface WpEdgeType {
+      node: Node
+    }
+
+    interface WpMediaItemConnectionEdgeType {
+      node: WpMediaItem
+    }
+
     interface BeatsProduct implements Node {
       id: ID!
       heading: String
