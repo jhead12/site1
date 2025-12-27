@@ -22,6 +22,20 @@ exports.createSchemaCustomization = async ({ actions }) => {
     type WpVideoConnection {
       nodes: [WpVideo]
     }
+    # Minimal connection/edge interfaces required for preview schema
+    # Ensure these are defined before any types `implements` them.
+    interface WpOneToOneConnectionType {
+      node: WpMediaItem
+    }
+
+    interface WpEdgeType {
+      node: Node
+    }
+
+    interface WpMediaItemConnectionEdgeType {
+      node: WpMediaItem
+    }
+
     # Minimal connection type for featured image links used by templates
     type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
       node: WpMediaItem!
