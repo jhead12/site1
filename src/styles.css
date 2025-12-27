@@ -48,7 +48,7 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem 0 1rem; /* Added top padding for spacing from header */
+  padding: 2rem 1rem 6rem 1rem; /* ensure space at bottom for persistent player */
 }
 
 /* Improved section spacing and layout */
@@ -168,7 +168,7 @@ img {
 /* Mobile-first responsive design */
 @media (max-width: 768px) {
   .content-wrapper {
-    padding: 1.5rem 0.75rem 0 0.75rem; /* Added top padding for mobile */
+    padding: 1.5rem 0.75rem 6rem 0.75rem; /* preserve bottom spacing on mobile for persistent player */
   }
   
   .section {

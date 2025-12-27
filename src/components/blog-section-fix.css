@@ -75,6 +75,7 @@ section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
   font-size: 0.9rem;
   line-height: 1.5;
   color: #4a5568;
+  /* Allow up to 3 lines on desktop so at least a full sentence shows */
   height: 4.5em;
   overflow: hidden;
   display: -webkit-box;
@@ -109,6 +110,7 @@ section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
   }
   
   section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
+    /* On mobile allow two lines so a short sentence fits */
     -webkit-line-clamp: 2;
     line-clamp: 2;
     height: 3em;

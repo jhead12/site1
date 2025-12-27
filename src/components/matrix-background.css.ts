@@ -28,11 +28,11 @@ export const matrixCanvas = style({
   '@media': {
     // Dark theme override for better visibility
     '(prefers-color-scheme: dark)': {
-      opacity: 0.12,
+      opacity: 0.2,
     },
     // Mobile optimization
     '(max-width: 768px)': {
-      opacity: 0.06,
+      opacity: 0.12,
     },
   },
 });
