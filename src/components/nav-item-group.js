@@ -1,6 +1,6 @@
 import * as React from "react"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
-import { Box, Flex, FlexList, NavButtonLink, NavLink } from "./ui"
+import { Box, Flex, NavButtonLink, NavLink } from "./ui"
 import Caret from "./caret"
 import * as styles from "./nav-item-group.css"
 import { media } from "./media.css"
@@ -8,13 +8,14 @@ import { media } from "./media.css"
 export default function NavItemGroup({ name, navItems = [], onItemClick }) {
   // Defensive check to ensure navItems is always an array
   const safeNavItems = Array.isArray(navItems) ? navItems : []
-  
+
   const [isOpen, setIsOpen] = React.useState(false)
   const [popupVisible, setPopupVisible] = React.useState(false)
+  const closeTimeoutRef = React.useRef(null)
   const isSmallScreen = () => {
     return !window.matchMedia(media.small).matches
   }
-  
+
   const handleSubItemClick = React.useCallback(() => {
     setIsOpen(false)
     setPopupVisible(false)
@@ -22,7 +23,7 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
       onItemClick()
     }
   }, [onItemClick])
-  
+
   const onGroupButtonClick = React.useCallback(() => {
     if (!isOpen) {
       setIsOpen(true)
@@ -35,6 +36,30 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
       setPopupVisible(false)
     }
   }, [isOpen])
+
+  const handleMouseEnter = React.useCallback(() => {
+    if (isSmallScreen()) return
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    if (!isOpen) {
+      setIsOpen(true)
+      setPopupVisible(true)
+    } else {
+      setPopupVisible(true)
+    }
+  }, [isOpen])
+
+  const handleMouseLeave = React.useCallback(() => {
+    if (isSmallScreen()) return
+    setPopupVisible(false)
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false)
+      closeTimeoutRef.current = null
+    }, 180)
+  }, [])
 
   React.useEffect(() => {
     // crude implementation of animating the popup without a library
@@ -74,13 +99,21 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
     }
   }, [name, isOpen, onGroupButtonClick])
 
+  React.useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+    }
+  }, [])
+
   return (
     <Flex
       data-id={`${name}-group-wrapper`}
       variant="columnStart"
       gap={4}
       className={styles.navGroupWrapper}
-      style={{ position: 'relative', zIndex: 100 }}
+      style={{ position: "relative", zIndex: 100 }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <NavButtonLink
         onClick={onGroupButtonClick}
@@ -97,31 +130,30 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
           className={
             styles.navLinkListWrapper[popupVisible ? "opened" : "closed"]
           }
-          style={{ 
-            zIndex: 200, 
-            position: 'absolute', 
-            top: '100%', 
+          style={{
+            zIndex: 200,
+            position: "absolute",
+            top: "100%",
             left: 0,
-            backgroundColor: '#000000',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            minWidth: '250px'
+            backgroundColor: "#000000",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            minWidth: "250px",
           }}
         >
-          <FlexList
-            variant="columnStart"
-            gap={2}
-            className={styles.navLinkListWrapperInner}
-          >
-            {safeNavItems && safeNavItems.length > 0 && safeNavItems.map((navItem) => (
-              <li key={navItem.id}>
-                <NavLink 
-                  to={navItem.href} 
-                  className={styles.navLinkListLink}
+          {/* Card-style grid for dropdown items (desktop-first). */}
+          <div className={styles.cardGrid}>
+            {safeNavItems &&
+              safeNavItems.length > 0 &&
+              safeNavItems.map((navItem) => (
+                <NavLink
+                  key={navItem.id}
+                  to={navItem.href}
+                  className={styles.cardItem}
                   onClick={handleSubItemClick}
                 >
-                  <Flex variant="start" gap={3}>
+                  <div className={styles.cardItemInner}>
                     {navItem.icon && navItem.icon.gatsbyImageData && (
                       <GatsbyImage
                         alt={navItem.icon.alt || navItem.text}
@@ -130,21 +162,16 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
                         style={{ zIndex: 250 }}
                       />
                     )}
-                    <Flex variant="columnStart" marginY={1} gap={0}>
-                      <Box as="span" className={styles.navLinkTitle}>
-                        {navItem.text}
-                      </Box>
-                      {!!navItem.description && (
-                        <Box as="p" className={styles.navLinkDescription}>
-                          {navItem.description}
-                        </Box>
-                      )}
-                    </Flex>
-                  </Flex>
+                    <div className={styles.cardItemTitle}>{navItem.text}</div>
+                    {!!navItem.description && (
+                      <div className={styles.cardItemDescription}>
+                        {navItem.description}
+                      </div>
+                    )}
+                  </div>
                 </NavLink>
-              </li>
-            ))}
-          </FlexList>
+              ))}
+          </div>
         </Box>
       )}
     </Flex>

@@ -17,7 +17,9 @@ export const navGroupTitle = style([
         alignItems: "baseline",
         color: "inherit",
         fontSize: "inherit",
-        ":hover": { color: theme.colors.active },
+        // Remove bottom border on desktop and brighten text on hover
+        borderBottom: "none",
+        ":hover": { color: theme.colors.background, fontWeight: 700 },
       },
     },
   },
@@ -32,33 +34,33 @@ export const navGroupTitleInner = style({
 })
 
 const navLinkListWrapperBase = style({
-position: "absolute",
-zIndex: 1000,
-whiteSpace: "nowrap",
-width: "fit-content",
-background: theme.colors.background,
-padding: `${theme.space[3]} ${theme.space[3]} ${theme.space[0]} ${theme.space[3]}`,
-top: "calc(100% + 20px)",
-left: "50%",
-transform: "translateX(-50%)",
-borderRadius: theme.radii.large,
-minWidth: theme.sizes.navGroupBoxMin,
-maxWidth: theme.sizes.navGroupBoxMax,
-boxShadow: theme.shadows.large,
-selectors: {
-  "&::before": {
-    content: "",
-    position: "absolute",
-    top: 0,
-    left: "50%",
-    transform: "translateX(-50%) translateY(calc(-100% + 2px))",
-    width: 0,
-    height: 0,
-    borderStyle: "solid",
-    borderWidth: "0 14px 17.3px 14px",
-    borderColor: `transparent transparent ${theme.colors.background} transparent`,
+  position: "absolute",
+  zIndex: 1000,
+  whiteSpace: "nowrap",
+  width: "fit-content",
+  background: theme.colors.background,
+  padding: `${theme.space[3]} ${theme.space[3]} ${theme.space[0]} ${theme.space[3]}`,
+  top: "calc(100% + 20px)",
+  left: "50%",
+  transform: "translateX(-50%)",
+  borderRadius: theme.radii.large,
+  minWidth: theme.sizes.navGroupBoxMin,
+  maxWidth: theme.sizes.navGroupBoxMax,
+  boxShadow: theme.shadows.large,
+  selectors: {
+    "&::before": {
+      content: "",
+      position: "absolute",
+      top: 0,
+      left: "50%",
+      transform: "translateX(-50%) translateY(calc(-100% + 2px))",
+      width: 0,
+      height: 0,
+      borderStyle: "solid",
+      borderWidth: "0 14px 17.3px 14px",
+      borderColor: `transparent transparent ${theme.colors.background} transparent`,
+    },
   },
-},
 })
 
 export const navLinkListWrapper = styleVariants({
@@ -119,9 +121,12 @@ export const navLinkListLink = style([
         fontSize: theme.fontSizes[2],
         fontWeight: theme.fontWeights.bold,
         borderRadius: theme.radii.button,
+        // Desktop: remove mobile-style bottom border and brighten hover
+        borderBottom: "none",
         ":hover": {
           background: theme.colors.muted,
-          color: "inherit",
+          color: theme.colors.primary,
+          fontWeight: theme.fontWeights.semibold,
         },
       },
     },
@@ -144,4 +149,59 @@ export const navLinkDescription = style({
 export const navLinkTitle = style({
   margin: 0,
   padding: 0,
+})
+
+// Card-style dropdown styles
+export const cardGrid = style({
+  display: "grid",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gap: theme.space[3],
+  padding: `${theme.space[2]} ${theme.space[3]}`,
+  "@media": {
+    [media.small]: {
+      gridTemplateColumns: "1fr",
+      padding: `${theme.space[2]} ${theme.space[2]}`,
+      gap: theme.space[2],
+    },
+  },
+})
+
+export const cardItem = style({
+  background: theme.colors.surface || "#0b0b0b",
+  borderRadius: theme.radii.large,
+  padding: `${theme.space[4]}`,
+  minHeight: 100,
+  display: "flex",
+  alignItems: "flex-start",
+  cursor: "pointer",
+  transition: "transform 0.18s ease, box-shadow 0.18s ease",
+  selectors: {
+    "&:hover": {
+      transform: "translateY(-6px) scale(1.01)",
+      boxShadow: theme.shadows.large,
+    },
+  },
+})
+
+export const cardItemInner = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.space[1],
+})
+
+export const cardItemTitle = style({
+  fontWeight: theme.fontWeights.bold,
+  fontSize: theme.fontSizes[2],
+})
+
+export const cardItemDescription = style({
+  fontSize: theme.fontSizes[1],
+  color: theme.colors.muted,
+})
+
+export const cardItemLinks = style({
+  marginTop: "auto",
+  display: "flex",
+  gap: theme.space[2],
+  alignItems: "center",
 })
