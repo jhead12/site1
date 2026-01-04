@@ -1,6 +1,7 @@
 import React from "react"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
+import { AmazonConnectButton } from '../components/LiveChat'
 
 const ContactPage = ({ data }) => {
   // Get the consultation link from Contentful
@@ -44,6 +45,12 @@ const ContactPage = ({ data }) => {
             </div>
           </div>
           
+          <div className="mt-8">
+            <h2 className="text-2xl font-semibold mb-4">Call / Request a Callback</h2>
+            <p className="text-gray-600 mb-4">Speak to us directly or request a callback — we use Amazon Connect for calls.</p>
+            <AmazonConnectButton phoneNumber={process.env.GATSBY_AMAZON_CONNECT_PHONE_NUMBER || "+1234567890"} />
+          </div>
+
           <div className="mt-8">
             <p className="text-gray-600">More contact options and forms coming soon...</p>
           </div>
