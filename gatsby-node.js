@@ -23,7 +23,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       nodes: [WpVideo]
     }
     # Minimal connection/edge interfaces required for preview schema
-    # Ensure these are defined before any types `implements` them.
+    # Ensure these are defined before any types that implements them.
     interface WpOneToOneConnectionType {
       node: WpMediaItem
     }
@@ -1287,7 +1287,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       }
       
       # Minimal connection/edge interfaces required for BYPASS_WORDPRESS
-      # Ensure any types that `implements` these interfaces have a base
+      # Ensure any types that implements these interfaces have a base
       # definition to avoid schema extraction errors in preview builds.
       interface WpOneToOneConnectionType {
         node: WpMediaItem
