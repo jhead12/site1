@@ -24,7 +24,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
     # Minimal connection type for featured image links used by templates
     # Only define the concrete type, not the interfaces (WordPress provides those)
-    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType {
+    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType {
       node: WpNode
     }
     # Minimal WpTutorial placeholder to avoid schema errors when the
@@ -1275,7 +1275,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       
       # Minimal connection type for featured image in BYPASS_WORDPRESS mode
       # Don't redefine WordPress interfaces - just the concrete type
-      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType {
+      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType {
         node: WpNode
       }
       
