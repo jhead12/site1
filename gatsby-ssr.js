@@ -25,6 +25,8 @@ const client = new ApolloClient({
 
 export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
     const facebookPixelId = process.env.GATSBY_FACEBOOK_PIXEL_ID;
+    const tawkToPropertyId = process.env.GATSBY_TAWKTO_PROPERTY_ID;
+    const tawkToWidgetId = process.env.GATSBY_TAWKTO_WIDGET_ID || 'default';
   
     setHeadComponents([
       <script
@@ -44,7 +46,26 @@ export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
           `,
         }}
       />,
-    ]);
+      // Tawk.to Live Chat Widget
+      tawkToPropertyId && (
+        <script
+          key="tawkto-script"
+          dangerouslySetInnerHTML={{
+            __html: `
+              var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+              (function(){
+                var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+                s1.async=true;
+                s1.src='https://embed.tawk.to/${tawkToPropertyId}/${tawkToWidgetId}';
+                s1.charset='UTF-8';
+                s1.setAttribute('crossorigin','*');
+                s0.parentNode.insertBefore(s1,s0);
+              })();
+            `,
+          }}
+        />
+      ),
+    ].filter(Boolean));
   
     setPostBodyComponents([
       <noscript key="meta-pixel-noscript">
