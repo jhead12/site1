@@ -522,8 +522,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       content: [HomepageProduct]
     }
 
-    
-
     interface BeatsProduct implements Node {
       id: ID!
       heading: String

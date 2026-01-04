@@ -1,7 +1,10 @@
 require("dotenv").config()
 
 // Check if we should bypass WordPress due to SSL issues
-const bypassWordPress = process.env.BYPASS_WORDPRESS === 'true' || process.env.NODE_ENV === 'production'
+// Only bypass when the BYPASS_WORDPRESS env var is explicitly set to 'true'.
+// Previously this file forced bypass in production (`NODE_ENV === 'production'`),
+// which prevented WordPress data from being sourced on production builds.
+const bypassWordPress = process.env.BYPASS_WORDPRESS === "true"
 
 const wordPressConfig = {
   resolve: "gatsby-source-wordpress",
@@ -39,7 +42,7 @@ const wordPressConfig = {
         password: process.env.WP_PASSWORD,
       },
     },
-  }
+  },
 }
 
 module.exports = {

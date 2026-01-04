@@ -18,8 +18,8 @@ const ContactPage = ({ data }) => {
         
         {/* Music Consultation CTA */}
         <div className="bg-blue-600 text-white rounded-lg p-6 mb-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">Ready to Take Your Music to the Next Level?</h2>
-          <p className="text-lg mb-4">Book a personalized music consultation session</p>
+          <h2 className="text-2xl font-bold mb-3"></h2>
+          <p className="text-lg mb-4">Reach out to me for any questions?</p>
           <a 
             href={consultationLink.href} 
             className="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors"
@@ -29,7 +29,7 @@ const ContactPage = ({ data }) => {
         </div>
         
         <div className="max-w-2xl">
-          <p className="text-lg mb-6">Get in touch with us!</p>
+          <p className="text-lg mb-6">Get in touch with me!</p>
           
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
