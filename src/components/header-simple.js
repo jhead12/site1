@@ -43,31 +43,33 @@ export default function Header() {
     }
   };
 
-  // Simple working query
+  // Query Contentful layout nodes and pick the first one; fall back to mock
   const queryData = useStaticQuery(graphql`
     query {
-      layout {
-        header {
-          id
-          navItems {
+      allContentfulLayout {
+        nodes {
+          header {
             id
-            navItemType
-            href
-            text
-            name
-            description
-            submenu {
+            navItems {
               id
               navItemType
               href
               text
+              name
               description
+              submenu {
+                id
+                navItemType
+                href
+                text
+                description
+              }
             }
-          }
-          cta {
-            id
-            href
-            text
+            cta {
+              id
+              href
+              text
+            }
           }
         }
       }
@@ -75,8 +77,9 @@ export default function Header() {
   `)
 
   // Prefer GraphQL data when available; fall back to mock data
-  const data = (queryData?.layout?.header && Object.keys(queryData.layout.header).length > 0)
-    ? queryData
+  const contentfulLayout = queryData?.allContentfulLayout?.nodes?.[0] || null
+  const data = contentfulLayout && Object.keys(contentfulLayout.header || {}).length > 0
+    ? { layout: contentfulLayout }
     : mockData
   const { navItems, cta } = data.layout.header
   const [isOpen, setOpen] = React.useState(false)

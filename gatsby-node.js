@@ -113,6 +113,13 @@ exports.createSchemaCustomization = async ({ actions }) => {
       allWpTutorial: WpTutorialConnection
     }
   `)
+  // Ensure `layout` query exists in the schema in all modes so layout
+  // static queries (header/footer) work regardless of BYPASS_WORDPRESS.
+  actions.createTypes(/* GraphQL */ `
+    extend type Query {
+      layout: ContentfulLayout
+    }
+  `)
   actions.createFieldExtension({
     name: "blocktype",
     extend(options) {
@@ -1521,7 +1528,6 @@ exports.createResolvers = ({ createResolvers }) => {
     Query: {
       // allPage resolver for both bypass mode and live mode
       allPage: {
-        type: "SitePageConnection",
         resolve(source, args, context) {
           if (bypassWordpress) {
             // Return mock pages in bypass mode
@@ -1546,32 +1552,53 @@ exports.createResolvers = ({ createResolvers }) => {
 
       // Add layout resolver for both modes
       layout: {
-        type: "ContentfulLayout",
-        resolve() {
+        resolve(source, args, context) {
+          // Prefer an actual ContentfulLayout node if available so the
+          // abstract Layout interface resolves to a concrete type.
+          try {
+            const layouts =
+              context.nodeModel.getAllNodes({ type: "ContentfulLayout" }) || []
+            if (layouts.length > 0) return layouts[0]
+          } catch (e) {
+            /* ignore and fall back to mock object below */
+          }
+
           return {
+            __typename: "ContentfulLayout",
             header: {
+              __typename: "ContentfulLayoutHeader",
               id: "header-1",
               navItems: [
-                { id: "nav-1", navItemType: "LINK", text: "Home", url: "/" },
                 {
+                  __typename: "ContentfulNavItem",
+                  id: "nav-1",
+                  navItemType: "LINK",
+                  text: "Home",
+                  url: "/",
+                },
+                {
+                  __typename: "ContentfulNavItem",
                   id: "nav-2",
                   navItemType: "LINK",
                   text: "Blog",
                   url: "/blog",
                 },
                 {
+                  __typename: "ContentfulNavItem",
                   id: "nav-3",
                   navItemType: "LINK",
                   text: "Music",
                   url: "/music",
                 },
                 {
+                  __typename: "ContentfulNavItem",
                   id: "nav-4",
                   navItemType: "LINK",
                   text: "Videos",
                   url: "/videos",
                 },
                 {
+                  __typename: "ContentfulNavItem",
                   id: "nav-5",
                   navItemType: "LINK",
                   text: "Contact",
@@ -1580,9 +1607,11 @@ exports.createResolvers = ({ createResolvers }) => {
               ],
             },
             footer: {
+              __typename: "ContentfulLayoutFooter",
               id: "footer-1",
               links: [
                 {
+                  __typename: "ContentfulNavItem",
                   id: "social-1",
                   navItemType: "SOCIAL",
                   text: "YouTube",
@@ -1591,6 +1620,7 @@ exports.createResolvers = ({ createResolvers }) => {
                   service: "youtube",
                 },
                 {
+                  __typename: "ContentfulNavItem",
                   id: "social-2",
                   navItemType: "SOCIAL",
                   text: "Instagram",

@@ -79,24 +79,26 @@ export default function Footer() {
   // Always call useStaticQuery unconditionally to satisfy React Hooks rules
   const queryData = useStaticQuery(graphql`
     query {
-      layout {
-        footer {
-          id
-          links {
+      allContentfulLayout {
+        nodes {
+          footer {
             id
-            href
-            text
-          }
-          meta {
-            id
-            href
-            text
-          }
-          copyright
-          socialLinks {
-            id
-            service
-            username
+            links {
+              id
+              href
+              text
+            }
+            meta {
+              id
+              href
+              text
+            }
+            copyright
+            socialLinks {
+              id
+              service
+              username
+            }
           }
         }
       }
@@ -134,8 +136,10 @@ export default function Footer() {
     }
   }), []);
 
-  // Use the appropriate data source
-  const data = isBypassMode ? mockData : queryData;
+  // Use the appropriate data source. Prefer a real Contentful layout node
+  // when available; otherwise fall back to the mock data for bypass mode.
+  const contentfulLayout = queryData?.allContentfulLayout?.nodes?.[0] || null
+  const data = isBypassMode ? mockData : { layout: contentfulLayout || mockData.layout }
   const { links, meta, socialLinks, copyright } = data.layout.footer
 
   return (
