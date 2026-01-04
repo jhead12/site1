@@ -49,6 +49,11 @@ target/
 *.jaeger
 otel-collector-config.yaml
 
+# AWS credentials - NEVER commit these
+IAM User/
+*.credentials.csv
+*_credentials.csv
+
 # TypeScript/JavaScript specific
 *.tsbuildinfo
 *.js.map
