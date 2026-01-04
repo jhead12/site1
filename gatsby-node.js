@@ -22,23 +22,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
     type WpVideoConnection {
       nodes: [WpVideo]
     }
-    # Minimal connection/edge interfaces required for preview schema
-    # Ensure these are defined before any types that implements them.
-    interface WpOneToOneConnectionType {
-      node: WpMediaItem
-    }
-
-    interface WpEdgeType {
-      node: Node
-    }
-
-    interface WpMediaItemConnectionEdgeType {
-      node: WpMediaItem
-    }
-
     # Minimal connection type for featured image links used by templates
-    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
-      node: WpMediaItem!
+    # Only define the concrete type, not the interfaces (WordPress provides those)
+    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType {
+      node: WpMediaItem
     }
     # Minimal WpTutorial placeholder to avoid schema errors when the
     # remote WordPress instance does not expose the type. This mirrors
@@ -1286,23 +1273,10 @@ exports.createSchemaCustomization = async ({ actions }) => {
         databaseId: Int
       }
       
-      # Minimal connection/edge interfaces required for BYPASS_WORDPRESS
-      # Ensure any types that implements these interfaces have a base
-      # definition to avoid schema extraction errors in preview builds.
-      interface WpOneToOneConnectionType {
+      # Minimal connection type for featured image in BYPASS_WORDPRESS mode
+      # Don't redefine WordPress interfaces - just the concrete type
+      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType {
         node: WpMediaItem
-      }
-
-      interface WpEdgeType {
-        node: Node
-      }
-
-      interface WpMediaItemConnectionEdgeType {
-        node: WpMediaItem
-      }
-
-      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
-        node: WpMediaItem!
       }
       
       type WpPostToCategoryConnection {
