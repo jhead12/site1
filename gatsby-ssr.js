@@ -1,11 +1,15 @@
 import * as React from "react"
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  gql,
+} from "@apollo/client"
 
 const client = new ApolloClient({
   uri: process.env.WPGRAPHQL_URL,
   cache: new InMemoryCache(),
-});
-
+})
 
 // client
 //   .query({
@@ -22,13 +26,27 @@ const client = new ApolloClient({
 //   })
 //   .then((result) => console.log(result));
 
+export const onRenderBody = ({
+  setHeadComponents,
+  setPostBodyComponents,
+  setHtmlAttributes,
+}) => {
+  // Ensure HTML `lang` attribute is present for accessibility
+  const siteLocale = process.env.SITE_LOCALE || process.env.LOCALE || "en-US"
+  setHtmlAttributes && setHtmlAttributes({ lang: siteLocale })
+  const facebookPixelId = process.env.GATSBY_FACEBOOK_PIXEL_ID
+  const tawkToPropertyId = process.env.GATSBY_TAWKTO_PROPERTY_ID
+  const tawkToWidgetId = process.env.GATSBY_TAWKTO_WIDGET_ID || "default"
 
-export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
-    const facebookPixelId = process.env.GATSBY_FACEBOOK_PIXEL_ID;
-    const tawkToPropertyId = process.env.GATSBY_TAWKTO_PROPERTY_ID;
-    const tawkToWidgetId = process.env.GATSBY_TAWKTO_WIDGET_ID || 'default';
-  
-    setHeadComponents([
+  setHeadComponents(
+    [
+      // Content-Language / Open Graph locale for social previews
+      <meta
+        key="content-language"
+        httpEquiv="Content-Language"
+        content={siteLocale}
+      />,
+      <meta key="og-locale" property="og:locale" content={siteLocale} />,
       <script
         key="meta-pixel-script"
         dangerouslySetInnerHTML={{
@@ -65,18 +83,18 @@ export const onRenderBody = ({ setHeadComponents, setPostBodyComponents }) => {
           }}
         />
       ),
-    ].filter(Boolean));
-  
-    setPostBodyComponents([
-      <noscript key="meta-pixel-noscript">
-        <img
-          height="1"
-          width="1"
-          style={{ display: 'none' }}
-          src={`https://www.facebook.com/tr?id=${facebookPixelId}&ev=PageView&noscript=1`}
-          alt="Meta Pixel"
-        />
-      </noscript>,
-    ]);
-  };
-  
+    ].filter(Boolean)
+  )
+
+  setPostBodyComponents([
+    <noscript key="meta-pixel-noscript">
+      <img
+        height="1"
+        width="1"
+        style={{ display: "none" }}
+        src={`https://www.facebook.com/tr?id=${facebookPixelId}&ev=PageView&noscript=1`}
+        alt="Meta Pixel"
+      />
+    </noscript>,
+  ])
+}

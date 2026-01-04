@@ -64,7 +64,7 @@ export default function BlogFeature(props) {
   }
 
   return (
-    <Section padding={4} background="muted">
+    <Section padding={4} background="muted" className="home-recent-blog">
       <Container width="fullbleed">
         <Subhead>Recent Blog Posts</Subhead>
         <Flex gap={3} className="blog-posts-container">

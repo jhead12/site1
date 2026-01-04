@@ -7,7 +7,7 @@ import "./global-fixes.css"
 import MatrixBackground from "./matrix-background"
 import { ThemeProvider } from "../contexts/ThemeContext"
 import "./page-transition.css"
-import GooeyNav from './GooeyNav/GooeyNav'
+// GooeyNav removed — floating nav disabled
 
 const Layout = ({ children, pageContext }) => {
   const locale = pageContext?.langKey || "en" // Get locale from pageContext or default to 'en'
@@ -24,7 +24,9 @@ const Layout = ({ children, pageContext }) => {
 
     return () => {
       // clean up class for unmount
-      try { node.classList.remove("is-visible") } catch (e) {}
+      try {
+        node.classList.remove("is-visible")
+      } catch (e) {}
     }
   }, [locale])
 
@@ -69,6 +71,8 @@ const Layout = ({ children, pageContext }) => {
           {/* Main Content */}
           <div ref={pageRef} className="page-transition">
             <main
+              id="main-content"
+              role="main"
               style={{
                 margin: "0 auto",
                 padding: "20px",
@@ -87,8 +91,7 @@ const Layout = ({ children, pageContext }) => {
           {/* Footer */}
           <Slice alias="footer" />
 
-          {/* Gooey floating nav */}
-          <GooeyNav />
+          {/* Gooey floating nav removed */}
 
           {/* Cookie Consent */}
           {/* <CookieConsent

@@ -58,22 +58,57 @@ export const mobileNavOverlay = style({
   position: "fixed",
   top: 0,
   left: 0,
-  width: "100vw",
-  height: "100vh",
+  right: 0,
+  bottom: 0,
   paddingTop: theme.space[6],
   paddingLeft: theme.space[4],
   paddingRight: theme.space[4],
   background: "rgba(0, 0, 0, 0.98)",
   backdropFilter: "blur(20px)",
-  zIndex: 100,
+  zIndex: 1000,
   display: "flex",
   flexDirection: "column",
-  overflow: "auto",
+  overflowY: "auto",
+  overscrollBehavior: "contain",
+  WebkitOverflowScrolling: "touch",
+  selectors: {
+    // ensure the nav inside overlay renders above the decorative prelayers
+    "& nav": {
+      position: "relative",
+      zIndex: 1100,
+    },
+  },
   "@media": {
     [media.medium]: {
       display: "none",
     },
   },
+})
+
+// decorative prelayer color bands behind the mobile panel (staggered look)
+export const mobilePrelayers = style({
+  position: "absolute",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  pointerEvents: "none",
+  zIndex: 1,
+  overflow: "hidden",
+})
+
+export const mobilePrelayer = style({
+  position: "absolute",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  transform: "translateX(0%)",
+  willChange: "transform, opacity",
+  transition: "transform 360ms cubic-bezier(.2,.9,.2,1), opacity 300ms ease",
+  mixBlendMode: "screen",
+  borderRadius: "0 0 18px 18px",
+  pointerEvents: "none",
 })
 
 export const mobileNavLink = style({
@@ -90,12 +125,12 @@ export const mobileNavLink = style({
   borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
   transition: "all 0.3s ease",
   lineHeight: "1.2",
-  
+
   ":hover": {
     color: theme.colors.primary,
     paddingLeft: theme.space[2],
   },
-  
+
   ":active": {
     color: theme.colors.primary,
     transform: "translateX(4px)",
@@ -104,23 +139,26 @@ export const mobileNavLink = style({
 
 // Add mobile CTA button styling
 export const mobileCTAButton = style({
-  width: "100%",
-  padding: theme.space[4],
-  marginTop: theme.space[6],
+  width: "calc(100% - 2rem)",
+  padding: theme.space[5],
+  marginTop: theme.space[4],
   backgroundColor: theme.colors.primary,
   color: "#ffffff",
-  fontSize: theme.fontSizes[4],
-  fontWeight: "600",
-  borderRadius: "8px",
+  fontSize: theme.fontSizes[5],
+  fontWeight: "700",
+  borderRadius: "12px",
   border: "none",
   textAlign: "center",
   textDecoration: "none",
   transition: "all 0.3s ease",
-  
+  position: "sticky",
+  bottom: "2.5rem",
+  alignSelf: "flex-start",
+  boxShadow: "0 12px 30px rgba(0,0,0,0.35)",
   ":hover": {
     backgroundColor: theme.colors.primaryHover || theme.colors.primary,
     transform: "translateY(-2px)",
-    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
+    boxShadow: "0 16px 36px rgba(0,0,0,0.4)",
   },
 })
 
@@ -150,7 +188,7 @@ export const mobileMenuButton = style({
   padding: theme.space[2],
   borderRadius: "4px",
   transition: "all 0.2s ease",
-  
+
   ":hover": {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },

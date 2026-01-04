@@ -31,17 +31,22 @@ export default function Header() {
         navItems: [
           { id: "home", navItemType: "LINK", href: "/", text: "Home" },
           { id: "music", navItemType: "LINK", href: "/music", text: "Music" },
-          { id: "videos", navItemType: "LINK", href: "/videos", text: "Videos" },
-          { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" }
+          {
+            id: "videos",
+            navItemType: "LINK",
+            href: "/videos",
+            text: "Videos",
+          },
+          { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" },
         ],
         cta: {
           id: "contact",
           href: "/contact",
-          text: "Contact"
-        }
-      }
-    }
-  };
+          text: "Contact",
+        },
+      },
+    },
+  }
 
   // Query Contentful layout nodes and pick the first one; fall back to mock
   const queryData = useStaticQuery(graphql`
@@ -78,9 +83,10 @@ export default function Header() {
 
   // Prefer GraphQL data when available; fall back to mock data
   const contentfulLayout = queryData?.allContentfulLayout?.nodes?.[0] || null
-  const data = contentfulLayout && Object.keys(contentfulLayout.header || {}).length > 0
-    ? { layout: contentfulLayout }
-    : mockData
+  const data =
+    contentfulLayout && Object.keys(contentfulLayout.header || {}).length > 0
+      ? { layout: contentfulLayout }
+      : mockData
   const { navItems, cta } = data.layout.header
   const [isOpen, setOpen] = React.useState(false)
 

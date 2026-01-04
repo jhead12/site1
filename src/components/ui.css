@@ -291,6 +291,12 @@
   padding: 0.5rem 1rem;
 }
 
+.navlink:hover {
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
 .navButtonlink {
   background: none;
   border: none;
