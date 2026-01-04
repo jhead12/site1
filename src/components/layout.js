@@ -7,6 +7,7 @@ import "./global-fixes.css"
 import MatrixBackground from "./matrix-background"
 import { ThemeProvider } from "../contexts/ThemeContext"
 import "./page-transition.css"
+import GooeyNav from './GooeyNav/GooeyNav'
 
 const Layout = ({ children, pageContext }) => {
   const locale = pageContext?.langKey || "en" // Get locale from pageContext or default to 'en'
@@ -85,6 +86,9 @@ const Layout = ({ children, pageContext }) => {
 
           {/* Footer */}
           <Slice alias="footer" />
+
+          {/* Gooey floating nav */}
+          <GooeyNav />
 
           {/* Cookie Consent */}
           {/* <CookieConsent
