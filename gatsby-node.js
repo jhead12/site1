@@ -1149,7 +1149,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       videoPublishedAt: Date
       youtubeUrl: String
       youtubeVideoId: String
-      customThumbnail: WpMediaItem
     }
   `)
 
@@ -1161,7 +1160,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       videoPublishedAt: Date
       youtubeUrl: String
       youtubeVideoId: String
-      customThumbnail: WpMediaItem
     }
   `)
 
@@ -1174,7 +1172,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       videoPublishedAt: Date
       youtubeUrl: String
       youtubeVideoId: String
-      customThumbnail: WpMediaItem
     }
   `)
 
