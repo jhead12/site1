@@ -1,36 +1,36 @@
 import React from "react"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
-import { AmazonConnectButton } from '../components/LiveChat'
+import { AmazonConnectButton } from "../components/LiveChat"
 
 const ContactPage = ({ data }) => {
   // Get the consultation link from Contentful
   const consultationLink = data?.allContentfulHomepageLink?.nodes?.find(
-    link => link.text && link.text.toLowerCase().includes('consultation')
+    (link) => link.text && link.text.toLowerCase().includes("consultation")
   ) || {
     text: "Schedule Music Consultation",
-    href: "/music-consultation"
-  };
+    href: "/music-consultation",
+  }
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-6">Contact</h1>
-        
+
         {/* Music Consultation CTA */}
         <div className="bg-blue-600 text-white rounded-lg p-6 mb-8 text-center">
           <h2 className="text-2xl font-bold mb-3"></h2>
           <p className="text-lg mb-4">Reach out to me for any questions?</p>
-          <a 
-            href={consultationLink.href} 
+          <a
+            href={consultationLink.href}
             className="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors"
           >
             {consultationLink.text}
           </a>
         </div>
-        
+
         <div className="max-w-2xl">
           <p className="text-lg mb-6">Get in touch with me!</p>
-          
+
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
             <div className="space-y-4">
@@ -40,19 +40,32 @@ const ContactPage = ({ data }) => {
               </div>
               <div>
                 <h3 className="font-medium">Social Media</h3>
-                <p className="text-gray-600">Follow us on our social channels</p>
+                <p className="text-gray-600">
+                  Follow us on our social channels
+                </p>
               </div>
             </div>
           </div>
-          
+
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold mb-4">Call / Request a Callback</h2>
-            <p className="text-gray-600 mb-4">Speak to us directly or request a callback — we use Amazon Connect for calls.</p>
-            <AmazonConnectButton phoneNumber={process.env.GATSBY_AMAZON_CONNECT_PHONE_NUMBER || "+1234567890"} />
+            <h2 className="text-2xl font-semibold mb-4">
+              Call / Request a Callback
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Speak to us directly or request a callback — we use Amazon Connect
+              for calls.
+            </p>
+            <AmazonConnectButton
+              phoneNumber={
+                process.env.GATSBY_AMAZON_CONNECT_PHONE_NUMBER || "+1234567890"
+              }
+            />
           </div>
 
           <div className="mt-8">
-            <p className="text-gray-600">More contact options and forms coming soon...</p>
+            <p className="text-gray-600">
+              More contact options and forms coming soon...
+            </p>
           </div>
         </div>
       </div>
