@@ -9,6 +9,10 @@
 }
 
 :root {
+  --gooey-accent: #00b3ff; /* bright cyan, overrideable */
+}
+
+:root {
   --linear-ease: linear(
     0,
     0.068,
@@ -92,8 +96,9 @@
 }
 
 .gooey-nav-container nav ul li.active {
-  color: white;
+  color: black;
   text-shadow: none;
+  font-weight: 700;
 }
 
 .gooey-nav-container nav ul li.active::after,
@@ -104,7 +109,12 @@
 
 .gooey-nav-container nav ul li:hover,
 .gooey-nav-container nav ul li:focus-within {
-  color: white;
+  color: black;
+}
+
+.gooey-nav-container nav ul li:hover a,
+.gooey-nav-container nav ul li:focus-within a {
+  color: black;
 }
 
 .gooey-nav-container .effect {
@@ -137,9 +147,9 @@
 .gooey-nav-container .effect.filter::before {
   content: "";
   position: absolute;
-  inset: -75px;
+  inset: -20px;
   z-index: -2;
-  background: black;
+  background: transparent;
 }
 
 .gooey-nav-container .effect.filter::after {
