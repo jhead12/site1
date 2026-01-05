@@ -17,45 +17,47 @@ export default function VideoPost({ data, pageContext }) {
   const video = data.wpVideo
   const relatedVideos = data.allWpVideo?.nodes || []
   const { previousVideo, nextVideo } = pageContext || {}
-  
+
   // Get featured image
-  const featuredImage = video?.featuredImage?.node?.localFile ? 
-    getImage(video.featuredImage.node.localFile) : null
-  
+  const featuredImage = video?.featuredImage?.node?.localFile
+    ? getImage(video.featuredImage.node.localFile)
+    : null
+
   // Extract YouTube ID from title or content as fallback
   const extractYouTubeId = (text) => {
-    if (!text) return null;
+    if (!text) return null
     // Try to match YouTube ID patterns like v=dQw4w9WgXcQ or youtu.be/dQw4w9WgXcQ
-    const youtubeRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
-    const match = text.match(youtubeRegex);
-    return match ? match[1] : null;
-  };
+    const youtubeRegex =
+      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i
+    const match = text.match(youtubeRegex)
+    return match ? match[1] : null
+  }
 
   // Sanitize and validate a candidate YouTube ID or URL
   const cleanYouTubeId = (candidate) => {
-    if (!candidate) return null;
+    if (!candidate) return null
     // If it's already a plain 11-char ID, accept it
-    const idOnly = candidate.match(/^[A-Za-z0-9_-]{11}$/);
-    if (idOnly) return idOnly[0];
+    const idOnly = candidate.match(/^[A-Za-z0-9_-]{11}$/)
+    if (idOnly) return idOnly[0]
     // Prefer URL-based extraction first (more precise)
-    const fromUrl = extractYouTubeId(candidate);
-    if (fromUrl) return fromUrl;
+    const fromUrl = extractYouTubeId(candidate)
+    if (fromUrl) return fromUrl
 
     // Last resort: extract any 11-char ID-like sequence
-    const inline = candidate.match(/([A-Za-z0-9_-]{11})/);
-    if (inline) return inline[1];
+    const inline = candidate.match(/([A-Za-z0-9_-]{11})/)
+    if (inline) return inline[1]
 
-    return null;
-  };
-  
+    return null
+  }
+
   // Get YouTube video ID for embedding directly from ACF fields or extract from content
   const youtubeVideoId = cleanYouTubeId(
     video?.videoDetails?.youtubeVideoId ||
-    video?.videoDetails?.youtubeUrl ||
-    video?.content ||
-    video?.title
-  );
-  
+      video?.videoDetails?.youtubeUrl ||
+      video?.content ||
+      video?.title
+  )
+
   return (
     <Layout>
       <Container>
@@ -64,52 +66,52 @@ export default function VideoPost({ data, pageContext }) {
             {video?.title || "Video"}
           </Heading>
           <Space size={4} />
-          
+
           <Box center>
             <Text variant="bold">Jeldon</Text>
           </Box>
-          
+
           <Space size={4} />
           <Text center>{video?.date || "Date unavailable"}</Text>
           <Space size={4} />
-          
+
           {/* Video Player */}
           <Box marginY={5}>
             {youtubeVideoId ? (
               <Box
                 id={`youtube-wrapper-${youtubeVideoId}`}
                 style={{
-                  position: 'relative',
-                  paddingBottom: '56.25%', // 16:9 aspect ratio
+                  position: "relative",
+                  paddingBottom: "56.25%", // 16:9 aspect ratio
                   height: 0,
-                  overflow: 'hidden',
-                  borderRadius: '8px'
+                  overflow: "hidden",
+                  borderRadius: "8px",
                 }}
               >
                 {/* Render poster + invisible placeholder; YT.Player will create the iframe client-side */}
                 <div
                   id={`yt-player-div-${youtubeVideoId}`}
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     inset: 0,
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#000'
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#000",
                   }}
                 >
                   <div
                     id={`yt-poster-${youtubeVideoId}`}
                     style={{
-                      position: 'absolute',
+                      position: "absolute",
                       inset: 0,
                       backgroundImage: `url(https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg)`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      filter: 'brightness(0.6)',
-                      borderRadius: '8px'
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      filter: "brightness(0.6)",
+                      borderRadius: "8px",
                     }}
                   />
                   <a
@@ -119,11 +121,11 @@ export default function VideoPost({ data, pageContext }) {
                     rel="noopener noreferrer"
                     style={{
                       zIndex: 10,
-                      color: '#fff',
-                      textDecoration: 'none',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center'
+                      color: "#fff",
+                      textDecoration: "none",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
                     <div
@@ -131,16 +133,26 @@ export default function VideoPost({ data, pageContext }) {
                         width: 84,
                         height: 84,
                         borderRadius: 999,
-                        background: 'rgba(0,0,0,0.6)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: 8
+                        background: "rgba(0,0,0,0.6)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 8,
                       }}
                     >
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7-11-7z" fill="currentColor"/></svg>
+                      <svg
+                        width="36"
+                        height="36"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M8 5v14l11-7-11-7z" fill="currentColor" />
+                      </svg>
                     </div>
-                    <div style={{textDecoration: 'underline'}}>Watch video on YouTube</div>
+                    <div style={{ textDecoration: "underline" }}>
+                      Watch video on YouTube
+                    </div>
                   </a>
                 </div>
 
@@ -223,47 +235,52 @@ export default function VideoPost({ data, pageContext }) {
     }
   } catch(err){}
 })();
-                    `
+                    `,
                   }}
                 />
               </Box>
             ) : featuredImage ? (
-              <GatsbyImage 
-                image={featuredImage} 
-                alt={video?.featuredImage?.node?.altText || video?.title || "Video"} 
-                style={{ borderRadius: '8px' }}
+              <GatsbyImage
+                image={featuredImage}
+                alt={
+                  video?.featuredImage?.node?.altText || video?.title || "Video"
+                }
+                style={{ borderRadius: "8px" }}
               />
             ) : (
-              <Box 
+              <Box
                 style={{
-                  width: '100%',
-                  height: '400px',
-                  backgroundColor: '#f0f0f0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '2px dashed #ccc',
-                  borderRadius: '8px'
+                  width: "100%",
+                  height: "400px",
+                  backgroundColor: "#f0f0f0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "2px dashed #ccc",
+                  borderRadius: "8px",
                 }}
               >
                 <Text>No video available</Text>
               </Box>
             )}
           </Box>
-          
+
           {/* Video Details */}
           <Box marginY={4}>
             <Flex>
               {video?.videoDetails?.videoDuration && (
-                <Text variant="bold">Duration: {video.videoDetails.videoDuration}</Text>
+                <Text variant="bold">
+                  Duration: {video.videoDetails.videoDuration}
+                </Text>
               )}
               {video?.videoDetails?.videoViews && (
-                <Text style={{ marginLeft: '20px' }}>Views: {video.videoDetails.videoViews}</Text>
+                <Text style={{ marginLeft: "20px" }}>
+                  Views: {video.videoDetails.videoViews}
+                </Text>
               )}
             </Flex>
           </Box>
-          
-          
+
           {/* Categories */}
           {video?.videoCategories?.nodes?.length > 0 && (
             <Box marginY={3}>
@@ -271,78 +288,125 @@ export default function VideoPost({ data, pageContext }) {
               {video.videoCategories.nodes.map((category, index) => (
                 <span key={category.id}>
                   {category.name}
-                  {index < video.videoCategories.nodes.length - 1 ? ', ' : ''}
+                  {index < video.videoCategories.nodes.length - 1 ? ", " : ""}
                 </span>
               ))}
             </Box>
           )}
-          
+
           {/* Content */}
           {(video?.content || video?.excerpt) && (
             <Box marginY={4}>
-              <div dangerouslySetInnerHTML={{ 
-                __html: video?.content || video?.excerpt || '' 
-              }} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: video?.content || video?.excerpt || "",
+                }}
+              />
             </Box>
           )}
-          
+
           {/* Navigation */}
           <Box marginY={5}>
-            <Flex style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
+            <Flex style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
               <div>
                 <Link to="/videos">← Back to Videos</Link>
               </div>
-              <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ display: "flex", gap: "20px" }}>
                 {previousVideo && (
-                  <Link to={`/videos/${previousVideo.slug}/`}>← {previousVideo.title}</Link>
+                  <Link to={`/videos/${previousVideo.slug}/`}>
+                    ← {previousVideo.title}
+                  </Link>
                 )}
                 {nextVideo && (
-                  <Link to={`/videos/${nextVideo.slug}/`}>{nextVideo.title} →</Link>
+                  <Link to={`/videos/${nextVideo.slug}/`}>
+                    {nextVideo.title} →
+                  </Link>
                 )}
               </div>
             </Flex>
           </Box>
-          
+
           {/* Related Videos */}
           {relatedVideos.length > 0 && (
             <Box marginY={5}>
               <Subhead>Related Videos</Subhead>
               <Space size={3} />
-              <Box 
+              <Box
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: '20px'
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                  gap: "20px",
                 }}
               >
-                {relatedVideos.map(relatedVideo => {
-                  const relatedImage = relatedVideo?.featuredImage?.node?.localFile ? 
-                    getImage(relatedVideo.featuredImage.node.localFile) : null
-                  
+                {relatedVideos.map((relatedVideo) => {
+                  const relatedImage = relatedVideo?.featuredImage?.node
+                    ?.localFile
+                    ? getImage(relatedVideo.featuredImage.node.localFile)
+                    : null
+
                   return (
-                    <Box key={relatedVideo.id} style={{ border: '1px solid #eee', borderRadius: '8px', overflow: 'hidden' }}>
-                      <Link to={`/videos/${relatedVideo.slug}/`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Box
+                      key={relatedVideo.id}
+                      style={{
+                        border: "1px solid #eee",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <Link
+                        to={`/videos/${relatedVideo.slug}/`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
                         {relatedImage ? (
-                          <GatsbyImage 
-                            image={relatedImage} 
-                            alt={relatedVideo.featuredImage?.node?.altText || relatedVideo.title}
-                            style={{ height: '160px' }}
+                          <GatsbyImage
+                            image={relatedImage}
+                            alt={
+                              relatedVideo.featuredImage?.node?.altText ||
+                              relatedVideo.title
+                            }
+                            style={{ height: "160px" }}
                           />
                         ) : (
-                          <Box style={{ height: '160px', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Box
+                            style={{
+                              height: "160px",
+                              backgroundColor: "#f5f5f5",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
                             <Text>No image</Text>
                           </Box>
                         )}
-                        <Box style={{ padding: '15px' }}>
-                          <Subhead as="h3" style={{ fontSize: '16px', marginBottom: '8px' }}>
+                        <Box style={{ padding: "15px" }}>
+                          <Subhead
+                            as="h3"
+                            style={{ fontSize: "16px", marginBottom: "8px" }}
+                          >
                             {relatedVideo.title}
                           </Subhead>
                           {relatedVideo.excerpt && (
-                            <Text style={{ fontSize: '14px', color: '#666', lineHeight: '1.4' }}>
-                              {relatedVideo.excerpt.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                            <Text
+                              style={{
+                                fontSize: "14px",
+                                color: "#666",
+                                lineHeight: "1.4",
+                              }}
+                            >
+                              {relatedVideo.excerpt
+                                .replace(/<[^>]*>/g, "")
+                                .substring(0, 100)}
+                              ...
                             </Text>
                           )}
-                          <Text style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>
+                          <Text
+                            style={{
+                              fontSize: "12px",
+                              color: "#999",
+                              marginTop: "8px",
+                            }}
+                          >
                             {relatedVideo.date}
                           </Text>
                         </Box>
@@ -361,11 +425,15 @@ export default function VideoPost({ data, pageContext }) {
 
 export function Head({ data }) {
   const video = data?.wpVideo
-  
-  return <SEOHead 
-    title={video?.title || "Video"} 
-    description={video?.excerpt?.replace(/<[^>]*>/g, '') || "Watch this video by Jeldon"} 
-  />
+
+  return (
+    <SEOHead
+      title={video?.title || "Video"}
+      description={
+        video?.excerpt?.replace(/<[^>]*>/g, "") || "Watch this video by Jeldon"
+      }
+    />
+  )
 }
 
 export const query = graphql`
@@ -396,9 +464,7 @@ export const query = graphql`
       }
     }
     allWpVideo(
-      filter: { 
-        slug: { ne: $slug }
-      }
+      filter: { slug: { ne: $slug } }
       limit: 6
       sort: { date: DESC }
     ) {

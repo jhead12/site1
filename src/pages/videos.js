@@ -391,7 +391,7 @@ const VideosPage = ({ data, location }) => {
 export const query = graphql`
   query VideosArchive {
     allWpVideo(sort: { date: DESC }) {
-      nodes {
+        nodes {
         id
         title
         excerpt
