@@ -1140,17 +1140,21 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `)
 
+  // Create Video Details type - needed in both bypass and live modes
+  actions.createTypes(`
+    type WpContentNode_Videodetails {
+      videoViews: String
+      videoDuration: String
+      videoPublishedAt: Date
+      youtubeUrl: String
+      youtubeVideoId: String
+    }
+  `)
+
   // Create comprehensive WordPress mock types when BYPASS_WORDPRESS is true
   if (process.env.BYPASS_WORDPRESS === "true") {
     console.log("📝 Creating WordPress mock types for BYPASS_WORDPRESS mode")
     actions.createTypes(`
-      type WpContentNode_Videodetails {
-        videoViews: String
-        videoDuration: String
-        videoPublishedAt: Date
-        youtubeUrl: String
-        youtubeVideoId: String
-      }
       
       # Core WordPress Types
       type WpMediaItem implements Node @dontInfer {
