@@ -410,14 +410,6 @@ export const query = graphql`
         content
       }
     }
-    # Fetch video categories if available so the UI can render filters
-    allWpVideoCategory {
-      nodes {
-        id
-        name
-        slug
-      }
-    }
     site {
       siteMetadata {
         title

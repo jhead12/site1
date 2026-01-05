@@ -1438,15 +1438,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       extend type SitePage {
         slug: String
       }
-
-      # Add allWpVideoCategory to Query
-      extend type Query {
-        allWpVideoCategory(filter: WpCategoryFilter): WpVideoCategoryConnection
-      }
-
-      type WpVideoCategoryConnection {
-        nodes: [WpCategory]
-      }
     `)
 
     // Add type extensions for query root fields
