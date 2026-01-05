@@ -11,21 +11,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_filter( 'register_post_type_args', function( $args, $post_type ) {
-    // Target common video-like post type slugs; adjust if your CPT slug is different
-    $target_types = array( 'video', 'videos', 'tutorial', 'beat', 'mix' );
+    // Map post types to their unique GraphQL names
+    $graphql_type_map = array(
+        'video'    => array( 'single' => 'Video', 'plural' => 'Videos' ),
+        'tutorial' => array( 'single' => 'Tutorial', 'plural' => 'Tutorials' ),
+        'beat'     => array( 'single' => 'Beat', 'plural' => 'Beats' ),
+        'mix'      => array( 'single' => 'Mix', 'plural' => 'Mixes' ),
+    );
 
-    if ( in_array( $post_type, $target_types, true ) ) {
+    if ( isset( $graphql_type_map[ $post_type ] ) ) {
         // Enable GraphQL exposure if not already enabled
         if ( empty( $args['show_in_graphql'] ) || $args['show_in_graphql'] !== true ) {
             $args['show_in_graphql'] = true;
         }
 
-        // Provide reasonable GraphQL type names if not set
+        // Provide unique GraphQL type names if not set
         if ( empty( $args['graphql_single_name'] ) ) {
-            $args['graphql_single_name'] = 'Video';
+            $args['graphql_single_name'] = $graphql_type_map[ $post_type ]['single'];
         }
         if ( empty( $args['graphql_plural_name'] ) ) {
-            $args['graphql_plural_name'] = 'Videos';
+            $args['graphql_plural_name'] = $graphql_type_map[ $post_type ]['plural'];
         }
     }
 
