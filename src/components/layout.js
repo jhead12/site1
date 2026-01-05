@@ -7,7 +7,8 @@ import "./global-fixes.css"
 import MatrixBackground from "./matrix-background"
 import { ThemeProvider } from "../contexts/ThemeContext"
 import "./page-transition.css"
-// GooeyNav removed — floating nav disabled
+import GooeyNav from "./GooeyNav/GooeyNav"
+import { desktopNav as desktopNavClass } from "./header.css"
 
 const Layout = ({ children, pageContext }) => {
   const locale = pageContext?.langKey || "en" // Get locale from pageContext or default to 'en'
@@ -91,7 +92,8 @@ const Layout = ({ children, pageContext }) => {
           {/* Footer */}
           <Slice alias="footer" />
 
-          {/* Gooey floating nav removed */}
+          {/* Gooey floating nav (top header links only) */}
+          <GooeyNav headerSelector={`nav.${desktopNavClass}`} />
 
           {/* Cookie Consent */}
           {/* <CookieConsent

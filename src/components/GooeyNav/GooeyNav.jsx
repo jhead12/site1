@@ -14,6 +14,7 @@ const GooeyNav = ({
   timeVariance = 300,
   colors = [1, 2, 3, 1, 2, 3, 1, 4],
   initialActiveIndex = 0,
+  headerSelector = "nav.header_desktopNav__1fobsgf9",
 }) => {
   const containerRef = useRef(null)
   const navRef = useRef(null)
@@ -138,7 +139,6 @@ const GooeyNav = ({
     // Attach to header nav if present and keep in sync with dynamic updates
     if (typeof document === "undefined") return
 
-    const headerSelector = "nav.header_desktopNav__1fobsgf9"
     const headerNav = document.querySelector(headerSelector)
     let listeners = []
     let mo = null

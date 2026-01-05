@@ -20,4 +20,26 @@ import "@fontsource/dm-mono/500.css"
 //       fbq('track', 'PageView');
 //     }
 //   };
-  
+
+export const onClientEntry = () => {
+  const tawkToPropertyId = process.env.GATSBY_TAWKTO_PROPERTY_ID
+  const tawkToWidgetId = process.env.GATSBY_TAWKTO_WIDGET_ID || "default"
+
+  if (typeof window !== "undefined" && tawkToPropertyId) {
+    try {
+      window.Tawk_API = window.Tawk_API || {}
+      const s1 = document.createElement("script")
+      s1.async = true
+      s1.src = `https://embed.tawk.to/${tawkToPropertyId}/${tawkToWidgetId}`
+      s1.charset = "UTF-8"
+      s1.crossOrigin = "anonymous"
+      const s0 = document.getElementsByTagName("script")[0]
+      s0.parentNode.insertBefore(s1, s0)
+    } catch (err) {
+      // Fail silently in environments where DOM isn't available
+      // (shouldn't happen because of the typeof check)
+      // eslint-disable-next-line no-console
+      console.warn("Tawk.to injection failed", err)
+    }
+  }
+}

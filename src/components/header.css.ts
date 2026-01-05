@@ -1,4 +1,4 @@
-import { style, styleVariants } from "@vanilla-extract/css"
+import { style, styleVariants, globalStyle } from "@vanilla-extract/css"
 import { theme } from "../theme.css"
 import { media } from "./media.css"
 
@@ -71,18 +71,19 @@ export const mobileNavOverlay = style({
   overflowY: "auto",
   overscrollBehavior: "contain",
   WebkitOverflowScrolling: "touch",
-  selectors: {
-    // ensure the nav inside overlay renders above the decorative prelayers
-    "& nav": {
-      position: "relative",
-      zIndex: 1100,
-    },
-  },
+  // Note: targeting native elements inside generated classes must use
+  // `globalStyle` instead of the local `&` selector.
   "@media": {
     [media.medium]: {
       display: "none",
     },
   },
+})
+
+// Ensure the `nav` inside the overlay renders above decorative prelayers
+globalStyle(`.${mobileNavOverlay} nav`, {
+  position: 'relative',
+  zIndex: 1100,
 })
 
 // decorative prelayer color bands behind the mobile panel (staggered look)
