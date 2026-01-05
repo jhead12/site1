@@ -1141,13 +1141,40 @@ exports.createSchemaCustomization = async ({ actions }) => {
   `)
 
   // Create Video Details type - needed in both bypass and live modes
+  // Define the canonical interface first so both types can reference it
   actions.createTypes(`
-    type WpContentNode_Videodetails {
+    interface WpVideoDetailsInterface {
       videoViews: String
       videoDuration: String
       videoPublishedAt: Date
       youtubeUrl: String
       youtubeVideoId: String
+      customThumbnail: WpMediaItem
+    }
+  `)
+
+  // WpVideoDetails is the expected interface type name from WPGraphQL/ACF
+  actions.createTypes(`
+    type WpVideoDetails implements WpVideoDetailsInterface @dontInfer {
+      videoViews: String
+      videoDuration: String
+      videoPublishedAt: Date
+      youtubeUrl: String
+      youtubeVideoId: String
+      customThumbnail: WpMediaItem
+    }
+  `)
+
+  // WpContentNode_Videodetails is the concrete type WPGraphQL may produce
+  // Make it implement the same interface so Gatsby accepts either name
+  actions.createTypes(`
+    type WpContentNode_Videodetails implements WpVideoDetailsInterface @dontInfer {
+      videoViews: String
+      videoDuration: String
+      videoPublishedAt: Date
+      youtubeUrl: String
+      youtubeVideoId: String
+      customThumbnail: WpMediaItem
     }
   `)
 
