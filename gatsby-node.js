@@ -83,7 +83,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       date: Date
       formattedDate: String
       featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
-      videoDetails: WpContentNode_Videodetails
+      videoDetails: VideoDetails
     }
 
     type WpPost implements Node {
@@ -1823,7 +1823,7 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
         videoDetails: {
-          type: "WpContentNode_Videodetails",
+          type: "VideoDetails",
           resolve() {
             return {
               videoViews: "12,345",
