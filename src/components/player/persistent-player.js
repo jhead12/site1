@@ -31,10 +31,13 @@ export const PersistentPlayerProvider = ({ children }) => {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(80);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [autoStart, setAutoStart] = useState(true);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   
   // References
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
+  const pendingTrackRef = useRef(null);
   
   // Initialize player with Samply playlist
   useEffect(() => {
@@ -50,6 +53,8 @@ export const PersistentPlayerProvider = ({ children }) => {
           const data = await response.json();
           if (data && data.tracks) {
             setQueue(data.tracks);
+            // Mark for auto-start when queue becomes available
+            setAutoStart(true);
           }
         }
       } catch (error) {
@@ -76,6 +81,8 @@ export const PersistentPlayerProvider = ({ children }) => {
         ];
         
         setQueue(demoTracks);
+        // Mark for auto-start when fallback queue is used
+        setAutoStart(true);
       }
     };
     
@@ -119,11 +126,19 @@ export const PersistentPlayerProvider = ({ children }) => {
         // Normal playback for real audio files
         audioRef.current.src = track.audioUrl;
         audioRef.current.load();
-        audioRef.current.play().catch(err => {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
           console.error("Error playing audio:", err);
           // Handle autoplay restrictions
           setIsPlaying(false);
+          setAutoplayBlocked(true);
+          pendingTrackRef.current = track;
         });
+      }
+      else {
+        // Audio element not mounted yet — remember the requested track
+        pendingTrackRef.current = track;
       }
       
       // Save to localStorage for persistence
@@ -145,11 +160,13 @@ export const PersistentPlayerProvider = ({ children }) => {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        audioRef.current.play().catch(err => {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
           console.error("Error resuming audio:", err);
           setIsPlaying(false);
+          setAutoplayBlocked(true);
         });
-        setIsPlaying(true);
       }
     }
   };
@@ -302,12 +319,114 @@ export const PersistentPlayerProvider = ({ children }) => {
       setIsVisible(true);
     }
   }, [currentTrack]);
+
+  // Auto-start first track when queue is populated (best-effort)
+  useEffect(() => {
+    if (autoStart && queue && queue.length > 0 && !currentTrack) {
+      // Attempt to start the first track
+      try {
+        playTrack(queue[0]);
+      } catch (err) {
+        console.error('Failed to auto-start track:', err);
+      }
+      setAutoStart(false);
+    }
+  }, [autoStart, queue]);
+
+  const handleStartClick = async () => {
+    const track = pendingTrackRef.current || currentTrack || (queue && queue[0]);
+    if (!track) return;
+
+    setAutoplayBlocked(false);
+    setCurrentTrack(track);
+    setIsVisible(true);
+
+    if (audioRef.current) {
+      try {
+        if (track.audioUrl) {
+          if (audioRef.current.src !== track.audioUrl) audioRef.current.src = track.audioUrl;
+          audioRef.current.load();
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } else {
+          setIsPlaying(true);
+        }
+      } catch (err) {
+        console.error('User start play failed:', err);
+        setIsPlaying(false);
+        setAutoplayBlocked(true);
+        pendingTrackRef.current = track;
+      }
+    } else {
+      // audio element not yet mounted; store pending
+      pendingTrackRef.current = track;
+    }
+  };
+
+  // If audio element becomes available or currentTrack changes, try to play pending/current track
+  useEffect(() => {
+    const el = audioRef.current;
+    const trackToPlay = pendingTrackRef.current || currentTrack;
+    if (!el || !trackToPlay) return;
+
+    // Clear pending when we begin handling it
+    pendingTrackRef.current = null;
+
+    const isPlaceholder = trackToPlay.audioUrl && 
+      (trackToPlay.audioUrl.includes('demo-track-1.mp3') || 
+       trackToPlay.audioUrl.includes('demo-track-2.mp3'));
+
+    if (isPlaceholder) {
+      // placeholder handling already simulated elsewhere; ensure visible/playing state
+      setIsPlaying(true);
+      setIsVisible(true);
+      return;
+    }
+
+    try {
+      if (el.src !== trackToPlay.audioUrl) el.src = trackToPlay.audioUrl;
+      el.load();
+      el.play().then(() => {
+        setIsPlaying(true);
+        setIsVisible(true);
+      }).catch(err => {
+        console.error('Error playing pending/current track:', err);
+        setIsPlaying(false);
+        setAutoplayBlocked(true);
+        // preserve pending track for user gesture
+        pendingTrackRef.current = trackToPlay;
+      });
+    } catch (err) {
+      console.error('Playback attempt failed:', err);
+      setIsPlaying(false);
+    }
+  }, [currentTrack, audioRef.current]);
   
   // Render the player and provider
   return (
     <PlayerContext.Provider value={playerContextValue}>
       {children}
       
+      {autoplayBlocked && (
+        <div style={{position: 'fixed', left: 0, right: 0, bottom: 20, display: 'flex', justifyContent: 'center', zIndex: 9999}}>
+          <button
+            onClick={handleStartClick}
+            style={{
+              padding: '12px 20px',
+              borderRadius: 999,
+              background: '#111',
+              color: '#fff',
+              fontSize: 16,
+              boxShadow: '0 6px 24px rgba(0,0,0,0.2)',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Tap to Start Music
+          </button>
+        </div>
+      )}
+
       {isVisible && (
         <div className={`persistent-player ${isMinimized ? 'minimized' : ''}`}>
           {/* Audio element (hidden) */}
