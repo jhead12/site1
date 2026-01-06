@@ -87,6 +87,24 @@ def handler(event, context):
         if not product_id and event.get("pathParameters"):
             product_id = event["pathParameters"].get("product_id")
             s3_key = event["pathParameters"].get("s3_key")
+        
+        # Get dynamic expiration (in days) from request
+        expiration_days = None
+        if event.get("queryStringParameters"):
+            expiration_days = event["queryStringParameters"].get("expiration_days")
+        if not expiration_days and isinstance(body, dict):
+            expiration_days = body.get("expiration_days")
+        
+        # Calculate expiration in seconds (default to env var)
+        if expiration_days:
+            try:
+                expiration_seconds = int(float(expiration_days) * 86400)  # days to seconds
+                logger.info(f"Using dynamic expiration: {expiration_days} days = {expiration_seconds} seconds")
+            except (ValueError, TypeError):
+                logger.warning(f"Invalid expiration_days: {expiration_days}, using default")
+                expiration_seconds = EXPIRATION
+        else:
+            expiration_seconds = EXPIRATION
 
         # Map product ID to S3 key if not explicitly provided
         if not s3_key:
@@ -132,11 +150,11 @@ def handler(event, context):
             return {"statusCode": 500, "body": json.dumps({"message": "S3 bucket not configured"})}
 
         # Generate presigned URL
-        logger.info(f"Generating presigned URL: bucket={bucket}, key={s3_key}, expiration={EXPIRATION}s")
+        logger.info(f"Generating presigned URL: bucket={bucket}, key={s3_key}, expiration={expiration_seconds}s")
         url = s3.generate_presigned_url(
             "get_object",
             Params={"Bucket": bucket, "Key": s3_key},
-            ExpiresIn=EXPIRATION,
+            ExpiresIn=expiration_seconds,
             HttpMethod="GET",
         )
 
@@ -151,9 +169,10 @@ def handler(event, context):
             },
             "body": json.dumps({
                 "url": url,
-                "expires_in": EXPIRATION,
+                "expires_in": expiration_seconds,
                 "product_id": product_id,
-                "file": s3_key
+                "file": s3_key,
+                "expires_in_days": round(expiration_seconds / 86400, 2)
             })
         }
 

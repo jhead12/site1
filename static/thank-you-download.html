@@ -125,7 +125,7 @@
 
     <div id="download-section" style="display: none;">
       <a id="download-link" href="#" class="download-btn">Download MPC Starter Kit</a>
-      <p class="info">Link expires in 15 minutes • 53 MB</p>
+      <p class="info" id="expiration-info">Link expires in 15 minutes • 53 MB</p>
     </div>
 
     <div id="error-section" style="display: none;">
@@ -142,6 +142,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('product_id') || 'free-mpc-kit';
     const orderRef = urlParams.get('order_ref') || '';
+    const expirationDays = urlParams.get('expiration_days') || '0.0104';  // Default 15 minutes
     
     // Lambda Function URL
     const LAMBDA_URL = 'https://2lan4ghtlylexojben5lmpc22a0hraqo.lambda-url.us-west-2.on.aws/';
@@ -156,6 +157,7 @@
           body: JSON.stringify({
             product_id: productId,
             order_ref: orderRef,
+            expiration_days: expirationDays,
             source: 'thank-you-page'
           })
         });
@@ -171,6 +173,18 @@
           document.getElementById('status').style.display = 'none';
           document.getElementById('download-section').style.display = 'block';
           document.getElementById('download-link').href = data.url;
+          
+          // Update expiration message dynamically
+          const expiresInSeconds = data.expires_in || 900;
+          const expiresInDays = data.expires_in_days || 0.01;
+          let expirationText = '';
+          if (expiresInDays >= 1) {
+            expirationText = `Link expires in ${Math.round(expiresInDays)} day${expiresInDays > 1 ? 's' : ''}`;
+          } else {
+            const minutes = Math.round(expiresInSeconds / 60);
+            expirationText = `Link expires in ${minutes} minute${minutes > 1 ? 's' : ''}`;
+          }
+          document.getElementById('expiration-info').textContent = expirationText + ' • 53 MB';
           
           // Optional: Auto-start download after 2 seconds
           setTimeout(() => {
