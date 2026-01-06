@@ -56,8 +56,10 @@ section.ui_backgrounds_muted__1mstrgk5f .blog-image-wrapper {
 
 /* Desktop: make image wrapper taller so photos fill the card */
 @media (min-width: 769px) {
+  /* Remove fixed pixel height and make images occupy 70% of the card height */
   section.ui_backgrounds_muted__1mstrgk5f .blog-image-wrapper {
-    height: 340px;
+    height: auto;
+    min-height: 0;
   }
 }
 
