@@ -1,11 +1,11 @@
 /**
  * Persistent Music Player Component
- * 
+ *
  * A SoundCloud-style persistent audio player that stays fixed at the bottom of the screen
  * and maintains playback state across page navigation.
  */
-import React, { useState, useEffect, useRef } from 'react';
-import './persistent-player.css';
+import React, { useState, useEffect, useRef } from "react"
+import "./persistent-player.css"
 
 // Player Context to share state across components
 export const PlayerContext = React.createContext({
@@ -18,27 +18,27 @@ export const PlayerContext = React.createContext({
   prevTrack: () => {},
   addToQueue: () => {},
   clearQueue: () => {},
-});
+})
 
 // Main Provider Component
 export const PersistentPlayerProvider = ({ children }) => {
   // Player state
-  const [currentTrack, setCurrentTrack] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [queue, setQueue] = useState([]);
-  const [isVisible, setIsVisible] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(80);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [autoStart, setAutoStart] = useState(true);
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
-  
+  const [currentTrack, setCurrentTrack] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [queue, setQueue] = useState([])
+  const [isVisible, setIsVisible] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [volume, setVolume] = useState(80)
+  const [isMinimized, setIsMinimized] = useState(false)
+  const [autoStart, setAutoStart] = useState(true)
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
+
   // References
-  const audioRef = useRef(null);
-  const progressBarRef = useRef(null);
-  const pendingTrackRef = useRef(null);
-  
+  const audioRef = useRef(null)
+  const progressBarRef = useRef(null)
+  const pendingTrackRef = useRef(null)
+
   // Initialize player with Samply playlist
   useEffect(() => {
     // Fetch tracks from Samply API or use embedded data
@@ -46,233 +46,248 @@ export const PersistentPlayerProvider = ({ children }) => {
       try {
         // This is a placeholder for the actual Samply API integration
         // You might need to adjust this based on how Samply's API works
-        const samplyPlaylistId = 'pXJcoEICbOorz8If1Yly';
-        const response = await fetch(`https://samply.app/api/embed/${samplyPlaylistId}`);
-        
+        const samplyPlaylistId = "pXJcoEICbOorz8If1Yly"
+        const response = await fetch(
+          `https://samply.app/api/embed/${samplyPlaylistId}`
+        )
+
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json()
           if (data && data.tracks) {
-            setQueue(data.tracks);
+            setQueue(data.tracks)
             // Mark for auto-start when queue becomes available
-            setAutoStart(true);
+            setAutoStart(true)
           }
         }
       } catch (error) {
-        console.error("Failed to load Samply playlist:", error);
-        
+        console.error("Failed to load Samply playlist:", error)
+
         // Fallback - use demo tracks
         const demoTracks = [
           {
-            id: 'demo1',
-            title: 'Demo Track 1',
-            artist: 'J.Eldon',
-            audioUrl: '/static/audio/demo-track-1.mp3',
-            coverUrl: '/static/images/demo-cover-1.jpg',
+            id: "demo1",
+            title: "Demo Track 1",
+            artist: "J.Eldon",
+            audioUrl: "/static/audio/demo-track-1.mp3",
+            coverUrl: "/static/images/demo-cover-1.jpg",
             duration: 180, // in seconds
           },
           {
-            id: 'demo2',
-            title: 'Demo Track 2',
-            artist: 'J.Eldon',
-            audioUrl: '/static/audio/demo-track-2.mp3',
-            coverUrl: '/static/images/demo-cover-2.jpg',
+            id: "demo2",
+            title: "Demo Track 2",
+            artist: "J.Eldon",
+            audioUrl: "/static/audio/demo-track-2.mp3",
+            coverUrl: "/static/images/demo-cover-2.jpg",
             duration: 210, // in seconds
-          }
-        ];
-        
-        setQueue(demoTracks);
+          },
+        ]
+
+        setQueue(demoTracks)
         // Mark for auto-start when fallback queue is used
-        setAutoStart(true);
+        setAutoStart(true)
       }
-    };
-    
-    initializeSamplyPlaylist();
-  }, []);
+    }
+
+    initializeSamplyPlaylist()
+  }, [])
 
   // Play track function
   const playTrack = (track) => {
     if (track) {
-      setCurrentTrack(track);
-      setIsPlaying(true);
-      setIsVisible(true);
-      
+      setCurrentTrack(track)
+      setIsPlaying(true)
+      setIsVisible(true)
+
       // If audio element exists, load and play the track
       if (audioRef.current) {
         // Check if the track URL contains a real audio file or a placeholder
-        const isPlaceholder = track.audioUrl && 
-          (track.audioUrl.includes('demo-track-1.mp3') || 
-           track.audioUrl.includes('demo-track-2.mp3'));
-        
+        const isPlaceholder =
+          track.audioUrl &&
+          (track.audioUrl.includes("demo-track-1.mp3") ||
+            track.audioUrl.includes("demo-track-2.mp3"))
+
         if (isPlaceholder) {
           // For placeholder tracks, just simulate playback without trying to load
-          console.log("Playing placeholder track:", track.title);
-          setIsPlaying(true);
+          console.log("Playing placeholder track:", track.title)
+          setIsPlaying(true)
           // Simulate track duration
-          setDuration(track.duration || 180);
+          setDuration(track.duration || 180)
           // Start a fake progress timer
-          let fakeProgress = 0;
+          let fakeProgress = 0
           const progressInterval = setInterval(() => {
-            fakeProgress += 1;
+            fakeProgress += 1
             if (fakeProgress >= (track.duration || 180)) {
-              clearInterval(progressInterval);
-              handleTrackEnd();
+              clearInterval(progressInterval)
+              handleTrackEnd()
             } else {
-              setProgress(fakeProgress);
+              setProgress(fakeProgress)
             }
-          }, 1000);
-          return;
+          }, 1000)
+          return
         }
-        
+
         // Normal playback for real audio files
-        audioRef.current.src = track.audioUrl;
-        audioRef.current.load();
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(err => {
-          console.error("Error playing audio:", err);
-          // Handle autoplay restrictions
-          setIsPlaying(false);
-          setAutoplayBlocked(true);
-          pendingTrackRef.current = track;
-        });
-      }
-      else {
+        audioRef.current.src = track.audioUrl
+        audioRef.current.load()
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true)
+          })
+          .catch((err) => {
+            console.error("Error playing audio:", err)
+            // Handle autoplay restrictions
+            setIsPlaying(false)
+            setAutoplayBlocked(true)
+            pendingTrackRef.current = track
+          })
+      } else {
         // Audio element not mounted yet — remember the requested track
-        pendingTrackRef.current = track;
+        pendingTrackRef.current = track
       }
-      
+
       // Save to localStorage for persistence
-      const isBrowser = typeof window !== 'undefined';
+      const isBrowser = typeof window !== "undefined"
       if (isBrowser) {
         try {
-          localStorage.setItem('jeldon_player_current_track', JSON.stringify(track));
+          localStorage.setItem(
+            "jeldon_player_current_track",
+            JSON.stringify(track)
+          )
         } catch (error) {
-          console.error("Browser storage not available:", error);
+          console.error("Browser storage not available:", error)
         }
       }
     }
-  };
-  
+  }
+
   // Handle existing track playback
   const togglePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
+        audioRef.current.pause()
+        setIsPlaying(false)
       } else {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(err => {
-          console.error("Error resuming audio:", err);
-          setIsPlaying(false);
-          setAutoplayBlocked(true);
-        });
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true)
+          })
+          .catch((err) => {
+            console.error("Error resuming audio:", err)
+            setIsPlaying(false)
+            setAutoplayBlocked(true)
+          })
       }
     }
-  };
-  
+  }
+
   // Next track function
   const nextTrack = () => {
     if (queue.length > 0) {
-      const currentIndex = currentTrack ? queue.findIndex(t => t.id === currentTrack.id) : -1;
-      const nextIndex = currentIndex + 1 < queue.length ? currentIndex + 1 : 0;
-      playTrack(queue[nextIndex]);
+      const currentIndex = currentTrack
+        ? queue.findIndex((t) => t.id === currentTrack.id)
+        : -1
+      const nextIndex = currentIndex + 1 < queue.length ? currentIndex + 1 : 0
+      playTrack(queue[nextIndex])
     }
-  };
-  
+  }
+
   // Previous track function
   const prevTrack = () => {
     if (queue.length > 0) {
-      const currentIndex = currentTrack ? queue.findIndex(t => t.id === currentTrack.id) : -1;
+      const currentIndex = currentTrack
+        ? queue.findIndex((t) => t.id === currentTrack.id)
+        : -1
       // Go to previous track, or go to the end of the queue if at the beginning
-      const prevIndex = currentIndex > 0 ? currentIndex - 1 : queue.length - 1;
-      playTrack(queue[prevIndex]);
+      const prevIndex = currentIndex > 0 ? currentIndex - 1 : queue.length - 1
+      playTrack(queue[prevIndex])
     }
-  };
-  
+  }
+
   // Add to queue
   const addToQueue = (track) => {
-    setQueue(prevQueue => [...prevQueue, track]);
-    
+    setQueue((prevQueue) => [...prevQueue, track])
+
     // If nothing is currently playing, start playing the added track
     if (!currentTrack) {
-      playTrack(track);
+      playTrack(track)
     }
-  };
-  
+  }
+
   // Add multiple tracks to queue
   const addMultipleToQueue = (tracks) => {
     if (tracks && tracks.length > 0) {
-      setQueue(prevQueue => [...prevQueue, ...tracks]);
-      
+      setQueue((prevQueue) => [...prevQueue, ...tracks])
+
       // If nothing is currently playing, start the first track
       if (!currentTrack) {
-        playTrack(tracks[0]);
+        playTrack(tracks[0])
       }
     }
-  };
-  
+  }
+
   // Clear queue
   const clearQueue = () => {
-    setQueue([]);
-    setCurrentTrack(null);
-    setIsPlaying(false);
-    
+    setQueue([])
+    setCurrentTrack(null)
+    setIsPlaying(false)
+
     if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
     }
-  };
-  
+  }
+
   // Handle progress bar updates
   const handleTimeUpdate = () => {
     if (audioRef.current) {
-      const currentTime = audioRef.current.currentTime;
-      const duration = audioRef.current.duration || 0;
-      const progressPercentage = (currentTime / duration) * 100;
-      
-      setProgress(progressPercentage);
-      setDuration(duration);
+      const currentTime = audioRef.current.currentTime
+      const duration = audioRef.current.duration || 0
+      const progressPercentage = (currentTime / duration) * 100
+
+      setProgress(progressPercentage)
+      setDuration(duration)
     }
-  };
-  
+  }
+
   // Handle seeking
   const handleSeek = (e) => {
     if (progressBarRef.current && audioRef.current) {
-      const progressBar = progressBarRef.current;
-      const bounds = progressBar.getBoundingClientRect();
-      const x = e.clientX - bounds.left;
-      const width = bounds.width;
-      const percentage = x / width;
-      
+      const progressBar = progressBarRef.current
+      const bounds = progressBar.getBoundingClientRect()
+      const x = e.clientX - bounds.left
+      const width = bounds.width
+      const percentage = x / width
+
       // Set the current time based on percentage
-      audioRef.current.currentTime = percentage * audioRef.current.duration;
+      audioRef.current.currentTime = percentage * audioRef.current.duration
     }
-  };
-  
+  }
+
   // Handle volume change
   const handleVolumeChange = (e) => {
-    const value = e.target.value;
-    setVolume(value);
-    
+    const value = e.target.value
+    setVolume(value)
+
     if (audioRef.current) {
-      audioRef.current.volume = value / 100;
+      audioRef.current.volume = value / 100
     }
-  };
-  
+  }
+
   // Handle track end
   const handleTrackEnd = () => {
-    nextTrack();
-  };
-  
+    nextTrack()
+  }
+
   // Format time function (converts seconds to MM:SS format)
   const formatTime = (seconds) => {
-    if (!seconds) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
-  
+    if (!seconds) return "0:00"
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`
+  }
+
   // Prepare player context values
   const playerContextValue = {
     currentTrack,
@@ -285,141 +300,155 @@ export const PersistentPlayerProvider = ({ children }) => {
     addToQueue,
     addMultipleToQueue,
     clearQueue,
-  };
-  
+  }
+
   // Restore state from localStorage when component mounts
   useEffect(() => {
-    const isBrowser = typeof window !== 'undefined';
+    const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
       try {
-        const savedTrack = localStorage.getItem('jeldon_player_current_track');
+        const savedTrack = localStorage.getItem("jeldon_player_current_track")
         if (savedTrack) {
           try {
-            const parsedTrack = JSON.parse(savedTrack);
-            setCurrentTrack(parsedTrack);
-            setIsVisible(true);
+            const parsedTrack = JSON.parse(savedTrack)
+            setCurrentTrack(parsedTrack)
+            setIsVisible(true)
           } catch (error) {
-            console.error("Error parsing saved track:", error);
+            console.error("Error parsing saved track:", error)
           }
         }
       } catch (error) {
-        console.error("Browser storage not available:", error);
+        console.error("Browser storage not available:", error)
       }
     }
-    
+
     // Set initial volume
     if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
+      audioRef.current.volume = volume / 100
     }
-  }, []);
-  
+  }, [])
+
   // Show the player when we have a track
   useEffect(() => {
     if (currentTrack) {
-      setIsVisible(true);
+      setIsVisible(true)
     }
-  }, [currentTrack]);
+  }, [currentTrack])
 
   // Auto-start first track when queue is populated (best-effort)
   useEffect(() => {
     if (autoStart && queue && queue.length > 0 && !currentTrack) {
       // Attempt to start the first track
       try {
-        playTrack(queue[0]);
+        playTrack(queue[0])
       } catch (err) {
-        console.error('Failed to auto-start track:', err);
+        console.error("Failed to auto-start track:", err)
       }
-      setAutoStart(false);
+      setAutoStart(false)
     }
-  }, [autoStart, queue]);
+  }, [autoStart, queue])
 
   const handleStartClick = async () => {
-    const track = pendingTrackRef.current || currentTrack || (queue && queue[0]);
-    if (!track) return;
+    const track = pendingTrackRef.current || currentTrack || (queue && queue[0])
+    if (!track) return
 
-    setAutoplayBlocked(false);
-    setCurrentTrack(track);
-    setIsVisible(true);
+    setAutoplayBlocked(false)
+    setCurrentTrack(track)
+    setIsVisible(true)
 
     if (audioRef.current) {
       try {
         if (track.audioUrl) {
-          if (audioRef.current.src !== track.audioUrl) audioRef.current.src = track.audioUrl;
-          audioRef.current.load();
-          await audioRef.current.play();
-          setIsPlaying(true);
+          if (audioRef.current.src !== track.audioUrl)
+            audioRef.current.src = track.audioUrl
+          audioRef.current.load()
+          await audioRef.current.play()
+          setIsPlaying(true)
         } else {
-          setIsPlaying(true);
+          setIsPlaying(true)
         }
       } catch (err) {
-        console.error('User start play failed:', err);
-        setIsPlaying(false);
-        setAutoplayBlocked(true);
-        pendingTrackRef.current = track;
+        console.error("User start play failed:", err)
+        setIsPlaying(false)
+        setAutoplayBlocked(true)
+        pendingTrackRef.current = track
       }
     } else {
       // audio element not yet mounted; store pending
-      pendingTrackRef.current = track;
+      pendingTrackRef.current = track
     }
-  };
+  }
 
   // If audio element becomes available or currentTrack changes, try to play pending/current track
   useEffect(() => {
-    const el = audioRef.current;
-    const trackToPlay = pendingTrackRef.current || currentTrack;
-    if (!el || !trackToPlay) return;
+    const el = audioRef.current
+    const trackToPlay = pendingTrackRef.current || currentTrack
+    if (!el || !trackToPlay) return
 
     // Clear pending when we begin handling it
-    pendingTrackRef.current = null;
+    pendingTrackRef.current = null
 
-    const isPlaceholder = trackToPlay.audioUrl && 
-      (trackToPlay.audioUrl.includes('demo-track-1.mp3') || 
-       trackToPlay.audioUrl.includes('demo-track-2.mp3'));
+    const isPlaceholder =
+      trackToPlay.audioUrl &&
+      (trackToPlay.audioUrl.includes("demo-track-1.mp3") ||
+        trackToPlay.audioUrl.includes("demo-track-2.mp3"))
 
     if (isPlaceholder) {
       // placeholder handling already simulated elsewhere; ensure visible/playing state
-      setIsPlaying(true);
-      setIsVisible(true);
-      return;
+      setIsPlaying(true)
+      setIsVisible(true)
+      return
     }
 
     try {
-      if (el.src !== trackToPlay.audioUrl) el.src = trackToPlay.audioUrl;
-      el.load();
-      el.play().then(() => {
-        setIsPlaying(true);
-        setIsVisible(true);
-      }).catch(err => {
-        console.error('Error playing pending/current track:', err);
-        setIsPlaying(false);
-        setAutoplayBlocked(true);
-        // preserve pending track for user gesture
-        pendingTrackRef.current = trackToPlay;
-      });
+      if (el.src !== trackToPlay.audioUrl) el.src = trackToPlay.audioUrl
+      el.load()
+      el.play()
+        .then(() => {
+          setIsPlaying(true)
+          setIsVisible(true)
+        })
+        .catch((err) => {
+          console.error("Error playing pending/current track:", err)
+          setIsPlaying(false)
+          setAutoplayBlocked(true)
+          // preserve pending track for user gesture
+          pendingTrackRef.current = trackToPlay
+        })
     } catch (err) {
-      console.error('Playback attempt failed:', err);
-      setIsPlaying(false);
+      console.error("Playback attempt failed:", err)
+      setIsPlaying(false)
     }
-  }, [currentTrack, audioRef.current]);
-  
+  }, [currentTrack, audioRef.current])
+
   // Render the player and provider
   return (
     <PlayerContext.Provider value={playerContextValue}>
       {children}
-      
+
       {autoplayBlocked && (
-        <div style={{position: 'fixed', left: 0, right: 0, bottom: 20, display: 'flex', justifyContent: 'center', zIndex: 9999}}>
+        <div
+          style={{
+            position: "fixed",
+            left: 0,
+            right: 0,
+            bottom: 20,
+            display: "flex",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+        >
           <button
             onClick={handleStartClick}
             style={{
-              padding: '12px 20px',
+              padding: "12px 20px",
               borderRadius: 999,
-              background: '#111',
-              color: '#fff',
+              background: "#111",
+              color: "#fff",
               fontSize: 16,
-              boxShadow: '0 6px 24px rgba(0,0,0,0.2)',
-              border: 'none',
-              cursor: 'pointer'
+              boxShadow: "0 6px 24px rgba(0,0,0,0.2)",
+              border: "none",
+              cursor: "pointer",
             }}
           >
             Tap to Start Music
@@ -428,66 +457,75 @@ export const PersistentPlayerProvider = ({ children }) => {
       )}
 
       {isVisible && (
-        <div className={`persistent-player ${isMinimized ? 'minimized' : ''}`}>
+        <div className={`persistent-player ${isMinimized ? "minimized" : ""}`}>
           {/* Audio element (hidden) */}
           <audio
             ref={audioRef}
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleTrackEnd}
           />
-          
+
           {/* Minimize/Maximize toggle */}
-          <button 
+          <button
             className="player-toggle"
             onClick={() => setIsMinimized(!isMinimized)}
           >
-            {isMinimized ? '▲' : '▼'}
+            {isMinimized ? "▲" : "▼"}
           </button>
-          
+
           {/* Album Art and Track Info */}
           <div className="player-info">
             {currentTrack?.coverUrl && (
-              <img 
-                src={currentTrack.coverUrl} 
-                alt={currentTrack.title} 
+              <img
+                src={currentTrack.coverUrl}
+                alt={currentTrack.title}
                 className="player-cover"
               />
             )}
             <div className="player-track-info">
-              <div className="player-title">{currentTrack?.title || 'No track selected'}</div>
-              <div className="player-artist">{currentTrack?.artist || 'Artist'}</div>
+              <div className="player-title">
+                {currentTrack?.title || "No track selected"}
+              </div>
+              <div className="player-artist">
+                {currentTrack?.artist || "Artist"}
+              </div>
             </div>
           </div>
-          
+
           {/* Player Controls */}
           <div className="player-controls">
             <button className="player-control" onClick={prevTrack}>
               ◄◄
             </button>
-            <button className="player-control play-pause" onClick={togglePlayPause}>
-              {isPlaying ? '❚❚' : '▶'}
+            <button
+              className="player-control play-pause"
+              onClick={togglePlayPause}
+            >
+              {isPlaying ? "❚❚" : "▶"}
             </button>
             <button className="player-control" onClick={nextTrack}>
               ►►
             </button>
           </div>
-          
+
           {/* Seek Bar */}
           <div className="player-progress-container">
-            <div className="player-time">{formatTime(audioRef.current?.currentTime || 0)}</div>
-            <div 
-              className="player-progress-bar" 
+            <div className="player-time">
+              {formatTime(audioRef.current?.currentTime || 0)}
+            </div>
+            <div
+              className="player-progress-bar"
               ref={progressBarRef}
               onClick={handleSeek}
             >
-              <div 
-                className="player-progress" 
+              <div
+                className="player-progress"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
             <div className="player-time">{formatTime(duration)}</div>
           </div>
-          
+
           {/* Volume Control */}
           <div className="player-volume">
             <span className="volume-icon">🔊</span>
@@ -503,59 +541,67 @@ export const PersistentPlayerProvider = ({ children }) => {
         </div>
       )}
     </PlayerContext.Provider>
-  );
-};
+  )
+}
 
 // Hook to access player context
 export const usePlayer = () => {
-  const context = React.useContext(PlayerContext);
+  const context = React.useContext(PlayerContext)
   if (!context) {
-    throw new Error("usePlayer must be used within a PersistentPlayerProvider");
+    throw new Error("usePlayer must be used within a PersistentPlayerProvider")
   }
-  return context;
-};
+  return context
+}
 
 // Play Button Component for use throughout the app
 export const PlayButton = ({ track, text = "Play", className = "" }) => {
-  const { playTrack } = usePlayer();
-  
+  const { playTrack } = usePlayer()
+
   return (
-    <button 
+    <button
       className={`play-button ${className}`}
       onClick={() => playTrack(track)}
     >
       {text}
     </button>
-  );
-};
+  )
+}
 
 // Queue Button Component
-export const QueueButton = ({ track, text = "Add to Queue", className = "" }) => {
-  const { addToQueue } = usePlayer();
-  
+export const QueueButton = ({
+  track,
+  text = "Add to Queue",
+  className = "",
+}) => {
+  const { addToQueue } = usePlayer()
+
   return (
-    <button 
+    <button
       className={`queue-button ${className}`}
       onClick={() => addToQueue(track)}
     >
       {text}
     </button>
-  );
-};
+  )
+}
 
 // Playlist Button Component
-export const PlaylistButton = ({ tracks, text = "Play All", className = "" }) => {
-  const { addMultipleToQueue } = usePlayer();
-  
+export const PlaylistButton = ({
+  tracks,
+  text = "Play All",
+  className = "",
+}) => {
+  const { addMultipleToQueue } = usePlayer()
+
   return (
-    <button 
+    <button
       className={`playlist-button ${className}`}
       onClick={() => addMultipleToQueue(tracks)}
     >
       {text}
     </button>
-  );
-};
+  )
+}
 
 // Default export for direct usage
-export default PersistentPlayerProvider;
+export default PersistentPlayerProvider
