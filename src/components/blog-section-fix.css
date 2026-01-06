@@ -61,6 +61,39 @@ section.ui_backgrounds_muted__1mstrgk5f .blog-image-wrapper {
   }
 }
 
+/* Desktop: make each blog card a column and image take 70% of the card height */
+@media (min-width: 769px) {
+  .home-recent-blog .blog-post-item {
+    display: flex;
+    flex-direction: column;
+    height: 480px; /* total card height */
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .home-recent-blog .blog-image-wrapper {
+    height: 70%;
+    min-height: 0;
+    position: relative;
+  }
+
+  .home-recent-blog .blog-post-item .ui_text_kicker__1mstrgk4v,
+  .home-recent-blog .blog-post-item .ui_text_body__1mstrgk4p {
+    flex: 1 1 auto;
+    padding: 12px 16px;
+  }
+
+  .home-recent-blog .blog-feature-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    left: 0;
+    top: 0;
+  }
+}
+
 /* Fix text elements */
 section.ui_backgrounds_muted__1mstrgk5f .ui_text_kicker__1mstrgk4v,
 section.ui_backgrounds_muted__1mstrgk5f .ui_text_body__1mstrgk4p {
