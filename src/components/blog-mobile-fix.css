@@ -134,6 +134,7 @@
 /* Improve contrast for Recent Blog Posts (fixes Pa11y findings) */
 .home-recent-blog {
   color: #000508 !important;
+  padding-bottom: 100px !important;
 }
 .home-recent-blog h3,
 .home-recent-blog a,
@@ -182,4 +183,30 @@
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
+}
+
+/* Ensure mobile-only layout rules don't leak into desktop/production views.
+   These desktop overrides restore standard grid/flex behavior for larger screens. */
+@media (min-width: 769px) {
+  .home-recent-blog .blog-posts-container {
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+    gap: 24px !important;
+    align-items: stretch;
+  }
+
+  .home-recent-blog .blog-post-item {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .home-recent-blog .blog-feature-image {
+    height: 340px;
+  }
 }
