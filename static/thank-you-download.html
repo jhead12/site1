@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You - JeldonMusic</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 50px 40px;
+      text-align: center;
+    }
+    .checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #4CAF50;
+      margin: 0 auto 30px;
+      position: relative;
+      animation: scaleIn 0.5s ease-out;
+    }
+    .checkmark::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 50px;
+      font-weight: bold;
+    }
+    @keyframes scaleIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    h1 {
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    .loading {
+      color: #667eea;
+      font-size: 16px;
+      margin: 20px 0;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .download-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      padding: 18px 50px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    .info {
+      color: #999;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+    .error {
+      color: #f44336;
+      background: #ffebee;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="checkmark"></div>
+    <h1>Thank You!</h1>
+    <p class="subtitle">Your free MPC Starter Kit is ready</p>
+    
+    <div id="status">
+      <div class="spinner"></div>
+      <p class="loading">Preparing your download...</p>
+    </div>
+
+    <div id="download-section" style="display: none;">
+      <a id="download-link" href="#" class="download-btn">Download MPC Starter Kit</a>
+      <p class="info">Link expires in 15 minutes • 53 MB</p>
+    </div>
+
+    <div id="error-section" style="display: none;">
+      <div class="error">
+        <p><strong>Unable to generate download link</strong></p>
+        <p id="error-message"></p>
+        <p style="margin-top: 10px;">Please contact support@jeldonmusic.com</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Extract URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('product_id') || 'free-mpc-kit';
+    const orderRef = urlParams.get('order_ref') || '';
+    
+    // Lambda Function URL
+    const LAMBDA_URL = 'https://2lan4ghtlylexojben5lmpc22a0hraqo.lambda-url.us-west-2.on.aws/';
+
+    async function getDownloadLink() {
+      try {
+        const response = await fetch(LAMBDA_URL + '?product_id=' + encodeURIComponent(productId), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            order_ref: orderRef,
+            source: 'thank-you-page'
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Server returned ' + response.status);
+        }
+
+        const data = await response.json();
+        
+        if (data.url) {
+          // Success - show download button
+          document.getElementById('status').style.display = 'none';
+          document.getElementById('download-section').style.display = 'block';
+          document.getElementById('download-link').href = data.url;
+          
+          // Optional: Auto-start download after 2 seconds
+          setTimeout(() => {
+            window.location.href = data.url;
+          }, 2000);
+          
+        } else if (data.status === 'ok') {
+          // Webhook validation response - show generic message
+          document.getElementById('status').style.display = 'none';
+          document.getElementById('error-section').style.display = 'block';
+          document.getElementById('error-message').textContent = 
+            'Please complete your order to receive the download link.';
+        } else {
+          throw new Error(data.message || 'No download URL received');
+        }
+        
+      } catch (error) {
+        console.error('Download link error:', error);
+        document.getElementById('status').style.display = 'none';
+        document.getElementById('error-section').style.display = 'block';
+        document.getElementById('error-message').textContent = error.message;
+      }
+    }
+
+    // Start fetching download link on page load
+    window.addEventListener('DOMContentLoaded', getDownloadLink);
+  </script>
+</body>
+</html>

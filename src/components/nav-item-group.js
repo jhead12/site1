@@ -1,6 +1,7 @@
 import * as React from "react"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import { Box, Flex, NavButtonLink, NavLink } from "./ui"
+import { createPortal } from "react-dom"
 import Caret from "./caret"
 import * as styles from "./nav-item-group.css"
 import { media } from "./media.css"
@@ -12,6 +13,9 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [popupVisible, setPopupVisible] = React.useState(false)
   const closeTimeoutRef = React.useRef(null)
+  const portalRootRef = React.useRef(null)
+  const portalContainerRef = React.useRef(null)
+  const [portalStyle, setPortalStyle] = React.useState({})
   const isSmallScreen = () => {
     return !window.matchMedia(media.small).matches
   }
@@ -105,6 +109,52 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
     }
   }, [])
 
+  // Create a portal root attached to body for dropdowns
+  React.useEffect(() => {
+    if (typeof document === "undefined") return
+    const root = document.createElement("div")
+    root.className = "nav-item-portal"
+    document.body.appendChild(root)
+    portalRootRef.current = root
+    return () => {
+      if (portalRootRef.current) {
+        document.body.removeChild(portalRootRef.current)
+        portalRootRef.current = null
+      }
+    }
+  }, [])
+
+  // Position the portal dropdown under the group wrapper when open
+  const updatePortalPosition = React.useCallback(() => {
+    if (typeof document === "undefined") return
+    const wrapper = document.querySelector(`[data-id="${name}-group-wrapper"]`)
+    if (!wrapper || !portalRootRef.current) return
+    const rect = wrapper.getBoundingClientRect()
+    setPortalStyle({
+      position: "absolute",
+      top: `${rect.bottom + window.scrollY}px`,
+      left: `${rect.left + window.scrollX}px`,
+      zIndex: 10001,
+      pointerEvents: "auto",
+      backgroundColor: "#000000",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      borderRadius: "8px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+      minWidth: "250px",
+    })
+  }, [name])
+
+  React.useEffect(() => {
+    if (!isOpen) return
+    updatePortalPosition()
+    window.addEventListener("resize", updatePortalPosition)
+    window.addEventListener("scroll", updatePortalPosition, true)
+    return () => {
+      window.removeEventListener("resize", updatePortalPosition)
+      window.removeEventListener("scroll", updatePortalPosition, true)
+    }
+  }, [isOpen, updatePortalPosition])
+
   return (
     <Flex
       data-id={`${name}-group-wrapper`}
@@ -124,56 +174,51 @@ export default function NavItemGroup({ name, navItems = [], onItemClick }) {
           <Caret direction={isOpen ? "up" : "down"} />
         </Flex>
       </NavButtonLink>
-      {isOpen && (
-        <Box
-          data-id={`${name}-popup-box`}
-          className={
-            styles.navLinkListWrapper[popupVisible ? "opened" : "closed"]
-          }
-          style={{
-            zIndex: 200,
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            backgroundColor: "#000000",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-            minWidth: "250px",
-          }}
-        >
-          {/* Card-style grid for dropdown items (desktop-first). */}
-          <div className={styles.cardGrid}>
-            {safeNavItems &&
-              safeNavItems.length > 0 &&
-              safeNavItems.map((navItem) => (
-                <NavLink
-                  key={navItem.id}
-                  to={navItem.href}
-                  className={styles.cardItem}
-                  onClick={handleSubItemClick}
-                >
-                  <div className={styles.cardItemInner}>
-                    {navItem.icon && navItem.icon.gatsbyImageData && (
-                      <GatsbyImage
-                        alt={navItem.icon.alt || navItem.text}
-                        image={getImage(navItem.icon.gatsbyImageData)}
-                        className={styles.navIcon}
-                        style={{ zIndex: 250 }}
-                      />
-                    )}
-                    <div className={styles.cardItemTitle}>{navItem.text}</div>
-                    {!!navItem.description && (
-                      <div className={styles.cardItemDescription}>
-                        {navItem.description}
-                      </div>
-                    )}
-                  </div>
-                </NavLink>
-              ))}
-          </div>
-        </Box>
-      )}
+      {isOpen &&
+        typeof document !== "undefined" &&
+        portalRootRef.current &&
+        createPortal(
+          <Box
+            data-id={`${name}-popup-box`}
+            className={
+              styles.navLinkListWrapper[popupVisible ? "opened" : "closed"]
+            }
+            style={portalStyle}
+            ref={portalContainerRef}
+          >
+            {/* Card-style grid for dropdown items (desktop-first). */}
+            <div className={styles.cardGrid}>
+              {safeNavItems &&
+                safeNavItems.length > 0 &&
+                safeNavItems.map((navItem) => (
+                  <NavLink
+                    key={navItem.id}
+                    to={navItem.href}
+                    className={styles.cardItem}
+                    onClick={handleSubItemClick}
+                  >
+                    <div className={styles.cardItemInner}>
+                      {navItem.icon && navItem.icon.gatsbyImageData && (
+                        <GatsbyImage
+                          alt={navItem.icon.alt || navItem.text}
+                          image={getImage(navItem.icon.gatsbyImageData)}
+                          className={styles.navIcon}
+                          style={{ zIndex: 250 }}
+                        />
+                      )}
+                      <div className={styles.cardItemTitle}>{navItem.text}</div>
+                      {!!navItem.description && (
+                        <div className={styles.cardItemDescription}>
+                          {navItem.description}
+                        </div>
+                      )}
+                    </div>
+                  </NavLink>
+                ))}
+            </div>
+          </Box>,
+          portalRootRef.current
+        )}
     </Flex>
   )
 }
