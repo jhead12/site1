@@ -134,7 +134,7 @@
 /* Improve contrast for Recent Blog Posts (fixes Pa11y findings) */
 .home-recent-blog {
   color: #000508 !important;
-  padding-bottom: 100px !important;
+  padding-bottom: 160px !important;
 }
 .home-recent-blog h3,
 .home-recent-blog a,

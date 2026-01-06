@@ -48,9 +48,17 @@ section.ui_backgrounds_muted__1mstrgk5f .ui_widths_full__1mstrgku:hover {
 }
 
 /* Fix image wrapper */
+/* Default (mobile/smaller) image wrapper height */
 section.ui_backgrounds_muted__1mstrgk5f .blog-image-wrapper {
   margin-bottom: 0;
   height: 160px;
+}
+
+/* Desktop: make image wrapper taller so photos fill the card */
+@media (min-width: 769px) {
+  section.ui_backgrounds_muted__1mstrgk5f .blog-image-wrapper {
+    height: 340px;
+  }
 }
 
 /* Fix text elements */
