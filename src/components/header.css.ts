@@ -22,6 +22,12 @@ export const desktopHeaderNavWrapper = style({
   },
 })
 
+// Ensure direct children of the header container are vertically centered
+globalStyle(`.${desktopHeaderNavWrapper} > *`, {
+  display: "flex",
+  alignItems: "center",
+})
+
 const mobileHeaderNavWrapperBase = style({
   display: "block",
   position: "sticky",
@@ -47,6 +53,16 @@ export const mobileHeaderNavWrapper = styleVariants({
     },
   ],
   closed: [mobileHeaderNavWrapperBase],
+})
+
+// Center items vertically in the mobile header wrapper for both states
+globalStyle(`.${mobileHeaderNavWrapper.open} > *`, {
+  display: "flex",
+  alignItems: "center",
+})
+globalStyle(`.${mobileHeaderNavWrapper.closed} > *`, {
+  display: "flex",
+  alignItems: "center",
 })
 
 export const mobileNavSVGColorWrapper = styleVariants({
