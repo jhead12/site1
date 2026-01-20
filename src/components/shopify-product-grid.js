@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useContext } from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import {
@@ -14,23 +15,13 @@ import {
   IconLink
 } from "./ui"
 import * as styles from "./shopify-product-grid.css"
-
-function formatPrice(priceV2) {
-  if (!priceV2) return ""
-  
-  // Get the price and currency
-  const amount = priceV2.amount || "0"
-  const currencyCode = priceV2.currencyCode || "USD"
-  
-  // Format with locale
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(amount)
-}
+import { ThemeContext } from "../contexts/ThemeContext"
+import { formatPrice } from "../utils/shopify-helpers"
 
 function ShopifyProductCard(props) {
   const { product } = props
+  const theme = useContext(ThemeContext) || {}
+  const locale = theme.locale || 'en-US'
   
   // Safety check for product data
   if (!product) return null
@@ -42,7 +33,7 @@ function ShopifyProductCard(props) {
     
   // Get price range
   const price = product.priceRange?.minVariantPrice
-    ? formatPrice(product.priceRange.minVariantPrice)
+    ? formatPrice(product.priceRange.minVariantPrice, locale)
     : "Price unavailable"
 
   return (

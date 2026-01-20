@@ -166,6 +166,7 @@
   display: flex;
   flex-direction: column;
   padding: 6em 2em 2em 2em;
+  padding-bottom: 8rem; /* extra space so sticky CTA has room */
   overflow-y: auto;
   z-index: 1120;
   pointer-events: auto;
@@ -205,6 +206,18 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+/* Keep CTA visible and clickable by making it sticky near the bottom of the scroll area */
+.sm-cta-wrap {
+  margin-top: 1rem;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  position: sticky;
+  bottom: 2.5rem;
+  z-index: 1135;
+  pointer-events: auto;
 }
 
 .sm-home-wrap {

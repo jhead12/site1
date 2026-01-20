@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import Layout from "../components/layout"
+import { formatPrice } from "../utils/shopify-helpers"
 import {
   Container,
   Box,
@@ -17,21 +18,9 @@ import {
 } from "../components/ui"
 import SEOHead from "../components/head"
 
-function formatPrice(priceV2) {
-  if (!priceV2) return ""
-  
-  // Get the price and currency
-  const amount = priceV2.amount || "0"
-  const currencyCode = priceV2.currencyCode || "USD"
-  
-  // Format with locale
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(amount)
-}
+// price formatting is provided by src/utils/shopify-helpers.formatPrice
 
-export default function ProductTemplate({ data = {} }) {
+export default function ProductTemplate({ data = {}, pageContext = {} }) {
   // Handle case where Shopify data isn't available (query is commented out)
   const product = data.shopifyProduct || null
   const [selectedVariant, setSelectedVariant] = useState(
@@ -56,10 +45,11 @@ export default function ProductTemplate({ data = {} }) {
     : null
     
   // Format the price based on selected variant or default price
+  const locale = pageContext?.langKey || 'en-US'
   const price = selectedVariant?.priceV2
-    ? formatPrice(selectedVariant.priceV2)
+    ? formatPrice(selectedVariant.priceV2, locale)
     : product.priceRange?.minVariantPrice
-    ? formatPrice(product.priceRange.minVariantPrice)
+    ? formatPrice(product.priceRange.minVariantPrice, locale)
     : "Price unavailable"
   
   // Handle add to cart (placeholder - will connect to your cart system)

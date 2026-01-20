@@ -24,8 +24,9 @@ export const ThemeContext = React.createContext()
 
 export const ThemeProvider = ({ children, locale }) => {
   const theme = themes[locale] || themes.en
+  const value = { ...theme, locale }
   return (
-    <ThemeContext.Provider value={theme}>
+    <ThemeContext.Provider value={value}>
       <div style={{ fontFamily: theme.fontFamily, direction: theme.direction }}>
         {children}
       </div>

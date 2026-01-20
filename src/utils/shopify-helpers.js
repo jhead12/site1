@@ -8,15 +8,16 @@
  * @param {Object} priceV2 - Shopify price object with amount and currencyCode
  * @returns {String} - Formatted price string
  */
-export function formatPrice(priceV2) {
+export function formatPrice(priceV2, locale = 'en-US') {
   if (!priceV2) return ""
-  
+
   // Get the price and currency
   const amount = priceV2.amount || "0"
   const currencyCode = priceV2.currencyCode || "USD"
-  
-  // Format with locale
-  return new Intl.NumberFormat('en-US', {
+
+  // Format with provided locale (fallback to en-US)
+  const useLocale = locale || 'en-US'
+  return new Intl.NumberFormat(useLocale, {
     style: 'currency',
     currency: currencyCode,
   }).format(amount)

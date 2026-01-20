@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useContext } from "react"
 import { useStaticQuery, graphql, Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import isAbsoluteURL from "is-absolute-url"
 import "./rotating-hero-banner.css"
+import { ThemeContext } from "../../contexts/ThemeContext"
 
 // Helper function to truncate text to a single sentence
 const truncateToFirstSentence = (text) => {
@@ -17,6 +18,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   const [isPlaying, setIsPlaying] = useState(!disableAutoRotate)
   const [fadeClass, setFadeClass] = useState("fade-in")
   const [heroData, setHeroData] = useState([])
+  const theme = useContext(ThemeContext) || {}
+  const locale = theme.locale || 'en-US'
 
   // Consolidated navigation function
   const navigateToSlide = useCallback(
@@ -534,7 +537,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             ) && "Latest"}
           </div>
           <div className="hero-banner-date">
-            {new Date(currentContent.date).toLocaleDateString("en-US", {
+            {new Date(currentContent.date).toLocaleDateString(locale, {
               month: "short",
               year: "numeric",
             })}
