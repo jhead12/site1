@@ -98,7 +98,7 @@ export const mobileNavOverlay = style({
 
 // Ensure the `nav` inside the overlay renders above decorative prelayers
 globalStyle(`.${mobileNavOverlay} nav`, {
-  position: 'relative',
+  position: "relative",
   zIndex: 1100,
 })
 

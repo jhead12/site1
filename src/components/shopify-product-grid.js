@@ -12,7 +12,7 @@ import {
   Subhead,
   Box,
   ButtonList,
-  IconLink
+  IconLink,
 } from "./ui"
 import * as styles from "./shopify-product-grid.css"
 import { ThemeContext } from "../contexts/ThemeContext"
@@ -21,16 +21,16 @@ import { formatPrice } from "../utils/shopify-helpers"
 function ShopifyProductCard(props) {
   const { product } = props
   const theme = useContext(ThemeContext) || {}
-  const locale = theme.locale || 'en-US'
-  
+  const locale = theme.locale || "en-US"
+
   // Safety check for product data
   if (!product) return null
-  
+
   // Get product image
-  const productImage = product.featuredImage?.localFile 
-    ? getImage(product.featuredImage.localFile) 
+  const productImage = product.featuredImage?.localFile
+    ? getImage(product.featuredImage.localFile)
     : null
-    
+
   // Get price range
   const price = product.priceRange?.minVariantPrice
     ? formatPrice(product.priceRange.minVariantPrice, locale)
@@ -69,7 +69,7 @@ function ShopifyProductCard(props) {
 
 export default function ShopifyProductGrid(props) {
   const { title, subtitle, products, showMoreLink } = props
-  
+
   if (!products || products.length === 0) {
     return null
   }
@@ -115,7 +115,7 @@ export const query = graphql`
               aspectRatio: 1
               placeholder: BLURRED
               formats: [AUTO, WEBP]
-              transformOptions: {cropFocus: CENTER}
+              transformOptions: { cropFocus: CENTER }
             )
           }
         }

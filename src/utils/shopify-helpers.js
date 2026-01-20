@@ -8,7 +8,7 @@
  * @param {Object} priceV2 - Shopify price object with amount and currencyCode
  * @returns {String} - Formatted price string
  */
-export function formatPrice(priceV2, locale = 'en-US') {
+export function formatPrice(priceV2, locale = "en-US") {
   if (!priceV2) return ""
 
   // Get the price and currency
@@ -16,9 +16,9 @@ export function formatPrice(priceV2, locale = 'en-US') {
   const currencyCode = priceV2.currencyCode || "USD"
 
   // Format with provided locale (fallback to en-US)
-  const useLocale = locale || 'en-US'
+  const useLocale = locale || "en-US"
   return new Intl.NumberFormat(useLocale, {
-    style: 'currency',
+    style: "currency",
     currency: currencyCode,
   }).format(amount)
 }
@@ -63,12 +63,12 @@ export function isShopifyConfigured() {
  */
 export function isProductAvailable(product) {
   if (!product) return false
-  
+
   // Check if at least one variant is available
   if (product.variants && product.variants.length > 0) {
-    return product.variants.some(v => v.availableForSale)
+    return product.variants.some((v) => v.availableForSale)
   }
-  
+
   return product.availableForSale || false
 }
 
@@ -81,14 +81,15 @@ export function getDemoProduct() {
     id: "demo-product-1",
     title: "Demo Beat Package",
     handle: "demo-beat-package",
-    description: "This is a sample beat package that would normally come from your Shopify store.",
+    description:
+      "This is a sample beat package that would normally come from your Shopify store.",
     productType: "Beat Package",
     tags: ["Hip Hop", "Demo", "Premium"],
     priceRange: {
       minVariantPrice: {
         amount: "29.99",
-        currencyCode: "USD"
-      }
+        currencyCode: "USD",
+      },
     },
     variants: [
       {
@@ -96,20 +97,20 @@ export function getDemoProduct() {
         title: "Basic License",
         priceV2: {
           amount: "29.99",
-          currencyCode: "USD"
+          currencyCode: "USD",
         },
-        availableForSale: true
+        availableForSale: true,
       },
       {
         id: "demo-variant-2",
         title: "Premium License",
         priceV2: {
           amount: "49.99",
-          currencyCode: "USD"
+          currencyCode: "USD",
         },
-        availableForSale: true
-      }
-    ]
+        availableForSale: true,
+      },
+    ],
   }
 }
 
@@ -122,13 +123,13 @@ export function getDemoProducts(count = 6) {
   const demoProducts = []
   const types = ["Beat Package", "Sample Pack", "Sound Kit", "Mixing Service"]
   const genres = ["Hip Hop", "R&B", "Trap", "Pop", "Lo-Fi", "Drill"]
-  
+
   for (let i = 1; i <= count; i++) {
     const productType = types[Math.floor(Math.random() * types.length)]
     const tag = genres[Math.floor(Math.random() * genres.length)]
-    const price = (19.99 + (Math.floor(Math.random() * 8) * 10)).toFixed(2)
+    const price = (19.99 + Math.floor(Math.random() * 8) * 10).toFixed(2)
     const premiumPrice = (parseFloat(price) + 20).toFixed(2)
-    
+
     demoProducts.push({
       id: `demo-product-${i}`,
       title: `Demo ${productType} ${i}`,
@@ -139,8 +140,8 @@ export function getDemoProducts(count = 6) {
       priceRange: {
         minVariantPrice: {
           amount: price,
-          currencyCode: "USD"
-        }
+          currencyCode: "USD",
+        },
       },
       variants: [
         {
@@ -148,22 +149,22 @@ export function getDemoProducts(count = 6) {
           title: "Basic License",
           priceV2: {
             amount: price,
-            currencyCode: "USD"
+            currencyCode: "USD",
           },
-          availableForSale: true
+          availableForSale: true,
         },
         {
           id: `demo-variant-premium-${i}`,
           title: "Premium License",
           priceV2: {
             amount: premiumPrice,
-            currencyCode: "USD"
+            currencyCode: "USD",
           },
-          availableForSale: true
-        }
-      ]
+          availableForSale: true,
+        },
+      ],
     })
   }
-  
+
   return demoProducts
 }

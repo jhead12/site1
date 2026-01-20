@@ -14,7 +14,7 @@ import {
   Section,
   Flex,
   FlexList,
-  Subhead
+  Subhead,
 } from "../components/ui"
 import SEOHead from "../components/head"
 
@@ -26,7 +26,7 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
   const [selectedVariant, setSelectedVariant] = useState(
     product?.variants?.length > 0 ? product.variants[0] : null
   )
-  
+
   if (!product) {
     return (
       <Layout>
@@ -40,26 +40,30 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
     )
   }
 
-  const productImage = product.featuredImage?.localFile 
-    ? getImage(product.featuredImage.localFile) 
+  const productImage = product.featuredImage?.localFile
+    ? getImage(product.featuredImage.localFile)
     : null
-    
+
   // Format the price based on selected variant or default price
-  const locale = pageContext?.langKey || 'en-US'
+  const locale = pageContext?.langKey || "en-US"
   const price = selectedVariant?.priceV2
     ? formatPrice(selectedVariant.priceV2, locale)
     : product.priceRange?.minVariantPrice
     ? formatPrice(product.priceRange.minVariantPrice, locale)
     : "Price unavailable"
-  
+
   // Handle add to cart (placeholder - will connect to your cart system)
   const handleAddToCart = () => {
     console.log("Adding to cart:", product.title, selectedVariant?.title)
     // Connect to Shopify Buy SDK or your cart system
     // e.g., client.checkout.addLineItems(checkoutId, [{variantId: selectedVariant.id}])
-    
+
     // Show temporary success message
-    alert(`${product.title} (${selectedVariant?.title || "Standard"}) added to cart!`)
+    alert(
+      `${product.title} (${
+        selectedVariant?.title || "Standard"
+      }) added to cart!`
+    )
   }
 
   return (
@@ -70,17 +74,17 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
             {/* Product Image */}
             <Box width={["100%", "100%", "50%"]}>
               {productImage ? (
-                <GatsbyImage 
-                  image={productImage} 
-                  alt={product.featuredImage?.altText || product.title} 
+                <GatsbyImage
+                  image={productImage}
+                  alt={product.featuredImage?.altText || product.title}
                   style={{ borderRadius: "8px" }}
                 />
               ) : (
-                <Box 
-                  backgroundColor="muted" 
-                  height="500px" 
-                  display="flex" 
-                  alignItems="center" 
+                <Box
+                  backgroundColor="muted"
+                  height="500px"
+                  display="flex"
+                  alignItems="center"
                   justifyContent="center"
                   borderRadius="8px"
                 >
@@ -88,31 +92,37 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
                 </Box>
               )}
             </Box>
-            
+
             {/* Product Details */}
             <Box width={["100%", "100%", "50%"]}>
-              {product.productType && (
-                <Kicker>{product.productType}</Kicker>
-              )}
-              <Heading as="h1" marginY={3}>{product.title}</Heading>
+              {product.productType && <Kicker>{product.productType}</Kicker>}
+              <Heading as="h1" marginY={3}>
+                {product.title}
+              </Heading>
               <Text fontSize={4} fontWeight="bold" color="primary" marginY={3}>
                 {price}
               </Text>
-              
+
               <Box marginY={4}>
-                <Text dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+                <Text
+                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+                />
               </Box>
-              
+
               {/* Variants */}
               {product.variants?.length > 1 && (
                 <Box marginY={4}>
                   <Subhead>Options</Subhead>
                   <FlexList gap={2} wrap>
-                    {product.variants.map(variant => (
-                      <Button 
-                        key={variant.id} 
+                    {product.variants.map((variant) => (
+                      <Button
+                        key={variant.id}
                         onClick={() => setSelectedVariant(variant)}
-                        variant={selectedVariant?.id === variant.id ? "primary" : "secondary"}
+                        variant={
+                          selectedVariant?.id === variant.id
+                            ? "primary"
+                            : "secondary"
+                        }
                       >
                         {variant.title}
                       </Button>
@@ -120,7 +130,7 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
                   </FlexList>
                 </Box>
               )}
-              
+
               {/* Add to Cart */}
               <Box marginY={4}>
                 <ButtonList>
@@ -132,17 +142,17 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
                   </Button>
                 </ButtonList>
               </Box>
-              
+
               {/* Additional Product Details */}
               {product.tags && product.tags.length > 0 && (
                 <Box marginY={4}>
                   <Subhead>Tags</Subhead>
                   <Flex gap={2} wrap>
-                    {product.tags.map(tag => (
-                      <Box 
-                        key={tag} 
-                        padding={2} 
-                        backgroundColor="muted" 
+                    {product.tags.map((tag) => (
+                      <Box
+                        key={tag}
+                        padding={2}
+                        backgroundColor="muted"
                         borderRadius="default"
                       >
                         <Text variant="small">{tag}</Text>
@@ -162,7 +172,7 @@ export default function ProductTemplate({ data = {}, pageContext = {} }) {
 export const Head = ({ data = {} }) => {
   // Handle case where Shopify data isn't available (query is commented out)
   const product = data.shopifyProduct || null
-  
+
   if (!product) {
     return (
       <SEOHead
@@ -171,11 +181,13 @@ export const Head = ({ data = {} }) => {
       />
     )
   }
-  
+
   return (
     <SEOHead
       title={product.title}
-      description={product.description || `Buy ${product.title} from Jeldon Music`}
+      description={
+        product.description || `Buy ${product.title} from Jeldon Music`
+      }
       image={product.featuredImage?.localFile?.childImageSharp?.gatsbyImageData}
     />
   )

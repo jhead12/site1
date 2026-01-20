@@ -19,7 +19,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   const [fadeClass, setFadeClass] = useState("fade-in")
   const [heroData, setHeroData] = useState([])
   const theme = useContext(ThemeContext) || {}
-  const locale = theme.locale || 'en-US'
+  const locale = theme.locale || "en-US"
 
   // Consolidated navigation function
   const navigateToSlide = useCallback(

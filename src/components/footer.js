@@ -126,7 +126,7 @@ export default function Footer() {
             { id: "meta-1", href: "/privacy", text: "Privacy" },
             { id: "meta-2", href: "/terms", text: "Terms" },
           ],
-          copyright: "© 2025 J. Eldon Music",
+          copyright: "© 2026 J. Eldon Music",
           socialLinks: [
             { id: "social-1", service: "INSTAGRAM", username: "jeldonmusic" },
             { id: "social-2", service: "YOUTUBE", username: "jeldonmusic" },
