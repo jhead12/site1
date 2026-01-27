@@ -1,15 +1,14 @@
 .blog-feature-image {
-    width: 100%;
-    height: 180px; /* Increased height for better visibility */
-    object-fit: cover; /* Ensures the image covers the container without stretching */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    opacity: 1 !important; /* Force images to be visible */
-  }
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
   
 .blog-image-wrapper {
     width: 100%;
-    height: 180px;
+    height: 100%;
     border-radius: 8px;
     overflow: hidden;
     background-color: #f0f0f0; /* Fallback color if image doesn't load */

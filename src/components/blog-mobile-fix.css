@@ -166,23 +166,51 @@
   }
 }
 
-/* Prevent cumulative layout shift (CLS) */
-.blog-image-wrapper {
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  width: 100%;
-  height: 100%;
+/* Prevent cumulative layout shift (CLS)
+   Keep desktop/tablet behavior (absolute cover) but switch to
+   a non-cropping, `contain` style on mobile so photos show fully. */
+@media (min-width: 769px) {
+  .blog-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .blog-image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 }
 
-.blog-image-wrapper img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
+/* Mobile: avoid cropping by letting the image scale to its full height
+   while keeping it responsive. */
+@media (max-width: 768px) {
+  .blog-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blog-image-wrapper img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    max-height: 220px;
+  }
 }
 
 /* Ensure mobile-only layout rules don't leak into desktop/production views.
@@ -208,5 +236,41 @@
 
   .home-recent-blog .blog-feature-image {
     height: 340px;
+  }
+}
+
+/* Equalize image heights so each card shows a consistent photo area
+   while preserving full-photo behavior on mobile (contain). */
+.home-recent-blog .blog-post-item {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .home-recent-blog .blog-image-wrapper {
+    height: 180px;
+    flex: 0 0 180px;
+  }
+
+  .home-recent-blog .blog-feature-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* show full photo, may letterbox */
+    display: block;
+    background-color: #f0f0f0;
+  }
+}
+
+@media (min-width: 769px) {
+  .home-recent-blog .blog-image-wrapper {
+    height: 340px;
+    flex: 0 0 340px;
+  }
+
+  .home-recent-blog .blog-feature-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* fill card area with cropping */
+    display: block;
   }
 }
