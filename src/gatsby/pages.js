@@ -14,6 +14,102 @@ exports.createPages = async ({ graphql, actions }) => {
     component: require.resolve("../components/footer.js"),
   })
 
+  // Fetch Contentful data (always needed for blog posts and video posts)
+  let result
+  try {
+    result = await graphql(`
+      {
+        # Blog posts live in Contentful
+        allContentfulBlogPost(sort: { publishDate: DESC }) {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+        # Video posts live in Contentful
+        allContentfulVideoPost(sort: { publishDate: DESC }) {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
+      }
+    `)
+
+    if (result.errors) {
+      console.error("GraphQL errors:", result.errors)
+      console.warn("Continuing build despite GraphQL errors")
+    }
+  } catch (error) {
+    console.error("Error fetching Contentful data:", error)
+    console.warn("Continuing build despite fetch error")
+    result = { data: {} }
+  }
+
+  const posts = result.data?.allContentfulBlogPost?.nodes || []
+  const videoPosts = result.data?.allContentfulVideoPost?.nodes || []
+
+  console.log(`Creating ${posts.length} blog post pages`)
+  console.log(`Creating ${videoPosts.length} Contentful video post pages`)
+
+  // Create Blog post pages with next/previous navigation
+  posts.forEach((post, index) => {
+    console.log(`Creating blog post page: /blog/${post.slug}/`)
+    const previousPost = index === 0 ? null : posts[index - 1]
+    const nextPost = index === posts.length - 1 ? null : posts[index + 1]
+
+    createPage({
+      path: `/blog/${post.slug}/`,
+      component: require.resolve("../templates/blog-post.js"),
+      context: {
+        id: post.id,
+        slug: post.slug,
+        previousPost: previousPost
+          ? {
+              slug: previousPost.slug,
+              title: previousPost.title,
+            }
+          : null,
+        nextPost: nextPost
+          ? {
+              slug: nextPost.slug,
+              title: nextPost.title,
+            }
+          : null,
+      },
+    })
+  })
+
+  // Create Contentful VideoPost pages with next/previous navigation
+  videoPosts.forEach((video, index) => {
+    console.log(`Creating Contentful video post page: /videos/${video.slug}/`)
+    const previousVideo = index === 0 ? null : videoPosts[index - 1]
+    const nextVideo = index === videoPosts.length - 1 ? null : videoPosts[index + 1]
+
+    createPage({
+      path: `/videos/${video.slug}/`,
+      component: require.resolve("../templates/video-post.js"),
+      context: {
+        id: video.id,
+        slug: video.slug,
+        previousVideo: previousVideo
+          ? {
+              slug: previousVideo.slug,
+              title: previousVideo.title,
+            }
+          : null,
+        nextVideo: nextVideo
+          ? {
+              slug: nextVideo.slug,
+              title: nextVideo.title,
+            }
+          : null,
+      },
+    })
+  })
+
   // Skip WordPress page creation if BYPASS_WORDPRESS is true
   if (process.env.BYPASS_WORDPRESS === "true") {
     console.log(
@@ -22,10 +118,10 @@ exports.createPages = async ({ graphql, actions }) => {
     return
   }
 
-  // Create WordPress pages
-  let result
+  // Fetch WordPress data
+  let wpResult
   try {
-    result = await graphql(`
+    wpResult = await graphql(`
       {
         allWpPage {
           nodes {
@@ -33,14 +129,6 @@ exports.createPages = async ({ graphql, actions }) => {
             slug
             title
             content
-          }
-        }
-        # Blog posts live in Contentful (not WordPress)
-        allContentfulBlogPost(sort: { publishDate: DESC }) {
-          nodes {
-            id
-            slug
-            title
           }
         }
         allWpBeat {
@@ -71,51 +159,32 @@ exports.createPages = async ({ graphql, actions }) => {
             title
           }
         }
-        allContentfulVideoPost(sort: { publishDate: DESC }) {
-          nodes {
-            id
-            slug
-            title
-          }
-        }
       }
     `)
 
-    if (result.errors) {
-      console.error("GraphQL errors:", result.errors)
+    if (wpResult.errors) {
+      console.error("GraphQL errors:", wpResult.errors)
       console.warn("Continuing build despite GraphQL errors")
     }
   } catch (error) {
     console.error("Error fetching WordPress data:", error)
     console.warn("Continuing build despite fetch error")
-    // Create empty result object to allow the build to continue
-    result = { data: {} }
+    wpResult = { data: {} }
   }
 
-  // Safely access data with fallbacks
-  const pages = result.data?.allWpPage?.nodes || []
-  const posts = result.data?.allContentfulBlogPost?.nodes || []
-  const beats = result.data?.allWpBeat?.nodes || []
-  const tutorials = result.data?.allWpTutorial?.nodes || []
-  const mixes = result.data?.allWpMix?.nodes || []
-  const videos = result.data?.allWpVideo?.nodes || []
-  const videoPosts = result.data?.allContentfulVideoPost?.nodes || []
+  // Safely access WordPress data with fallbacks
+  const pages = wpResult.data?.allWpPage?.nodes || []
+  const beats = wpResult.data?.allWpBeat?.nodes || []
+  const tutorials = wpResult.data?.allWpTutorial?.nodes || []
+  const mixes = wpResult.data?.allWpMix?.nodes || []
+  const videos = wpResult.data?.allWpVideo?.nodes || []
 
   // Debug logging
   console.log(`Creating ${pages.length} WordPress pages`)
-  console.log(`Creating ${posts.length} blog posts`)
   console.log(`Creating ${beats.length} beats`)
   console.log(`Creating ${tutorials.length} tutorials`)
   console.log(`Creating ${mixes.length} mixes`)
   console.log(`Creating ${videos.length} WordPress videos`)
-  console.log(`Creating ${videoPosts.length} Contentful video posts`)
-
-  // Check for blog content
-  if (posts.length === 0) {
-    console.warn(
-      "⚠️  No Contentful blog posts found. Create BlogPost entries in Contentful."
-    )
-  }
 
   // Create WordPress pages
   pages.forEach((page) => {
@@ -125,34 +194,6 @@ exports.createPages = async ({ graphql, actions }) => {
       context: {
         id: page.id,
         slug: page.slug,
-      },
-    })
-  })
-
-  // Create Blog post pages with next/previous navigation
-  posts.forEach((post, index) => {
-    console.log(`Creating blog post page: /blog/${post.slug}/`)
-    const previousPost = index === 0 ? null : posts[index - 1]
-    const nextPost = index === posts.length - 1 ? null : posts[index + 1]
-
-    createPage({
-      path: `/blog/${post.slug}/`,
-      component: require.resolve("../templates/blog-post.js"),
-      context: {
-        id: post.id,
-        slug: post.slug,
-        previousPost: previousPost
-          ? {
-              slug: previousPost.slug,
-              title: previousPost.title,
-            }
-          : null,
-        nextPost: nextPost
-          ? {
-              slug: nextPost.slug,
-              title: nextPost.title,
-            }
-          : null,
       },
     })
   })
@@ -202,34 +243,6 @@ exports.createPages = async ({ graphql, actions }) => {
     createPage({
       path: `/videos/${video.slug}/`,
       component: require.resolve("../templates/video.js"),
-      context: {
-        id: video.id,
-        slug: video.slug,
-        previousVideo: previousVideo
-          ? {
-              slug: previousVideo.slug,
-              title: previousVideo.title,
-            }
-          : null,
-        nextVideo: nextVideo
-          ? {
-              slug: nextVideo.slug,
-              title: nextVideo.title,
-            }
-          : null,
-      },
-    })
-  })
-
-  // Create Contentful VideoPost pages with next/previous navigation
-  videoPosts.forEach((video, index) => {
-    console.log(`Creating Contentful video post page: /videos/${video.slug}/`)
-    const previousVideo = index === 0 ? null : videoPosts[index - 1]
-    const nextVideo = index === videoPosts.length - 1 ? null : videoPosts[index + 1]
-
-    createPage({
-      path: `/videos/${video.slug}/`,
-      component: require.resolve("../templates/video-post.js"),
       context: {
         id: video.id,
         slug: video.slug,
