@@ -131,64 +131,75 @@ const BlogPage = ({ data, location }) => {
           />
           
           {/* Results count */}
-          <Text style={{ color: "#666", marginBottom: "1rem" }}>
-            {selectedCategory === "all" 
-              ? `Showing ${finalFilteredPosts.length} of ${posts.length} posts`
-              : `Showing ${finalFilteredPosts.length} posts in "${categoriesWithCounts.find(c => c.slug === selectedCategory)?.name || selectedCategory}"`
-            }
-          </Text>
-          
-          <Box marginY={5}>
-            <Flex gap={4} variant="column">
-              {finalFilteredPosts.map((post) => (
-                <Box key={post.id} paddingY={4} style={{ borderBottom: "1px solid #eee" }}>
-                  <Flex gap={4}>
-                    {post.featuredImage?.url && (
-                      <Box style={{ minWidth: "200px" }}>
-                        <div className="blog-image-wrapper">
-                          <Link to={`/blog/${post.slug}/`}>
-                            <img
-                              src={post.featuredImage.url}
-                              alt={post.featuredImage.description || post.featuredImage.alt || post.title}
-                              loading="lazy"
-                              onLoad={(e) => (e.target.style.opacity = "1")}
-                              onError={(e) => (e.target.style.display = "none")}
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "8px",
-                                opacity: 0,
-                                transition: "opacity 0.3s ease",
-                              }}
-                            />
-                          </Link>
-                        </div>
-                      </Box>
-                    )}
+          {finalFilteredPosts.length > 0 ? (
+            <Text style={{ color: "#666", marginBottom: "1rem" }}>
+              {selectedCategory === "all"
+                ? `Showing ${finalFilteredPosts.length} of ${posts.length} posts`
+                : `Showing ${finalFilteredPosts.length} posts in "${categoriesWithCounts.find(c => c.slug === selectedCategory)?.name || selectedCategory}"`
+              }
+            </Text>
+          ) : (
+            <Box marginY={5} center>
+              <Heading as="h2">Blogs Coming Soon</Heading>
+              <Text variant="lead" center>
+                We're working on new content. Check back soon for fresh articles on music production, tutorials, and industry insights.
+              </Text>
+            </Box>
+          )}
 
-                    <Box>
-                      <Subhead>
-                        <Link to={`/blog/${post.slug}/`}>{post.title}</Link>
-                      </Subhead>
-
-                      <Text variant="kicker" marginY={2}>
-                        {/* Date hidden per user request */}
-                        {/* {post.publishDate} */}
-                        {post.author && `By ${post.author}`}
-                      </Text>
-                      
-                      {post.excerpt && (
-                        <Text dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+          {finalFilteredPosts.length > 0 && (
+            <Box marginY={5}>
+              <Flex gap={4} variant="column">
+                {finalFilteredPosts.map((post) => (
+                  <Box key={post.id} paddingY={4} style={{ borderBottom: "1px solid #eee" }}>
+                    <Flex gap={4}>
+                      {post.featuredImage?.url && (
+                        <Box style={{ minWidth: "200px" }}>
+                          <div className="blog-image-wrapper">
+                            <Link to={`/blog/${post.slug}/`}>
+                              <img
+                                src={post.featuredImage.url}
+                                alt={post.featuredImage.description || post.featuredImage.alt || post.title}
+                                loading="lazy"
+                                onLoad={(e) => (e.target.style.opacity = "1")}
+                                onError={(e) => (e.target.style.display = "none")}
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "8px",
+                                  opacity: 0,
+                                  transition: "opacity 0.3s ease",
+                                }}
+                              />
+                            </Link>
+                          </div>
+                        </Box>
                       )}
-                      
-                      <Box marginY={3}>
-                        <Link to={`/blog/${post.slug}/`}>Read more →</Link>
+
+                      <Box>
+                        <Subhead>
+                          <Link to={`/blog/${post.slug}/`}>{post.title}</Link>
+                        </Subhead>
+
+                        <Text variant="kicker" marginY={2}>
+                          {/* Date hidden per user request */}
+                          {/* {post.publishDate} */}
+                          {post.author && `By ${post.author}`}
+                        </Text>
+
+                        {post.excerpt && (
+                          <Text dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+                        )}
+
+                        <Box marginY={3}>
+                          <Link to={`/blog/${post.slug}/`}>Read more →</Link>
+                        </Box>
                       </Box>
-                    </Box>
-                  </Flex>
-                </Box>
-              ))}
-            </Flex>
-          </Box>
+                    </Flex>
+                  </Box>
+                ))}
+              </Flex>
+            </Box>
+          )}
         </Container>
       </Section>
     </Layout>
