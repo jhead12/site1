@@ -39,7 +39,7 @@ restart_dev_server() {
     gatsby clean
     
     echo -e "${BLUE}🔄 Starting development server...${NC}"
-    GATSBY_CONFIG_FILE=gatsby-config-dev.js gatsby develop &
+    gatsby develop &
     DEV_PID=$!
     
     echo -e "${BLUE}📊 Development server PID: $DEV_PID${NC}"

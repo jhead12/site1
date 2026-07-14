@@ -102,6 +102,26 @@ exports.createSchemaCustomization = async ({ actions }) => {
       date: Date
       formattedDate: String
       featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      seo: WpSEOType
+    }
+
+    # SEO type used by WpPost and other WP content types
+    type WpSEOType {
+      title: String
+      metaDesc: String
+      canonical: String
+      opengraphTitle: String
+      opengraphDescription: String
+      opengraphImage: WpSEOImage
+      twitterTitle: String
+      twitterDescription: String
+      twitterImage: WpSEOImage
+    }
+
+    type WpSEOImage {
+      altText: String
+      sourceUrl: String
+      localFile: File @link
     }
 
     # Sort input types used in queries — include date so queries that sort
@@ -1179,6 +1199,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         tags: WpPostToTagConnection
         author: WpNodeWithAuthorToUserConnectionEdge
         databaseId: Int
+        seo: WpSEOType
       }
       
       type WpPage implements Node @dontInfer {
@@ -1190,6 +1211,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         date: Date @dateformat
         featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         databaseId: Int
+        seo: WpSEOType
       }
 
       # Music Content Types
@@ -1203,6 +1225,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         acfBeats: WpBeatAcfBeats
         beatFields: WpBeatAcfBeats
         databaseId: Int
+        seo: WpSEOType
       }
 
       type WpBeatAcfBeats @dontInfer {
@@ -1257,6 +1280,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfTutorials: WpTutorialAcfTutorials
         databaseId: Int
+        seo: WpSEOType
       }
 
       type WpTutorialAcfTutorials {
@@ -1281,6 +1305,26 @@ exports.createSchemaCustomization = async ({ actions }) => {
         videoCategories: WpVideoToVideoCategoryConnection
         videoDetails: WpContentNode_Videodetails
         databaseId: Int
+        seo: WpSEOType
+      }
+      
+      # SEO type for Yoast/RankMath-compatible fields
+      type WpSEOType {
+        title: String
+        metaDesc: String
+        canonical: String
+        opengraphTitle: String
+        opengraphDescription: String
+        opengraphImage: WpSEOImage
+        twitterTitle: String
+        twitterDescription: String
+        twitterImage: WpSEOImage
+      }
+
+      type WpSEOImage {
+        altText: String
+        sourceUrl: String
+        localFile: File @link
       }
       
       # Minimal connection type for featured image in BYPASS_WORDPRESS mode
@@ -1394,6 +1438,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       interface WpContentNode {
         id: ID!
         date: Date @dateformat
+        seo: WpSEOType
       }
       
       interface WpTermNode {
@@ -1496,4 +1541,3 @@ exports.createSchemaCustomization = async ({ actions }) => {
     `)
   }
 }
-

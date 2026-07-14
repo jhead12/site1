@@ -281,6 +281,31 @@ exports.createResolvers = ({ createResolvers }) => {
             }
           },
         },
+        seo: {
+          type: "WpSEOType",
+          resolve(source) {
+            // Return sensible SEO defaults derived from the post fields
+            return {
+              title: source.title || "Jeldon Music",
+              metaDesc: source.excerpt
+                ? source.excerpt.replace(/<[^>]*>/g, "").substring(0, 160)
+                : "Music production, beats, tutorials, and more from Jeldon Music.",
+              canonical: source.slug
+                ? `https://www.jeldonmusic.com/${source.slug}/`
+                : "https://www.jeldonmusic.com",
+              opengraphTitle: source.title || "Jeldon Music",
+              opengraphDescription: source.excerpt
+                ? source.excerpt.replace(/<[^>]*>/g, "").substring(0, 160)
+                : "Music production, beats, tutorials, and more from Jeldon Music.",
+              opengraphImage: null,
+              twitterTitle: source.title || "Jeldon Music",
+              twitterDescription: source.excerpt
+                ? source.excerpt.replace(/<[^>]*>/g, "").substring(0, 160)
+                : "Music production, beats, tutorials, and more from Jeldon Music.",
+              twitterImage: null,
+            }
+          },
+        },
       },
       // Add WpVideo resolvers
       WpVideo: {
@@ -480,4 +505,3 @@ exports.createResolvers = ({ createResolvers }) => {
     createResolvers(baseResolvers)
   }
 }
-

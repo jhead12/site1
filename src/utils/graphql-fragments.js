@@ -25,21 +25,25 @@ export const wpContentFields = graphql`
         }
       }
     }
-    # seo {  # Temporarily disabled pending SEO plugin fix
-    #   title
-    #   metaDesc
-    #   canonical
-    #   opengraphTitle
-    #   opengraphDescription
-    #   opengraphImage {
-    #     altText
-    #     localFile {
-    #       childImageSharp {
-    #         gatsbyImageData(width: 1200, height: 630)
-    #       }
-    #     }
-    #   }
-    # }
+    # SEO fields from Yoast or RankMath (restored — if the WP SEO plugin
+    # is not active, these fields simply won't be populated and the
+    # wordpress-seo.js component falls back to title/description props)
+    seo {
+      title
+      metaDesc
+      canonical
+      opengraphTitle
+      opengraphDescription
+      opengraphImage {
+        altText
+        sourceUrl
+        localFile {
+          childImageSharp {
+            gatsbyImageData(width: 1200, height: 630)
+          }
+        }
+      }
+    }
   }
 `
 
