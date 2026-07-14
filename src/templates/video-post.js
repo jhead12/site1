@@ -151,7 +151,7 @@ const VideoPostTemplate = ({ data: { post } }) => {
                   <strong>Duration:</strong> {post.duration}
                 </Text>
               )}
-              {post.videoViews !== undefined && (
+              {post.videoViews != null && post.videoViews > 0 && (
                 <Text>
                   <strong>Views:</strong> {post.videoViews.toLocaleString()}
                 </Text>
