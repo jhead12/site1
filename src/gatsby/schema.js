@@ -788,12 +788,11 @@ exports.createSchemaCustomization = async ({ actions }) => {
   `)
 
 
-  // WordPress mock types when BYPASS_WORDPRESS is true
-  if (process.env.BYPASS_WORDPRESS === "true") {
-    console.log("📝 Creating WordPress mock types for BYPASS_WORDPRESS mode")
-    actions.createTypes(`
-      # Mock Contentful types for bypass mode
-      type ContentfulBlogPost implements Node @dontInfer {
+  // Always create these types so queries work even when Contentful has no blog posts
+  // These act as fallbacks that merge with Contentful's generated types
+  actions.createTypes(`
+    # Fallback Contentful types for when no blog posts exist yet
+    type ContentfulBlogPost implements Node @dontInfer {
         id: ID!
         title: String
         slug: String!
@@ -857,13 +856,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
         id: ID!
         name: String
         slug: String
-      }
-
-      type Query {
-        contentfulBlogPost(slug: String): ContentfulBlogPost
-        allContentfulBlogPost(limit: Int, sort: JSON, filter: JSON): ContentfulBlogPostConnection
-        contentfulVideoPost(slug: String): ContentfulVideoPost
-        allContentfulVideoPost(limit: Int, sort: JSON, filter: JSON): ContentfulVideoPostConnection
       }
 
       type WpMediaItem implements Node @dontInfer {
