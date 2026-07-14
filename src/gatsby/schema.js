@@ -860,7 +860,9 @@ exports.createSchemaCustomization = async ({ actions }) => {
       }
 
       extend type Query {
+        contentfulBlogPost(slug: String): ContentfulBlogPost
         allContentfulBlogPost(limit: Int, sort: JSON, filter: JSON): ContentfulBlogPostConnection
+        contentfulVideoPost(slug: String): ContentfulVideoPost
         allContentfulVideoPost(limit: Int, sort: JSON, filter: JSON): ContentfulVideoPostConnection
       }
 
