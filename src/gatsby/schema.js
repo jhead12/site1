@@ -788,84 +788,18 @@ exports.createSchemaCustomization = async ({ actions }) => {
   `)
 
 
-  // Always create these types so queries work even when Contentful has no blog posts
-  // These act as fallbacks that merge with Contentful's generated types
+  // Add connection types with totalCount for Contentful types
+  // These are needed for mock resolvers when Contentful has no blog posts yet
   actions.createTypes(`
-    # Fallback Contentful types for when no blog posts exist yet
-    type ContentfulBlogPost implements Node @dontInfer {
-        id: ID!
-        title: String
-        slug: String!
-        excerpt: String
-        content: String
-        publishDate: Date @dateformat
-        author: String
-        featuredImage: ContentfulAsset
-        categories: [ContentfulBlogCategory]
-        tags: [ContentfulBlogTag]
-        seoTitle: String
-        seoDescription: String
-      }
+    type ContentfulBlogPostConnection {
+      nodes: [ContentfulBlogPost]
+      totalCount: Int!
+    }
 
-      type ContentfulBlogPostConnection {
-        nodes: [ContentfulBlogPost]
-        totalCount: Int!
-      }
-
-      type ContentfulBlogCategory implements Node @dontInfer {
-        id: ID!
-        name: String
-        slug: String
-      }
-
-      type ContentfulBlogTag implements Node @dontInfer {
-        id: ID!
-        name: String
-        slug: String
-      }
-
-      type ContentfulVideoPost implements Node @dontInfer {
-        id: ID!
-        title: String
-        slug: String!
-        excerpt: String
-        body: String
-        publishDate: Date @dateformat
-        author: String
-        featuredImage: ContentfulAsset
-        categories: [ContentfulVideoCategory]
-        tags: [ContentfulVideoTag]
-        youtubeVideoId: String
-        duration: String
-        videoViews: Int
-      }
-
-      type ContentfulVideoPostConnection {
-        nodes: [ContentfulVideoPost]
-        totalCount: Int!
-      }
-
-      type ContentfulVideoCategory implements Node @dontInfer {
-        id: ID!
-        name: String
-        slug: String
-        description: String
-      }
-
-      type ContentfulVideoTag implements Node @dontInfer {
-        id: ID!
-        name: String
-        slug: String
-      }
-
-      # Extend Query type to add Contentful blog/video queries
-      # This ensures queries work even when Contentful has no blog posts yet
-      extend type Query {
-        contentfulBlogPost(slug: String): ContentfulBlogPost
-        allContentfulBlogPost(limit: Int, sort: JSON, filter: JSON): ContentfulBlogPostConnection
-        contentfulVideoPost(slug: String): ContentfulVideoPost
-        allContentfulVideoPost(limit: Int, sort: JSON, filter: JSON): ContentfulVideoPostConnection
-      }
+    type ContentfulVideoPostConnection {
+      nodes: [ContentfulVideoPost]
+      totalCount: Int!
+    }
 
       type WpMediaItem implements Node @dontInfer {
         id: ID!
