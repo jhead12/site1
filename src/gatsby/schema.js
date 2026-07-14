@@ -858,6 +858,15 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
       }
 
+      # Extend Query type to add Contentful blog/video queries
+      # This ensures queries work even when Contentful has no blog posts yet
+      extend type Query {
+        contentfulBlogPost(slug: String): ContentfulBlogPost
+        allContentfulBlogPost(limit: Int, sort: JSON, filter: JSON): ContentfulBlogPostConnection
+        contentfulVideoPost(slug: String): ContentfulVideoPost
+        allContentfulVideoPost(limit: Int, sort: JSON, filter: JSON): ContentfulVideoPostConnection
+      }
+
       type WpMediaItem implements Node @dontInfer {
         id: ID!
         altText: String
