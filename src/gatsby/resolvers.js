@@ -58,9 +58,18 @@ exports.createResolvers = ({ createResolvers }) => {
       },
 
       allContentfulBlogPost: {
-        resolve() {
-          // Return empty nodes - no mock data
-          // Real blog posts come from Contentful
+        resolve(_, args, context) {
+          // Try to get real Contentful blog posts first
+          const realPosts = context.nodeModel.getAllNodes({ type: "ContentfulBlogPost" }) || []
+
+          if (realPosts.length > 0) {
+            return {
+              nodes: realPosts,
+              totalCount: realPosts.length,
+            }
+          }
+
+          // Return empty nodes when no real Contentful data exists
           return {
             nodes: [],
             totalCount: 0,
@@ -69,9 +78,18 @@ exports.createResolvers = ({ createResolvers }) => {
       },
 
       allContentfulVideoPost: {
-        resolve() {
-          // Return empty nodes - no mock data
-          // Real video posts come from Contentful
+        resolve(_, args, context) {
+          // Try to get real Contentful video posts first
+          const realVideos = context.nodeModel.getAllNodes({ type: "ContentfulVideoPost" }) || []
+
+          if (realVideos.length > 0) {
+            return {
+              nodes: realVideos,
+              totalCount: realVideos.length,
+            }
+          }
+
+          // Return empty nodes when no real Contentful data exists
           return {
             nodes: [],
             totalCount: 0,
