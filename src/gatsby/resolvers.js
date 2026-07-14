@@ -37,7 +37,7 @@ exports.createResolvers = ({ createResolvers }) => {
     // Query resolvers
     Query: {
       allPage: {
-        resolve(source, args, context) {
+        async resolve(source, args, context) {
           if (bypassWordpress) {
             return {
               nodes: [
@@ -52,21 +52,31 @@ exports.createResolvers = ({ createResolvers }) => {
               ],
             }
           } else {
-            return context.nodeModel.getAllNodes({ type: "SitePage" })
+            try {
+              const { entries } = await context.nodeModel.findAll({ type: "SitePage" })
+              return Array.from(entries)
+            } catch (e) {
+              return []
+            }
           }
         },
       },
 
       allContentfulBlogPost: {
-        resolve(_, args, context) {
-          // Try to get real Contentful blog posts first
-          const realPosts = context.nodeModel.getAllNodes({ type: "ContentfulBlogPost" }) || []
+        async resolve(_, args, context) {
+          // Try to get real Contentful blog posts first (Gatsby v5 uses findAll)
+          try {
+            const { entries } = await context.nodeModel.findAll({ type: "ContentfulBlogPost" })
+            const realPosts = Array.from(entries) || []
 
-          if (realPosts.length > 0) {
-            return {
-              nodes: realPosts,
-              totalCount: realPosts.length,
+            if (realPosts.length > 0) {
+              return {
+                nodes: realPosts,
+                totalCount: realPosts.length,
+              }
             }
+          } catch (e) {
+            // If findAll fails, fall through to empty result
           }
 
           // Return empty nodes when no real Contentful data exists
@@ -78,15 +88,20 @@ exports.createResolvers = ({ createResolvers }) => {
       },
 
       allContentfulVideoPost: {
-        resolve(_, args, context) {
-          // Try to get real Contentful video posts first
-          const realVideos = context.nodeModel.getAllNodes({ type: "ContentfulVideoPost" }) || []
+        async resolve(_, args, context) {
+          // Try to get real Contentful video posts first (Gatsby v5 uses findAll)
+          try {
+            const { entries } = await context.nodeModel.findAll({ type: "ContentfulVideoPost" })
+            const realVideos = Array.from(entries) || []
 
-          if (realVideos.length > 0) {
-            return {
-              nodes: realVideos,
-              totalCount: realVideos.length,
+            if (realVideos.length > 0) {
+              return {
+                nodes: realVideos,
+                totalCount: realVideos.length,
+              }
             }
+          } catch (e) {
+            // If findAll fails, fall through to empty result
           }
 
           // Return empty nodes when no real Contentful data exists
@@ -98,10 +113,10 @@ exports.createResolvers = ({ createResolvers }) => {
       },
 
       layout: {
-        resolve(source, args, context) {
+        async resolve(source, args, context) {
           try {
-            const layouts =
-              context.nodeModel.getAllNodes({ type: "ContentfulLayout" }) || []
+            const { entries } = await context.nodeModel.findAll({ type: "ContentfulLayout" })
+            const layouts = Array.from(entries) || []
             if (layouts.length > 0) return layouts[0]
           } catch (e) {
             /* ignore and fall back to mock object below */
