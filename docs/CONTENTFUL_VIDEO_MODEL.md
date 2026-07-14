@@ -13,7 +13,7 @@ Before running the sync or building the site, you need to create the following c
 3. **videoCategory** - For categorizing videos
 4. **videoTag** - For tagging videos
 
-## Content Type: `videoPost`
+## Content Type: `w`
 
 **Name:** Video Post  
 **Description:** YouTube video synced from channel uploads
@@ -155,8 +155,8 @@ After creating the content types, verify they exist:
 
 ```bash
 # Check if content types are available
-curl -s "https://cdn.contentful.com/spaces/YOUR_SPACE_ID/environments/master/content_types" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+curl -s "https://cdn.contentful.com/spaces/esrzm688xldd/environments/master/content_types" \
+  -H "Authorization: Bearer 8SjzhspjJ_yogjktpLrJAeTmKomvxxbsUpKK488XP70" \
   | jq -r '.items[].sys.id'
 ```
 
