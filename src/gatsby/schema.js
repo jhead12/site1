@@ -801,6 +801,17 @@ exports.createSchemaCustomization = async ({ actions }) => {
       totalCount: Int!
     }
 
+    # Explicitly define Query fields for Contentful blog/video
+    # This is required because createResolvers can only resolve existing fields
+    type Query {
+      allContentfulBlogPost(limit: Int, sort: JSON, filter: JSON): ContentfulBlogPostConnection
+      contentfulBlogPost(slug: String): ContentfulBlogPost
+      allContentfulVideoPost(limit: Int, sort: JSON, filter: JSON): ContentfulVideoPostConnection
+      contentfulVideoPost(slug: String): ContentfulVideoPost
+    }
+  `)
+
+  actions.createTypes(`
       type WpMediaItem implements Node @dontInfer {
         id: ID!
         altText: String
