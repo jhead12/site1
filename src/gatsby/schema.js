@@ -1157,29 +1157,4 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
       }
     `)
-
-    actions.createTypes(/* GraphQL */ `
-      extend type Query {
-        wpPage(id: String, slug: String): WpPage
-        wpPost(id: String, slug: String): WpPost
-        wpBeat(id: String, slug: String): WpBeat
-        wpMix(id: String, slug: String): WpMix
-        wpVideo(id: String, slug: String): WpVideo
-        wpTutorial(id: String, slug: String): WpTutorial
-        allWpPost(
-          filter: WpPostFilter
-          sort: WpPostSort
-          limit: Int
-        ): WpPostConnection
-        allWpCategory(filter: WpCategoryFilter): WpCategoryConnection
-        allWpTag(filter: WpTagFilter): WpTagConnection
-        allWpTutorial: WpTutorialConnection
-        allWpVideo: WpVideoConnection
-        allWpBeat: WpBeatConnection
-        allWpMix: WpMixConnection
-        allPage: SitePageConnection
-        layout: ContentfulLayout
-      }
-    `)
-  }
 }
