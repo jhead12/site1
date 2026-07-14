@@ -84,23 +84,18 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         }
       }
 
-      # Get WordPress Blog Posts - will be skipped if WordPress is not connected
-      allWpPost(sort: { date: DESC }, limit: 2) {
+      # Get Blog Posts from Contentful (blog migrated off WordPress)
+      allContentfulBlogPost(sort: { publishDate: DESC }, limit: 2) {
         nodes {
           id
           title
           excerpt
           slug
-          date
+          publishDate
           featuredImage {
-            node {
-              altText
-              localFile {
-                childImageSharp {
-                  gatsbyImageData(width: 1200, height: 600)
-                }
-              }
-            }
+            alt
+            description
+            gatsbyImageData(width: 1200, height: 600)
           }
         }
       }
@@ -160,7 +155,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         return
       }
       const wpVideos = data?.allWpVideo?.nodes || []
-      const wpPosts = data?.allWpPost?.nodes || []
+      const blogPosts = data?.allContentfulBlogPost?.nodes || []
       let heroItems = []
 
       // Helper function to determine content category
@@ -220,15 +215,11 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         })
         .filter(Boolean) // Remove null items
 
-      // Transform WordPress blog posts with images and filter by category
-      const wpBlogItems = wpPosts
-        .filter(
-          (post) =>
-            post.featuredImage?.node?.localFile?.childImageSharp
-              ?.gatsbyImageData
-        )
+      // Transform Contentful blog posts with images and filter by category
+      const blogItems = blogPosts
+        .filter((post) => post.featuredImage?.gatsbyImageData)
         .map((post) => {
-          const category = getContentCategory(post.date, "blog")
+          const category = getContentCategory(post.publishDate, "blog")
           if (!category) return null // Filter out old content
 
           // Determine kicker text based on category
@@ -247,10 +238,9 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             description:
               truncateToFirstSentence(post.excerpt) ||
               "Read our latest blog post",
-            image:
-              post.featuredImage.node.localFile.childImageSharp.gatsbyImageData,
+            image: post.featuredImage.gatsbyImageData,
             slug: `/blog/${post.slug}`,
-            date: post.date,
+            date: post.publishDate,
             type: "blog",
             category: category,
             kicker: kicker,
@@ -259,8 +249,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         })
         .filter(Boolean) // Remove null items
 
-      // Combine WordPress content and sort by priority and date
-      const wpContent = [...wpVideoItems, ...wpBlogItems]
+      // Combine WordPress video content + Contentful blog content, sort by priority/date
+      const wpContent = [...wpVideoItems, ...blogItems]
         .sort((a, b) => {
           // First sort by priority (lower number = higher priority)
           if (a.priority !== b.priority) {

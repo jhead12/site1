@@ -14,13 +14,13 @@ const BlogSearch = ({ posts, onFilteredPosts, selectedCategory }) => {
       const titleMatch = post.title.toLowerCase().includes(term)
       const excerptMatch = post.excerpt?.toLowerCase().includes(term)
       const contentMatch = post.content?.toLowerCase().includes(term)
-      const categoryMatch = post.categories?.nodes?.some(cat => 
+      const categoryMatch = (post.categories || []).some(cat =>
         cat.name.toLowerCase().includes(term)
       )
-      const tagMatch = post.tags?.nodes?.some(tag => 
+      const tagMatch = (post.tags || []).some(tag =>
         tag.name.toLowerCase().includes(term)
       )
-      
+
       return titleMatch || excerptMatch || contentMatch || categoryMatch || tagMatch
     })
   }, [posts, searchTerm])

@@ -14,21 +14,28 @@ import {
   Flex
 } from "../components/ui"
 import "../components/blog-mobile-fix.css"
-import { getDemoBlogPosts, getDemoCategories } from "../utils/fallback-data"
 
 const BlogPage = ({ data, location }) => {
-  const wpBypassMode = !data.allWpPost?.nodes
-  
-  // First, memoize the source data based on wpBypassMode
+  // Blog content comes from Contentful (always available — no WP bypass needed)
   const postsData = useMemo(() => {
-    return wpBypassMode ? getDemoBlogPosts() : (data.allWpPost?.nodes || [])
-  }, [wpBypassMode, data.allWpPost?.nodes])
-  
+    return data.allContentfulBlogPost?.nodes || []
+  }, [data.allContentfulBlogPost?.nodes])
+
+  // Derive the category list (with counts) from the posts themselves,
+  // so only categories that are actually used appear.
   const categoriesData = useMemo(() => {
-    return wpBypassMode ? getDemoCategories() : (data.allWpCategory?.nodes || [])
-  }, [wpBypassMode, data.allWpCategory?.nodes])
-  
-  // Then use these memoized values for further processing
+    const map = new Map()
+    postsData.forEach((post) => {
+      ;(post.categories || []).forEach((category) => {
+        if (!map.has(category.slug)) {
+          map.set(category.slug, { ...category, count: 0 })
+        }
+        map.get(category.slug).count += 1
+      })
+    })
+    return Array.from(map.values())
+  }, [postsData])
+
   const posts = postsData
   
   // Get category from URL params
@@ -54,31 +61,34 @@ const BlogPage = ({ data, location }) => {
   // Filter posts based on selected category
   const categoryFilteredPosts = useMemo(() => {
     if (selectedCategory === "all") return postsData
-    
-    return postsData.filter(post => 
-      post.categories.nodes.some(category => category.slug === selectedCategory)
+
+    return postsData.filter(post =>
+      (post.categories || []).some(category => category.slug === selectedCategory)
     )
   }, [postsData, selectedCategory])
-  
+
   // Combine category and search filters
   const finalFilteredPosts = useMemo(() => {
     if (selectedCategory === "all") {
       return searchFilteredPosts
     }
-    
-    return searchFilteredPosts.filter(post => 
-      post.categories.nodes.some(category => category.slug === selectedCategory)
+
+    return searchFilteredPosts.filter(post =>
+      (post.categories || []).some(category => category.slug === selectedCategory)
     )
   }, [searchFilteredPosts, selectedCategory])
-  
-  // Add post counts to categories
+
+  // Add post counts to categories (derived categories already carry counts,
+  // but recompute here to stay consistent with the current filter source).
   const categoriesWithCounts = useMemo(() => {
-    return categoriesData.map(category => ({
-      ...category,
-      count: postsData.filter(post => 
-        post.categories.nodes.some(postCategory => postCategory.slug === category.slug)
-      ).length
-    })).filter(category => category.count > 0)
+    return categoriesData
+      .map(category => ({
+        ...category,
+        count: postsData.filter(post =>
+          (post.categories || []).some(postCategory => postCategory.slug === category.slug)
+        ).length,
+      }))
+      .filter(category => category.count > 0)
   }, [categoriesData, postsData])
 
   const handleCategoryChange = (categorySlug) => {
@@ -104,26 +114,7 @@ const BlogPage = ({ data, location }) => {
           <Text center variant="lead">
             Latest thoughts on music production, tutorials, and industry insights.
           </Text>
-          
-          {wpBypassMode && (
-            <Box 
-              marginY={4} 
-              paddingY={3} 
-              paddingX={4} 
-              style={{ 
-                background: "#fff8e1", 
-                borderRadius: "8px", 
-                border: "1px solid #ffecb3",
-                textAlign: "center"
-              }}
-            >
-              <Text>
-                <strong>WordPress Bypass Mode:</strong> Sample content is being displayed. 
-                Connect to WordPress to see actual content.
-              </Text>
-            </Box>
-          )}
-          
+
           {/* Search */}
           <Box marginBottom={7}>
             <BlogSearch 
@@ -152,37 +143,37 @@ const BlogPage = ({ data, location }) => {
               {finalFilteredPosts.map((post) => (
                 <Box key={post.id} paddingY={4} style={{ borderBottom: "1px solid #eee" }}>
                   <Flex gap={4}>
-                    {post.featuredImage?.node?.sourceUrl && (
+                    {post.featuredImage?.url && (
                       <Box style={{ minWidth: "200px" }}>
                         <div className="blog-image-wrapper">
                           <Link to={`/blog/${post.slug}/`}>
                             <img
-                              src={post.featuredImage.node.sourceUrl}
-                              alt={post.featuredImage.node.altText || post.title}
+                              src={post.featuredImage.url}
+                              alt={post.featuredImage.description || post.featuredImage.alt || post.title}
                               loading="lazy"
-                              onLoad={(e) => e.target.style.opacity = '1'}
-                              onError={(e) => e.target.style.display = 'none'}
+                              onLoad={(e) => (e.target.style.opacity = "1")}
+                              onError={(e) => (e.target.style.display = "none")}
                               style={{
                                 objectFit: "cover",
                                 borderRadius: "8px",
                                 opacity: 0,
-                                transition: "opacity 0.3s ease"
+                                transition: "opacity 0.3s ease",
                               }}
                             />
                           </Link>
                         </div>
                       </Box>
                     )}
-                    
+
                     <Box>
                       <Subhead>
                         <Link to={`/blog/${post.slug}/`}>{post.title}</Link>
                       </Subhead>
-                      
+
                       <Text variant="kicker" marginY={2}>
                         {/* Date hidden per user request */}
-                        {/* {post.date} */}
-                        {post.author?.node?.name && `By ${post.author.node.name}`}
+                        {/* {post.publishDate} */}
+                        {post.author && `By ${post.author}`}
                       </Text>
                       
                       {post.excerpt && (
@@ -205,40 +196,25 @@ const BlogPage = ({ data, location }) => {
 }
 
 export const query = graphql`
-  query BlogArchive($BYPASS_WORDPRESS: Boolean = false) {
-    allWpPost(sort: { date: DESC }) @skip(if: $BYPASS_WORDPRESS) {
+  query BlogArchive {
+    allContentfulBlogPost(sort: { publishDate: DESC }) {
       nodes {
         id
         title
         excerpt
         slug
-        date
-        author {
-          node {
-            name
-          }
-        }
+        publishDate
+        author
         featuredImage {
-          node {
-            sourceUrl
-            altText
-          }
+          url
+          alt
+          description
         }
         categories {
-          nodes {
-            id
-            name
-            slug
-          }
+          id
+          name
+          slug
         }
-      }
-    }
-    allWpCategory(filter: { count: { gt: 0 } }) @skip(if: $BYPASS_WORDPRESS) {
-      nodes {
-        id
-        name
-        slug
-        count
       }
     }
   }

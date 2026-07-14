@@ -5,16 +5,11 @@ import * as sections from "../components/sections"
 import Fallback from "../components/fallback"
 import SEOHead from "../components/head"
 import RotatingHeroBanner from "../components/hero/rotating-hero-banner"
-import { getDemoBlogPosts } from "../utils/fallback-data"
 
 export default function Homepage(props) {
   // Defensive: handle missing data
   const data = props.data || {}
-  const wpPosts = data.allWpPost?.nodes
-  const wpBypassMode = !wpPosts
-  const blogPosts = wpBypassMode
-    ? { nodes: getDemoBlogPosts(5) } // Use 5 demo posts when WordPress is bypassed
-    : data.allWpPost
+  const blogPosts = data.allContentfulBlogPost || { nodes: [] }
 
   // Check if homepage data exists (won't exist in bypass mode)
   const homepage = data.homepage || { blocks: [] }
@@ -38,7 +33,7 @@ export default function Homepage(props) {
 
       <sections.BeatsStatList />
 
-      <sections.BlogFeature data={{ allWpPost: blogPosts }} />
+      <sections.BlogFeature data={{ allContentfulBlogPost: blogPosts }} />
 
       {/* Shopify section - only show if products exist */}
       <sections.ShopFeature
@@ -49,24 +44,6 @@ export default function Homepage(props) {
               : { nodes: [] },
         }}
       />
-
-      {wpBypassMode && (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "20px",
-            background: "#fff8e1",
-            margin: "20px auto",
-            maxWidth: "800px",
-            borderRadius: "8px",
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            <strong>WordPress Bypass Mode:</strong> Sample content is being
-            displayed. Connect to WordPress to see actual content.
-          </p>
-        </div>
-      )}
     </Layout>
   )
 }
@@ -88,7 +65,7 @@ export const Head = (props) => {
 }
 
 export const query = graphql`
-  query HomePageQuery($BYPASS_WORDPRESS: Boolean = false) {
+  query HomePageQuery {
     site {
       siteMetadata {
         title
@@ -158,18 +135,17 @@ export const query = graphql`
       }
     }
 
-    allWpPost(sort: { date: DESC }, limit: 3) @skip(if: $BYPASS_WORDPRESS) {
+    allContentfulBlogPost(sort: { publishDate: DESC }, limit: 3) {
       nodes {
         id
         title
         slug
         excerpt
-        date(formatString: "MMMM DD, YYYY")
+        publishDate(formatString: "MMMM DD, YYYY")
         featuredImage {
-          node {
-            sourceUrl
-            altText
-          }
+          url
+          description
+          alt
         }
       }
     }

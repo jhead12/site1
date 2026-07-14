@@ -15,17 +15,17 @@ import {
 import * as styles from "./blog-post.css"
 import SEOHead from "../components/head"
 import RelatedPosts from "../components/blog/related-posts"
-import WordPressComments from "../components/wordpress-comments"
+import GiscusComments from "../components/blog/giscus-comments"
 import BlogNavigation from "../components/blog/blog-navigation"
 import SocialShare from "../components/blog/social-share"
 import "../components/blog-mobile-fix.css"
 
 export default function BlogPost({ data, pageContext, location }) {
-  const post = data.wpPost
-  const relatedPosts = data.allWpPost.nodes
+  const post = data.contentfulBlogPost
+  const relatedPosts = data.allContentfulBlogPost.nodes
   const { previousPost, nextPost } = pageContext
-  const featuredImage = post.featuredImage?.node
-  const imageData = featuredImage?.localFile?.childImageSharp?.gatsbyImageData
+  const featuredImage = post.featuredImage
+  const imageData = featuredImage?.gatsbyImageData
   
   // Get the full URL for social sharing
   const siteUrl = typeof window !== "undefined" ? window.location.origin : ""
@@ -40,22 +40,22 @@ export default function BlogPost({ data, pageContext, location }) {
           </Heading>
           <Space size={4} />
           
-          {post.author?.node && (
+          {post.author && (
             <Box center>
-              <Text variant="bold">{post.author.node.name}</Text>
+              <Text variant="bold">{post.author}</Text>
             </Box>
           )}
-          
+
           <Space size={4} />
           {/* Date hidden per user request */}
-          {/* <Text center>{post.date}</Text> */}
+          {/* <Text center>{post.publishDate}</Text> */}
           <Space size={4} />
-          
-          {featuredImage && (imageData || featuredImage.sourceUrl) && (
+
+          {featuredImage && (imageData || featuredImage.url) && (
             <Box center marginY={5} style={{ textAlign: "center" }}>
               {imageData ? (
                 <GatsbyImage
-                  alt={featuredImage.altText || post.title}
+                  alt={featuredImage.description || featuredImage.alt || post.title}
                   image={getImage(imageData)}
                   style={{ margin: "0 auto", borderRadius: "8px" }}
                   loading="lazy"
@@ -63,19 +63,19 @@ export default function BlogPost({ data, pageContext, location }) {
               ) : (
                 <div className="blog-image-wrapper">
                   <img
-                    src={featuredImage.sourceUrl}
-                    alt={featuredImage.altText || post.title}
+                    src={featuredImage.url}
+                    alt={featuredImage.description || featuredImage.alt || post.title}
                     loading="lazy"
-                    onLoad={(e) => e.target.style.opacity = '1'}
-                    onError={(e) => e.target.style.display = 'none'}
-                    style={{ 
-                      width: '100%', 
-                      height: 'auto', 
-                      borderRadius: '8px',
+                    onLoad={(e) => (e.target.style.opacity = "1")}
+                    onError={(e) => (e.target.style.display = "none")}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      borderRadius: "8px",
                       margin: "0 auto",
                       display: "block",
                       opacity: 0,
-                      transition: "opacity 0.3s ease"
+                      transition: "opacity 0.3s ease",
                     }}
                   />
                 </div>
@@ -101,12 +101,12 @@ export default function BlogPost({ data, pageContext, location }) {
             }}
           />
           
-          {post.categories?.nodes?.length > 0 && (
+          {post.categories?.length > 0 && (
             <Box marginY={5}>
               <Subhead>Categories</Subhead>
               <Space size={2} />
               <Flex gap={2} style={{ flexWrap: "wrap" }}>
-                {post.categories.nodes.map((category) => (
+                {post.categories.map((category) => (
                   <Link key={category.id} to={`/blog/?category=${category.slug}`} style={{ textDecoration: "none" }}>
                     <Box style={{
                       padding: "0.5rem 1rem",
@@ -130,7 +130,7 @@ export default function BlogPost({ data, pageContext, location }) {
           <BlogNavigation previousPost={previousPost} nextPost={nextPost} />
 
           {/* Social Share */}
-          <SocialShare 
+          <SocialShare
             title={post.title}
             url={postUrl}
             excerpt={post.excerpt}
@@ -139,11 +139,8 @@ export default function BlogPost({ data, pageContext, location }) {
           {/* Related Posts Section */}
           <RelatedPosts posts={relatedPosts} currentPostSlug={post.slug} />
 
-          {/* Comments Section */}
-          <WordPressComments 
-            postId={post.databaseId} 
-            postSlug={post.slug} 
-          />
+          {/* Comments Section (Giscus — GitHub Discussions) */}
+          <GiscusComments />
         </Box>
       </Container>
     </Layout>
@@ -151,78 +148,67 @@ export default function BlogPost({ data, pageContext, location }) {
 }
 
 export const Head = ({ data }) => {
-  return <SEOHead 
-    title={data.wpPost.title} 
-    description={data.wpPost.excerpt?.replace(/<[^>]*>/g, '')} 
-  />
+  const post = data.contentfulBlogPost
+  return (
+    <SEOHead
+      title={post.seoTitle || post.title}
+      description={post.seoDescription || post.excerpt}
+      pathname={`/blog/${post.slug}/`}
+    />
+  )
 }
 
 export const query = graphql`
   query BlogPostBySlug($slug: String!) {
-    wpPost(slug: { eq: $slug }) {
+    contentfulBlogPost(slug: { eq: $slug }) {
       id
       title
-      content
-      excerpt
-      date(formatString: "MMMM DD, YYYY")
       slug
-      uri
-      author {
-        node {
-          name
-        }
-      }
+      excerpt
+      content
+      publishDate(formatString: "MMMM DD, YYYY")
+      author
+      seoTitle
+      seoDescription
       featuredImage {
-        node {
-          altText
-          sourceUrl
-          localFile {
-            childImageSharp {
-              gatsbyImageData(width: 800, height: 400, placeholder: BLURRED)
-            }
-          }
-        }
+        id
+        url
+        alt
+        description
+        gatsbyImageData(width: 800, height: 400, placeholder: BLURRED)
       }
       categories {
-        nodes {
-          id
-          name
+        id
+        name
           slug
         }
       }
       tags {
-        nodes {
-          id
-          name
-          slug
-        }
+        id
+        name
+        slug
       }
     }
-    # Get related posts based on categories
-    allWpPost(
-      filter: { 
-        slug: { ne: $slug }
-        categories: { nodes: { elemMatch: { slug: { in: [] } } } }
-      }
+    # Related posts — latest posts excluding the current one.
+    # (Client-side category filtering can be applied in RelatedPosts if desired.)
+    allContentfulBlogPost(
+      filter: { slug: { ne: $slug } }
       limit: 3
-      sort: { date: DESC }
+      sort: { publishDate: DESC }
     ) {
       nodes {
         id
         title
         slug
         excerpt
-        date(formatString: "MMMM DD, YYYY")
+        publishDate(formatString: "MMMM DD, YYYY")
         featuredImage {
-          node {
-            sourceUrl
-            altText
-          }
+          url
+          description
+          alt
         }
         categories {
-          nodes {
-            name
-          }
+          name
         }
       }
     }

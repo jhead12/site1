@@ -29,50 +29,50 @@ const RelatedPosts = ({ posts, currentPostSlug }) => {
               borderRadius: "8px"
             }}
           >
-            {post.featuredImage?.node?.sourceUrl && (
+            {post.featuredImage?.url && (
               <Box marginY={2}>
                 <div className="blog-image-wrapper">
                   <Link to={`/blog/${post.slug}/`}>
                     <img
-                      src={post.featuredImage.node.sourceUrl}
-                      alt={post.featuredImage.node.altText || post.title}
+                      src={post.featuredImage.url}
+                      alt={post.featuredImage.description || post.featuredImage.alt || post.title}
                       loading="lazy"
-                      onLoad={(e) => e.target.style.opacity = '1'}
-                      onError={(e) => e.target.style.display = 'none'}
-                      style={{ 
-                        width: "100%", 
-                        height: "150px", 
+                      onLoad={(e) => (e.target.style.opacity = "1")}
+                      onError={(e) => (e.target.style.display = "none")}
+                      style={{
+                        width: "100%",
+                        height: "150px",
                         objectFit: "cover",
                         borderRadius: "4px",
                         opacity: 0,
-                        transition: "opacity 0.3s ease"
+                        transition: "opacity 0.3s ease",
                       }}
                     />
                   </Link>
                 </div>
               </Box>
             )}
-            
+
             {/* Date hidden per user request */}
             {/* <Text variant="kicker" marginY={1}>
-              {post.date}
+              {post.publishDate}
             </Text> */}
-            
+
             <Text variant="subhead" marginY={2}>
               <Link to={`/blog/${post.slug}/`}>{post.title}</Link>
             </Text>
-            
+
             {post.excerpt && (
-              <Text 
+              <Text
                 variant="small"
                 dangerouslySetInnerHTML={{ __html: post.excerpt.substring(0, 120) + "..." }}
               />
             )}
-            
-            {post.categories?.nodes?.length > 0 && (
+
+            {post.categories?.length > 0 && (
               <Box marginY={2}>
                 <Text variant="kicker">
-                  {post.categories.nodes.map(cat => cat.name).join(", ")}
+                  {post.categories.map((cat) => cat.name).join(", ")}
                 </Text>
               </Box>
             )}

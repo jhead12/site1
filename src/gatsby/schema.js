@@ -1155,6 +1155,42 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `)
 
+  // Blog content types (Contentful-backed, replacing the WordPress blog).
+  // `content` is derived from the Contentful `body` Rich Text field via the
+  // @richText extension (which parses body.raw → HTML), so templates can keep
+  // treating post content as an HTML string.
+  actions.createTypes(/* GraphQL */ `
+    type ContentfulBlogCategory implements Node @dontInfer {
+      id: ID!
+      name: String
+      slug: String
+    }
+
+    type ContentfulBlogTag implements Node @dontInfer {
+      id: ID!
+      name: String
+      slug: String
+    }
+
+    type ContentfulBlogPost implements Node @dontInfer {
+      id: ID!
+      title: String
+      slug: String!
+      excerpt: String
+      content: String @richText
+      publishDate: Date @dateformat
+      author: String
+      featuredImage: ContentfulAsset @link(from: "featuredImage___NODE")
+      categories: [ContentfulBlogCategory] @link(from: "categories___NODE")
+      tags: [ContentfulBlogTag] @link(from: "tags___NODE")
+      seoTitle: String
+      seoDescription: String
+      # Optional: unique key for the YouTube→Contentful auto-sync script.
+      # When present, the sync job upserts entries by this id instead of slug.
+      youtubeVideoId: String
+    }
+  `)
+
   // Define the WordPress-specific types
   actions.createTypes(/* GraphQL */ `
     type WpPost implements Node & BlogFeature & HomepageBlock @dontInfer {

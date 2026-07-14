@@ -48,8 +48,8 @@ const truncateTitle = (title, maxLength = 60) => {
 }
 
 export default function BlogFeature(props) {
-  const { allWpPost } = props.data
-  const recentPosts = allWpPost?.nodes || []
+  const { allContentfulBlogPost } = props.data
+  const recentPosts = allContentfulBlogPost?.nodes || []
 
   // If no posts available, show a message or return null
   if (recentPosts.length === 0) {
@@ -57,7 +57,7 @@ export default function BlogFeature(props) {
       <Section padding={4} background="muted">
         <Container width="fullbleed">
           <Subhead>Recent Blog Posts</Subhead>
-          <Text>Blog posts will appear here when WordPress is connected.</Text>
+          <Text>Blog posts will appear here once you publish BlogPost entries in Contentful.</Text>
         </Container>
       </Section>
     )
@@ -74,10 +74,10 @@ export default function BlogFeature(props) {
                 <Link to={`/blog/${post.slug}/`}>
                   <img
                     src={
-                      post.featuredImage?.node?.sourceUrl ||
+                      post.featuredImage?.url ||
                       "https://via.placeholder.com/300x180/f0f0f0/666666/?text=Jeldon+Music"
                     }
-                    alt={post.featuredImage?.node?.altText || post.title}
+                    alt={post.featuredImage?.description || post.featuredImage?.alt || post.title}
                     className="blog-feature-image"
                     loading="lazy"
                     onLoad={(e) => {

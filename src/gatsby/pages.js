@@ -35,7 +35,8 @@ exports.createPages = async ({ graphql, actions }) => {
             content
           }
         }
-        allWpPost {
+        # Blog posts live in Contentful (not WordPress)
+        allContentfulBlogPost(sort: { publishDate: DESC }) {
           nodes {
             id
             slug
@@ -86,7 +87,7 @@ exports.createPages = async ({ graphql, actions }) => {
 
   // Safely access data with fallbacks
   const pages = result.data?.allWpPage?.nodes || []
-  const posts = result.data?.allWpPost?.nodes || []
+  const posts = result.data?.allContentfulBlogPost?.nodes || []
   const beats = result.data?.allWpBeat?.nodes || []
   const tutorials = result.data?.allWpTutorial?.nodes || []
   const mixes = result.data?.allWpMix?.nodes || []
@@ -100,11 +101,10 @@ exports.createPages = async ({ graphql, actions }) => {
   console.log(`Creating ${mixes.length} mixes`)
   console.log(`Creating ${videos.length} videos`)
 
-  // Check for WordPress connection
+  // Check for blog content
   if (posts.length === 0) {
     console.warn(
-      "⚠️  No WordPress posts found. Check WordPress connection at:",
-      process.env.WPGRAPHQL_URL
+      "⚠️  No Contentful blog posts found. Create BlogPost entries in Contentful."
     )
   }
 
