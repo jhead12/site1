@@ -810,6 +810,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
       type ContentfulBlogPostConnection {
         nodes: [ContentfulBlogPost]
+        totalCount: Int!
       }
 
       type ContentfulBlogCategory implements Node @dontInfer {
@@ -842,6 +843,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
       type ContentfulVideoPostConnection {
         nodes: [ContentfulVideoPost]
+        totalCount: Int!
       }
 
       type ContentfulVideoCategory implements Node @dontInfer {

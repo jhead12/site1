@@ -59,64 +59,68 @@ exports.createResolvers = ({ createResolvers }) => {
 
       allContentfulBlogPost: {
         resolve() {
+          const nodes = [
+            {
+              id: "blog-1",
+              title: "Music Production Tips for Beginners",
+              slug: "music-production-tips-beginners",
+              excerpt: "Learn essential music production techniques to take your tracks to the next level.",
+              publishDate: new Date(Date.now() - 86400000 * 5).toISOString(),
+              author: "Jeldon",
+              featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-1.jpg" } } } },
+              categories: { nodes: [{ id: "cat-1", name: "Production", slug: "production" }] },
+            },
+            {
+              id: "blog-2",
+              title: "How to Mix Vocals Like a Pro",
+              slug: "how-to-mix-vocals-like-pro",
+              excerpt: "Professional vocal mixing techniques used in top studios.",
+              publishDate: new Date(Date.now() - 86400000 * 10).toISOString(),
+              author: "Jeldon",
+              featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-2.jpg" } } } },
+              categories: { nodes: [{ id: "cat-2", name: "Mixing", slug: "mixing" }] },
+            },
+          ]
           return {
-            nodes: [
-              {
-                id: "blog-1",
-                title: "Music Production Tips for Beginners",
-                slug: "music-production-tips-beginners",
-                excerpt: "Learn essential music production techniques to take your tracks to the next level.",
-                publishDate: new Date(Date.now() - 86400000 * 5).toISOString(),
-                author: "Jeldon",
-                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-1.jpg" } } } },
-                categories: { nodes: [{ id: "cat-1", name: "Production", slug: "production" }] },
-              },
-              {
-                id: "blog-2",
-                title: "How to Mix Vocals Like a Pro",
-                slug: "how-to-mix-vocals-like-pro",
-                excerpt: "Professional vocal mixing techniques used in top studios.",
-                publishDate: new Date(Date.now() - 86400000 * 10).toISOString(),
-                author: "Jeldon",
-                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-2.jpg" } } } },
-                categories: { nodes: [{ id: "cat-2", name: "Mixing", slug: "mixing" }] },
-              },
-            ],
+            nodes,
+            totalCount: nodes.length,
           }
         },
       },
 
       allContentfulVideoPost: {
         resolve() {
+          const nodes = [
+            {
+              id: "video-1",
+              title: "FL Studio Beat Making Tutorial",
+              slug: "fl-studio-beat-making-tutorial",
+              excerpt: "Watch how to create a complete beat from scratch in FL Studio.",
+              publishDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+              author: "Jeldon",
+              youtubeVideoId: "dQw4w9WgXcQ",
+              duration: "12:45",
+              videoViews: 15420,
+              featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-1.jpg" } } } },
+              categories: { nodes: [{ id: "vcat-1", name: "Tutorials", slug: "tutorials" }] },
+            },
+            {
+              id: "video-2",
+              title: "Mixing Bass and Kick Together",
+              slug: "mixing-bass-kick-together",
+              excerpt: "Learn how to get your bass and kick sitting perfectly in the mix.",
+              publishDate: new Date(Date.now() - 86400000 * 7).toISOString(),
+              author: "Jeldon",
+              youtubeVideoId: "abc123xyz",
+              duration: "8:30",
+              videoViews: 28900,
+              featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-2.jpg" } } } },
+              categories: { nodes: [{ id: "vcat-2", name: "Mixing Tips", slug: "mixing-tips" }] },
+            },
+          ]
           return {
-            nodes: [
-              {
-                id: "video-1",
-                title: "FL Studio Beat Making Tutorial",
-                slug: "fl-studio-beat-making-tutorial",
-                excerpt: "Watch how to create a complete beat from scratch in FL Studio.",
-                publishDate: new Date(Date.now() - 86400000 * 3).toISOString(),
-                author: "Jeldon",
-                youtubeVideoId: "dQw4w9WgXcQ",
-                duration: "12:45",
-                videoViews: 15420,
-                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-1.jpg" } } } },
-                categories: { nodes: [{ id: "vcat-1", name: "Tutorials", slug: "tutorials" }] },
-              },
-              {
-                id: "video-2",
-                title: "Mixing Bass and Kick Together",
-                slug: "mixing-bass-kick-together",
-                excerpt: "Learn how to get your bass and kick sitting perfectly in the mix.",
-                publishDate: new Date(Date.now() - 86400000 * 7).toISOString(),
-                author: "Jeldon",
-                youtubeVideoId: "abc123xyz",
-                duration: "8:30",
-                videoViews: 28900,
-                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-2.jpg" } } } },
-                categories: { nodes: [{ id: "vcat-2", name: "Mixing Tips", slug: "mixing-tips" }] },
-              },
-            ],
+            nodes,
+            totalCount: nodes.length,
           }
         },
       },
