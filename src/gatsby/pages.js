@@ -71,6 +71,13 @@ exports.createPages = async ({ graphql, actions }) => {
             title
           }
         }
+        allContentfulVideoPost(sort: { publishDate: DESC }) {
+          nodes {
+            id
+            slug
+            title
+          }
+        }
       }
     `)
 
@@ -92,6 +99,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const tutorials = result.data?.allWpTutorial?.nodes || []
   const mixes = result.data?.allWpMix?.nodes || []
   const videos = result.data?.allWpVideo?.nodes || []
+  const videoPosts = result.data?.allContentfulVideoPost?.nodes || []
 
   // Debug logging
   console.log(`Creating ${pages.length} WordPress pages`)
@@ -99,7 +107,8 @@ exports.createPages = async ({ graphql, actions }) => {
   console.log(`Creating ${beats.length} beats`)
   console.log(`Creating ${tutorials.length} tutorials`)
   console.log(`Creating ${mixes.length} mixes`)
-  console.log(`Creating ${videos.length} videos`)
+  console.log(`Creating ${videos.length} WordPress videos`)
+  console.log(`Creating ${videoPosts.length} Contentful video posts`)
 
   // Check for blog content
   if (posts.length === 0) {
@@ -184,15 +193,43 @@ exports.createPages = async ({ graphql, actions }) => {
     })
   })
 
-  // Create Video pages with next/previous navigation
+  // Create Video pages with next/previous navigation (WordPress videos - legacy)
   videos.forEach((video, index) => {
-    console.log(`Creating video page: /videos/${video.slug}/`)
+    console.log(`Creating WordPress video page: /videos/${video.slug}/`)
     const previousVideo = index === 0 ? null : videos[index - 1]
     const nextVideo = index === videos.length - 1 ? null : videos[index + 1]
 
     createPage({
       path: `/videos/${video.slug}/`,
       component: require.resolve("../templates/video.js"),
+      context: {
+        id: video.id,
+        slug: video.slug,
+        previousVideo: previousVideo
+          ? {
+              slug: previousVideo.slug,
+              title: previousVideo.title,
+            }
+          : null,
+        nextVideo: nextVideo
+          ? {
+              slug: nextVideo.slug,
+              title: nextVideo.title,
+            }
+          : null,
+      },
+    })
+  })
+
+  // Create Contentful VideoPost pages with next/previous navigation
+  videoPosts.forEach((video, index) => {
+    console.log(`Creating Contentful video post page: /videos/${video.slug}/`)
+    const previousVideo = index === 0 ? null : videoPosts[index - 1]
+    const nextVideo = index === videoPosts.length - 1 ? null : videoPosts[index + 1]
+
+    createPage({
+      path: `/videos/${video.slug}/`,
+      component: require.resolve("../templates/video-post.js"),
       context: {
         id: video.id,
         slug: video.slug,

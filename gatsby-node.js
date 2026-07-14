@@ -11,3 +11,5 @@ exports.createPages = require("./src/gatsby/pages").createPages
 exports.onCreatePage = require("./src/gatsby/on-create-page").onCreatePage
 exports.onCreateNode = require("./src/gatsby/on-create-node").onCreateNode
 exports.onPostBuild = require("./src/gatsby/bypass-mocks").onPostBuild
+
+// Video posts are created separately in src/gatsby/pages.js

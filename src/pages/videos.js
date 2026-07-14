@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react"
-import { graphql } from "gatsby"
+import { graphql, Link } from "gatsby"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import Layout from "../components/layout"
-import { Link } from "../components/ui"
 import {
   Container,
   Section,
@@ -14,9 +14,9 @@ import {
 
 const VideosPage = ({ data, location }) => {
   // Memoize videos and categories data to avoid unnecessary re-renders
-  const allVideos = useMemo(() => data?.allWpVideo?.nodes || [], [data])
+  const allVideos = useMemo(() => data?.allContentfulVideoPost?.nodes || [], [data])
   const allCategories = useMemo(
-    () => data?.allWpVideoCategory?.nodes || [],
+    () => data?.allContentfulVideoCategory?.nodes || [],
     [data]
   )
 
@@ -38,7 +38,7 @@ const VideosPage = ({ data, location }) => {
     if (selectedCategory === "all") return allVideos
 
     return allVideos.filter((video) =>
-      video.videoCategories?.nodes?.some(
+      video.categories?.some(
         (category) => category.slug === selectedCategory
       )
     )
@@ -50,7 +50,7 @@ const VideosPage = ({ data, location }) => {
       .map((category) => ({
         ...category,
         count: allVideos.filter((video) =>
-          video.videoCategories?.nodes?.some(
+          video.categories?.some(
             (videoCategory) => videoCategory.slug === category.slug
           )
         ).length,
@@ -81,7 +81,7 @@ const VideosPage = ({ data, location }) => {
             Videos
           </Heading>
           <Text center variant="lead">
-            Latest video tutorials, beats, and music production content.
+            Latest video tutorials, production tips, and music content.
           </Text>
 
           {/* Category Filter */}
@@ -159,202 +159,197 @@ const VideosPage = ({ data, location }) => {
                   gap: "2rem",
                 }}
               >
-                {filteredVideos.map((video) => (
-                  <Box
-                    key={video.id}
-                    style={{
-                      border: "1px solid #eee",
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-5px)"
-                      e.currentTarget.style.boxShadow =
-                        "0 10px 25px rgba(0,0,0,0.1)"
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)"
-                      e.currentTarget.style.boxShadow = "none"
-                    }}
-                  >
-                    {/* Video Thumbnail */}
-                    <Link to={`/videos/${video.slug}/`}>
-                      <Box style={{ position: "relative" }}>
-                        {video.videoDetails?.youtubeVideoId ||
-                        video.content?.includes("youtube.com/embed/") ? (
-                          <img
-                            src={`https://img.youtube.com/vi/${
-                              video.videoDetails?.youtubeVideoId ||
-                              video.content?.match(
-                                /youtube\.com\/embed\/([^"&?/ ]{11})/i
-                              )?.[1]
-                            }/mqdefault.jpg`}
-                            alt={video.title}
-                            style={{
-                              width: "100%",
-                              height: "200px",
-                              objectFit: "cover",
-                              display: "block",
-                            }}
-                          />
-                        ) : (
+                {filteredVideos.map((video) => {
+                  // Get YouTube thumbnail
+                  const thumbUrl = video.youtubeVideoId
+                    ? `https://img.youtube.com/vi/${video.youtubeVideoId}/mqdefault.jpg`
+                    : null
+                  const featuredImage = video.featuredImage
+                    ? getImage(video.featuredImage)
+                    : null
+
+                  return (
+                    <Box
+                      key={video.id}
+                      style={{
+                        border: "1px solid #eee",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-5px)"
+                        e.currentTarget.style.boxShadow =
+                          "0 10px 25px rgba(0,0,0,0.1)"
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)"
+                        e.currentTarget.style.boxShadow = "none"
+                      }}
+                    >
+                      {/* Video Thumbnail */}
+                      <Link to={`/videos/${video.slug}/`}>
+                        <Box style={{ position: "relative" }}>
+                          {featuredImage ? (
+                            <GatsbyImage
+                              image={featuredImage}
+                              alt={video.featuredImage?.alt || video.title}
+                              style={{ width: "100%", height: "200px" }}
+                            />
+                          ) : thumbUrl ? (
+                            <img
+                              src={thumbUrl}
+                              alt={video.title}
+                              style={{
+                                width: "100%",
+                                height: "200px",
+                                objectFit: "cover",
+                                display: "block",
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "100%",
+                                height: "200px",
+                                backgroundColor: "#f0f0f0",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Text>No thumbnail</Text>
+                            </div>
+                          )}
+
+                          {/* Duration overlay */}
+                          {video.duration && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                bottom: "8px",
+                                right: "8px",
+                                backgroundColor: "rgba(0,0,0,0.8)",
+                                color: "white",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {video.duration}
+                            </div>
+                          )}
+
+                          {/* Play button overlay */}
                           <div
                             style={{
-                              width: "100%",
-                              height: "200px",
-                              backgroundColor: "#f0f0f0",
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: "60px",
+                              height: "60px",
+                              backgroundColor: "rgba(255, 0, 0, 0.8)",
+                              borderRadius: "50%",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
+                              opacity: 0.9,
+                              transition: "opacity 0.2s ease",
                             }}
                           >
-                            <Text>No thumbnail</Text>
+                            <div
+                              style={{
+                                width: 0,
+                                height: 0,
+                                borderLeft: "20px solid white",
+                                borderTop: "12px solid transparent",
+                                borderBottom: "12px solid transparent",
+                                marginLeft: "4px",
+                              }}
+                            />
                           </div>
+                        </Box>
+                      </Link>
+
+                      {/* Video Info */}
+                      <Box style={{ padding: "16px" }}>
+                        <Text
+                          variant="kicker"
+                          marginY={1}
+                          style={{ color: "#666" }}
+                        >
+                          {new Date(video.publishDate).toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "short",
+                          })}
+                        </Text>
+
+                        <Subhead marginY={2}>
+                          <Link
+                            to={`/videos/${video.slug}/`}
+                            style={{ textDecoration: "none" }}
+                          >
+                            {video.title}
+                          </Link>
+                        </Subhead>
+
+                        {video.excerpt && (
+                          <Text
+                            style={{
+                              color: "#666",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                            }}
+                          >
+                            {video.excerpt}
+                          </Text>
                         )}
 
-                        {/* Duration overlay */}
-                        {video.videoDetails?.videoDuration && (
-                          <div
+                        {/* Categories */}
+                        {video.categories?.length > 0 && (
+                          <Box marginY={3}>
+                            <Flex gap={1} style={{ flexWrap: "wrap" }}>
+                              {video.categories
+                                .slice(0, 3)
+                                .map((category) => (
+                                  <span
+                                    key={category.name}
+                                    style={{
+                                      fontSize: "0.8rem",
+                                      backgroundColor: "#f0f0f0",
+                                      color: "#666",
+                                      padding: "4px 8px",
+                                      borderRadius: "12px",
+                                      display: "inline-block",
+                                    }}
+                                  >
+                                    {category.name}
+                                  </span>
+                                ))}
+                            </Flex>
+                          </Box>
+                        )}
+
+                        <Box marginY={3}>
+                          <Link
+                            to={`/videos/${video.slug}/`}
                             style={{
-                              position: "absolute",
-                              bottom: "8px",
-                              right: "8px",
-                              backgroundColor: "rgba(0,0,0,0.8)",
-                              color: "white",
-                              padding: "4px 8px",
-                              borderRadius: "4px",
-                              fontSize: "12px",
+                              color: "#004ca3",
+                              textDecoration: "none",
                               fontWeight: "bold",
                             }}
                           >
-                            {video.videoDetails.videoDuration}
-                          </div>
-                        )}
-
-                        {/* Views overlay */}
-                        {video.videoDetails?.videoViews && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              bottom: "8px",
-                              left: "8px",
-                              backgroundColor: "rgba(0,0,0,0.8)",
-                              color: "white",
-                              padding: "4px 8px",
-                              borderRadius: "4px",
-                              fontSize: "12px",
-                            }}
-                          >
-                            {video.videoDetails.videoViews} views
-                          </div>
-                        )}
-
-                        {/* Play button overlay */}
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            width: "60px",
-                            height: "60px",
-                            backgroundColor: "rgba(255, 0, 0, 0.8)",
-                            borderRadius: "50%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            opacity: 0.9,
-                            transition: "opacity 0.2s ease",
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 0,
-                              height: 0,
-                              borderLeft: "20px solid white",
-                              borderTop: "12px solid transparent",
-                              borderBottom: "12px solid transparent",
-                              marginLeft: "4px",
-                            }}
-                          />
-                        </div>
-                      </Box>
-                    </Link>
-
-                    {/* Video Info */}
-                    <Box style={{ padding: "16px" }}>
-                      <Text
-                        variant="kicker"
-                        marginY={1}
-                        style={{ color: "#666" }}
-                      >
-                        {video.date}
-                        {/* Author field removed as it may not be available in WpVideo schema */}
-                      </Text>
-
-                      <Subhead marginY={2}>
-                        <Link
-                          to={`/videos/${video.slug}/`}
-                          style={{ textDecoration: "none" }}
-                        >
-                          {video.title}
-                        </Link>
-                      </Subhead>
-
-                      {video.excerpt && (
-                        <Text
-                          style={{
-                            color: "#666",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                          }}
-                          dangerouslySetInnerHTML={{ __html: video.excerpt }}
-                        />
-                      )}
-
-                      {/* Categories */}
-                      {video.videoCategories?.nodes?.length > 0 && (
-                        <Box marginY={3}>
-                          <Flex gap={1} style={{ flexWrap: "wrap" }}>
-                            {video.videoCategories.nodes
-                              .slice(0, 3)
-                              .map((category) => (
-                                <span
-                                  key={category.name}
-                                  style={{
-                                    fontSize: "0.8rem",
-                                    backgroundColor: "#f0f0f0",
-                                    color: "#666",
-                                    padding: "4px 8px",
-                                    borderRadius: "12px",
-                                    display: "inline-block",
-                                  }}
-                                >
-                                  {category.name}
-                                </span>
-                              ))}
-                          </Flex>
+                            Watch Video →
+                          </Link>
                         </Box>
-                      )}
-
-                      <Box marginY={3}>
-                        <Link
-                          to={`/videos/${video.slug}/`}
-                          style={{
-                            color: "#004ca3",
-                            textDecoration: "none",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Watch Video →
-                        </Link>
                       </Box>
                     </Box>
-                  </Box>
-                ))}
+                  )
+                })}
               </div>
             ) : (
               <Box center marginY={5}>
@@ -374,8 +369,9 @@ const VideosPage = ({ data, location }) => {
                   >
                     <Subhead>Ready to add videos?</Subhead>
                     <Text style={{ marginTop: "10px" }}>
-                      Create your first video post in WordPress admin → Videos →
-                      Add New
+                      Run the YouTube sync script to import videos from your channel:
+                      <br />
+                      <code>node ./scripts/sync-youtube-to-videos.js</code>
                     </Text>
                   </Box>
                 )}
@@ -390,24 +386,29 @@ const VideosPage = ({ data, location }) => {
 
 export const query = graphql`
   query VideosArchive {
-    allWpVideo(sort: { date: DESC }) {
+    allContentfulVideoPost(sort: { publishDate: DESC }) {
       nodes {
         id
         title
         excerpt
         slug
-        date
+        publishDate
+        youtubeVideoId
+        duration
         featuredImage {
-          node {
-            sourceUrl
-            altText
-          }
+          alt
+          gatsbyImageData(width: 300, height: 200, placeholder: BLURRED)
         }
-        videoDetails {
-          youtubeVideoId
-          videoDuration
+        categories {
+          name
+          slug
         }
-        content
+      }
+    }
+    allContentfulVideoCategory {
+      nodes {
+        name
+        slug
       }
     }
     site {

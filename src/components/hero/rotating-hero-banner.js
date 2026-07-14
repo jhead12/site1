@@ -57,34 +57,27 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
     [currentSlide, navigateToSlide]
   )
 
-  // Enhanced GraphQL query to include blogs and videos with proper fallback handling
+  // Enhanced GraphQL query to include blogs, videos with proper fallback handling
   const data = useStaticQuery(graphql`
     query HeroBannerContent {
-      # Get WordPress Videos - will be skipped if WordPress is not connected
-      allWpVideo(sort: { date: DESC }, limit: 2) {
+      # Get Contentful Video Posts (YouTube sync)
+      allContentfulVideoPost(sort: { publishDate: DESC }, limit: 2) {
         nodes {
           id
           title
           excerpt
           slug
-          date
-          videoDetails {
-            youtubeVideoId
-          }
+          publishDate
+          youtubeVideoId
           featuredImage {
-            node {
-              altText
-              localFile {
-                childImageSharp {
-                  gatsbyImageData(width: 1200, height: 600)
-                }
-              }
-            }
+            alt
+            description
+            gatsbyImageData(width: 1200, height: 600)
           }
         }
       }
 
-      # Get Blog Posts from Contentful (blog migrated off WordPress)
+      # Get Blog Posts from Contentful
       allContentfulBlogPost(sort: { publishDate: DESC }, limit: 2) {
         nodes {
           id
@@ -100,7 +93,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         }
       }
 
-      # Get Contentful Hero Background Images (simplified query with error handling)
+      # Get Contentful Hero Background Images
       allContentfulAsset(
         filter: { title: { regex: "/studio_photo|hero|background|welcome/" } }
         limit: 10
@@ -118,7 +111,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         }
       }
 
-      # Fallback static content - this should always be available
+      # Fallback static content
       site {
         siteMetadata {
           title
@@ -154,7 +147,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         setHeroData(mapped)
         return
       }
-      const wpVideos = data?.allWpVideo?.nodes || []
+      const videoPosts = data?.allContentfulVideoPost?.nodes || []
       const blogPosts = data?.allContentfulBlogPost?.nodes || []
       let heroItems = []
 
@@ -175,15 +168,14 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         return null // Don't show content older than 90 days
       }
 
-      // Transform WordPress videos with images and filter by category
-      const wpVideoItems = wpVideos
+      // Transform Contentful video posts with images and filter by category
+      const videoItems = videoPosts
         .filter(
           (video) =>
-            video.featuredImage?.node?.localFile?.childImageSharp
-              ?.gatsbyImageData
+            video.featuredImage?.gatsbyImageData
         )
         .map((video) => {
-          const category = getContentCategory(video.date, "video")
+          const category = getContentCategory(video.publishDate, "video")
           if (!category) return null // Filter out old content
 
           // Determine kicker text based on category
@@ -202,11 +194,9 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             description:
               truncateToFirstSentence(video.excerpt) ||
               "Watch our latest video content",
-            image:
-              video.featuredImage.node.localFile.childImageSharp
-                .gatsbyImageData,
+            image: video.featuredImage.gatsbyImageData,
             slug: `/videos/${video.slug}`,
-            date: video.date,
+            date: video.publishDate,
             type: "video",
             category: category,
             kicker: kicker,
@@ -249,8 +239,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         })
         .filter(Boolean) // Remove null items
 
-      // Combine WordPress video content + Contentful blog content, sort by priority/date
-      const wpContent = [...wpVideoItems, ...blogItems]
+      // Combine video posts + blog posts, sort by priority/date
+      const wpContent = [...videoItems, ...blogItems]
         .sort((a, b) => {
           // First sort by priority (lower number = higher priority)
           if (a.priority !== b.priority) {

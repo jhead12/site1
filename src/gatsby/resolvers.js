@@ -2,7 +2,6 @@ exports.createResolvers = ({ createResolvers }) => {
   // Always add resolvers, but conditionally return real or mock data
   const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
 
-  // Log mode for debugging
   console.log(
     bypassWordpress
       ? "📝 Adding mock data resolvers for BYPASS_WORDPRESS mode"
@@ -11,7 +10,7 @@ exports.createResolvers = ({ createResolvers }) => {
 
   // Create a base resolver set that works in both modes
   const baseResolvers = {
-    // Add field resolvers for navigation items
+    // Navigation item resolvers
     ContentfulNavItem: {
       name: {
         resolve: (source) => source.text || source.name || "",
@@ -35,13 +34,11 @@ exports.createResolvers = ({ createResolvers }) => {
       },
     },
 
-    // The Query type resolvers (like allPage) work in both modes
+    // Query resolvers
     Query: {
-      // allPage resolver for both bypass mode and live mode
       allPage: {
         resolve(source, args, context) {
           if (bypassWordpress) {
-            // Return mock pages in bypass mode
             return {
               nodes: [
                 { id: "page-1", path: "/", slug: "home", title: "Home" },
@@ -55,17 +52,77 @@ exports.createResolvers = ({ createResolvers }) => {
               ],
             }
           } else {
-            // In live mode, delegate to regular SitePage resolver
             return context.nodeModel.getAllNodes({ type: "SitePage" })
           }
         },
       },
 
-      // Add layout resolver for both modes
+      allContentfulBlogPost: {
+        resolve() {
+          return {
+            nodes: [
+              {
+                id: "blog-1",
+                title: "Music Production Tips for Beginners",
+                slug: "music-production-tips-beginners",
+                excerpt: "Learn essential music production techniques to take your tracks to the next level.",
+                publishDate: new Date(Date.now() - 86400000 * 5).toISOString(),
+                author: "Jeldon",
+                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-1.jpg" } } } },
+                categories: { nodes: [{ id: "cat-1", name: "Production", slug: "production" }] },
+              },
+              {
+                id: "blog-2",
+                title: "How to Mix Vocals Like a Pro",
+                slug: "how-to-mix-vocals-like-pro",
+                excerpt: "Professional vocal mixing techniques used in top studios.",
+                publishDate: new Date(Date.now() - 86400000 * 10).toISOString(),
+                author: "Jeldon",
+                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-2.jpg" } } } },
+                categories: { nodes: [{ id: "cat-2", name: "Mixing", slug: "mixing" }] },
+              },
+            ],
+          }
+        },
+      },
+
+      allContentfulVideoPost: {
+        resolve() {
+          return {
+            nodes: [
+              {
+                id: "video-1",
+                title: "FL Studio Beat Making Tutorial",
+                slug: "fl-studio-beat-making-tutorial",
+                excerpt: "Watch how to create a complete beat from scratch in FL Studio.",
+                publishDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+                author: "Jeldon",
+                youtubeVideoId: "dQw4w9WgXcQ",
+                duration: "12:45",
+                videoViews: 15420,
+                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-1.jpg" } } } },
+                categories: { nodes: [{ id: "vcat-1", name: "Tutorials", slug: "tutorials" }] },
+              },
+              {
+                id: "video-2",
+                title: "Mixing Bass and Kick Together",
+                slug: "mixing-bass-kick-together",
+                excerpt: "Learn how to get your bass and kick sitting perfectly in the mix.",
+                publishDate: new Date(Date.now() - 86400000 * 7).toISOString(),
+                author: "Jeldon",
+                youtubeVideoId: "abc123xyz",
+                duration: "8:30",
+                videoViews: 28900,
+                featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-2.jpg" } } } },
+                categories: { nodes: [{ id: "vcat-2", name: "Mixing Tips", slug: "mixing-tips" }] },
+              },
+            ],
+          }
+        },
+      },
+
       layout: {
         resolve(source, args, context) {
-          // Prefer an actual ContentfulLayout node if available so the
-          // abstract Layout interface resolves to a concrete type.
           try {
             const layouts =
               context.nodeModel.getAllNodes({ type: "ContentfulLayout" }) || []
@@ -146,7 +203,7 @@ exports.createResolvers = ({ createResolvers }) => {
       },
     },
 
-    // File resolvers work in both modes
+    // File resolvers
     File: {
       publicURL: {
         resolve(source) {
@@ -155,7 +212,7 @@ exports.createResolvers = ({ createResolvers }) => {
       },
     },
 
-    // ContentfulAsset works in both modes
+    // ContentfulAsset resolvers
     ContentfulAsset: {
       id: {
         type: "ID!",
@@ -170,7 +227,6 @@ exports.createResolvers = ({ createResolvers }) => {
       gatsbyImageData: {
         type: "GatsbyImageData",
         resolve: (source) => {
-          // Return mock GatsbyImageData structure if actual data is not available
           return (
             source.gatsbyImageData || {
               layout: "constrained",
@@ -196,43 +252,153 @@ exports.createResolvers = ({ createResolvers }) => {
     },
   }
 
-  // Only add WordPress-specific resolvers in bypass mode
+  // WordPress mock resolvers for bypass mode
   if (bypassWordpress) {
-    // Add all the WordPress mock resolvers
+    // Mock data for Contentful blog and video posts
+    const mockBlogPosts = [
+      {
+        id: "blog-1",
+        title: "Music Production Tips for Beginners",
+        slug: "music-production-tips-beginners",
+        excerpt: "Learn essential music production techniques to take your tracks to the next level.",
+        content: "<p>Music production is both an art and a science. In this article, we'll explore key techniques...</p>",
+        publishDate: new Date(Date.now() - 86400000 * 5).toISOString(),
+        author: "Jeldon",
+        featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-1.jpg" } } } },
+        categories: { nodes: [{ id: "cat-1", name: "Production", slug: "production" }] },
+        tags: { nodes: [{ id: "tag-1", name: "Tutorial", slug: "tutorial" }] },
+      },
+      {
+        id: "blog-2",
+        title: "How to Mix Vocals Like a Pro",
+        slug: "how-to-mix-vocals-like-pro",
+        excerpt: "Professional vocal mixing techniques used in top studios.",
+        content: "<p>Vocal mixing is crucial for a polished sound. Here are the secrets...</p>",
+        publishDate: new Date(Date.now() - 86400000 * 10).toISOString(),
+        author: "Jeldon",
+        featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-2.jpg" } } } },
+        categories: { nodes: [{ id: "cat-2", name: "Mixing", slug: "mixing" }] },
+        tags: { nodes: [{ id: "tag-2", name: "Vocals", slug: "vocals" }] },
+      },
+      {
+        id: "blog-3",
+        title: "Choosing the Right DAW for Your Workflow",
+        slug: "choosing-right-daw-workflow",
+        excerpt: "A comprehensive guide to selecting the best digital audio workstation.",
+        content: "<p>The right DAW can transform your production workflow...</p>",
+        publishDate: new Date(Date.now() - 86400000 * 20).toISOString(),
+        author: "Jeldon",
+        featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/demo-cover-3.jpg" } } } },
+        categories: { nodes: [{ id: "cat-3", name: "Software", slug: "software" }] },
+        tags: { nodes: [{ id: "tag-3", name: "DAW", slug: "daw" }] },
+      },
+    ]
+
+    const mockVideoPosts = [
+      {
+        id: "video-1",
+        title: "FL Studio Beat Making Tutorial",
+        slug: "fl-studio-beat-making-tutorial",
+        excerpt: "Watch how to create a complete beat from scratch in FL Studio.",
+        body: "<p>In this tutorial, we'll build a complete beat...</p>",
+        publishDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+        author: "Jeldon",
+        youtubeVideoId: "dQw4w9WgXcQ",
+        duration: "12:45",
+        videoViews: 15420,
+        featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-1.jpg" } } } },
+        categories: { nodes: [{ id: "vcat-1", name: "Tutorials", slug: "tutorials" }] },
+      },
+      {
+        id: "video-2",
+        title: "Mixing Bass and Kick Together",
+        slug: "mixing-bass-kick-together",
+        excerpt: "Learn how to get your bass and kick sitting perfectly in the mix.",
+        body: "<p>The relationship between bass and kick is crucial...</p>",
+        publishDate: new Date(Date.now() - 86400000 * 7).toISOString(),
+        author: "Jeldon",
+        youtubeVideoId: "abc123xyz",
+        duration: "8:30",
+        videoViews: 28900,
+        featuredImage: { gatsbyImageData: { images: { fallback: { src: "/static/images/video-cover-2.jpg" } } } },
+        categories: { nodes: [{ id: "vcat-2", name: "Mixing Tips", slug: "mixing-tips" }] },
+      },
+    ]
+
     const wpResolvers = {
+      // Mock Contentful BlogPost resolvers
+      ContentfulBlogPost: {
+        formattedDate: {
+          type: "String",
+          resolve(source) {
+            if (!source.publishDate) return ""
+            const dateObj = new Date(source.publishDate)
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            const month = months[dateObj.getMonth()]
+            const day = dateObj.getDate()
+            const year = dateObj.getFullYear()
+            return `${month} ${day < 10 ? "0" + day : day}, ${year}`
+          },
+        },
+        categories: {
+          type: "[ContentfulBlogCategory]",
+          resolve(source) {
+            return source.categories?.nodes || []
+          },
+        },
+        tags: {
+          type: "[ContentfulBlogTag]",
+          resolve(source) {
+            return source.tags?.nodes || []
+          },
+        },
+      },
+      // Mock Contentful VideoPost resolvers
+      ContentfulVideoPost: {
+        formattedDate: {
+          type: "String",
+          resolve(source) {
+            if (!source.publishDate) return ""
+            const dateObj = new Date(source.publishDate)
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            const month = months[dateObj.getMonth()]
+            const day = dateObj.getDate()
+            const year = dateObj.getFullYear()
+            return `${month} ${day < 10 ? "0" + day : day}, ${year}`
+          },
+        },
+        categories: {
+          type: "[ContentfulVideoCategory]",
+          resolve(source) {
+            return source.categories?.nodes || []
+          },
+        },
+        tags: {
+          type: "[ContentfulVideoTag]",
+          resolve(source) {
+            return source.tags?.nodes || []
+          },
+        },
+      },
       WpPost: {
         formattedDate: {
           type: "String",
           resolve(source) {
             if (!source.date) return ""
-
             const dateObj = new Date(source.date)
             const months = [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",
+              "January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December",
             ]
-
             const month = months[dateObj.getMonth()]
             const day = dateObj.getDate()
             const year = dateObj.getFullYear()
-
             return `${month} ${day < 10 ? "0" + day : day}, ${year}`
           },
         },
         featuredImage: {
           type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
-            // Return a mock featuredImage structure in bypass mode
             return {
               node: {
                 sourceUrl: "/static/images/demo-cover-1.jpg",
@@ -249,7 +415,6 @@ exports.createResolvers = ({ createResolvers }) => {
         categories: {
           type: "WpPostToCategoryConnection",
           resolve() {
-            // Return mock categories in bypass mode
             return {
               nodes: [
                 { id: "cat-1", name: "Music", slug: "music" },
@@ -284,7 +449,6 @@ exports.createResolvers = ({ createResolvers }) => {
         seo: {
           type: "WpSEOType",
           resolve(source) {
-            // Return sensible SEO defaults derived from the post fields
             return {
               title: source.title || "Jeldon Music",
               metaDesc: source.excerpt
@@ -307,40 +471,25 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
       },
-      // Add WpVideo resolvers
       WpVideo: {
         formattedDate: {
           type: "String",
           resolve(source) {
             if (!source.date) return ""
-
             const dateObj = new Date(source.date)
             const months = [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",
+              "January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December",
             ]
-
             const month = months[dateObj.getMonth()]
             const day = dateObj.getDate()
             const year = dateObj.getFullYear()
-
             return `${month} ${day < 10 ? "0" + day : day}, ${year}`
           },
         },
         featuredImage: {
           type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
-            // Return a mock featuredImage structure in bypass mode
             return {
               node: {
                 sourceUrl: "/static/images/demo-cover-1.jpg",
@@ -357,7 +506,6 @@ exports.createResolvers = ({ createResolvers }) => {
         videoCategories: {
           type: "WpVideoToVideoCategoryConnection",
           resolve() {
-            // Return mock categories in bypass mode
             return {
               nodes: [
                 { id: "vcat-1", name: "Tutorials", slug: "tutorials" },
@@ -383,12 +531,11 @@ exports.createResolvers = ({ createResolvers }) => {
           },
         },
       },
-      // Enhance WpBeat resolvers
+      // Minimal WpBeat resolvers
       WpBeat: {
         featuredImage: {
           type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
-            // Return a mock featuredImage structure in bypass mode
             return {
               node: {
                 sourceUrl: "/static/images/demo-cover-1.jpg",
@@ -402,56 +549,12 @@ exports.createResolvers = ({ createResolvers }) => {
             }
           },
         },
-        // Add mock acfBeats fields
-        acfBeats: {
-          type: "WpBeatAcfBeats",
-          resolve() {
-            return {
-              audioFile: {
-                localFile: {
-                  publicURL: "/static/audio/demo-track-1.mp3",
-                  url: "/static/audio/demo-track-1.mp3",
-                },
-              },
-              price: 29.99,
-              genre: "Hip-Hop",
-              bpm: 95,
-              audioUrl: "/static/audio/demo-track-1.mp3",
-              soundcloudUrl: "#",
-              keySignature: "C Minor",
-              musicalKey: "C Minor",
-            }
-          },
-        },
-        beatFields: {
-          type: "WpBeatAcfBeats",
-          resolve(source) {
-            // Simply pass through or delegate to the acfBeats resolver
-            return {
-              audioFile: {
-                localFile: {
-                  publicURL: "/static/audio/demo-track-1.mp3",
-                  url: "/static/audio/demo-track-1.mp3",
-                },
-              },
-              price: 29.99,
-              genre: "Hip-Hop",
-              bpm: 95,
-              audioUrl: "/static/audio/demo-track-1.mp3",
-              soundcloudUrl: "#",
-              keySignature: "C Minor",
-              musicalKey: "C Minor",
-              purchaseUrl: "https://example.com/buy",
-            }
-          },
-        },
       },
-      // Enhance WpMix resolvers
+      // Minimal WpMix resolvers
       WpMix: {
         featuredImage: {
           type: "WpNodeWithFeaturedImageToMediaItemConnectionEdgeType",
           resolve() {
-            // Return a mock featuredImage structure in bypass mode
             return {
               node: {
                 sourceUrl: "/static/images/demo-cover-1.jpg",
@@ -465,43 +568,12 @@ exports.createResolvers = ({ createResolvers }) => {
             }
           },
         },
-        mixFields: {
-          type: "WpMixAcfMixes",
-          resolve(source) {
-            // Only use this resolver in bypass mode
-            const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
-
-            if (!bypassWordpress && source.acfMixes) {
-              // In WordPress mode, delegate to the actual ACF field
-              return source.acfMixes
-            }
-
-            // In bypass mode or if acfMixes is missing, return mock data
-            return {
-              audioFile: {
-                localFile: {
-                  publicURL: "/static/audio/demo-track-2.mp3",
-                  url: "/static/audio/demo-track-2.mp3",
-                },
-              },
-              genre: "Hip-Hop",
-              tracklist: "1. Track One\n2. Track Two\n3. Track Three",
-              audioUrl: "/static/audio/demo-track-2.mp3",
-              soundcloudUrl: "#",
-              spotifyUrl: "https://spotify.com/track",
-              mixDuration: "45:30",
-              mixType: "DJ Mix",
-            }
-          },
-        },
       },
     }
 
-    // Merge the base resolvers with the WordPress resolvers
     const resolvers = { ...baseResolvers, ...wpResolvers }
     createResolvers(resolvers)
   } else {
-    // In WordPress mode, only use the base resolvers to avoid conflicts
     createResolvers(baseResolvers)
   }
 }
