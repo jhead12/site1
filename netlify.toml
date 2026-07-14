@@ -11,7 +11,9 @@
 [build.environment]
   # Use Node 22.x (latest patch) for longer support
   NODE_VERSION = "22"
-  BYPASS_WORDPRESS = "false"
+  # Bypass WordPress — blog.jeldonmusic.com/graphql is currently returning 404.
+  # Set to "false" once WPGraphQL + WPGatsby plugins are active on the WP site.
+  BYPASS_WORDPRESS = "true"
   NPM_FLAGS = "--prefer-offline --no-audit"
   YARN_FLAGS = "--prefer-offline --no-audit"
   NODE_OPTIONS = "--max_old_space_size=4096"
