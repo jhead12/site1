@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect } from "react"
 import { Box, Heading, Text, Flex } from "../ui"
-import { ThemeContext } from "../../contexts/ThemeContext"
 
 const InstagramFeed = ({ feedCount = 6, showLoadMore = false }) => {
   const [posts, setPosts] = useState([])
@@ -120,9 +119,7 @@ const InstagramFeed = ({ feedCount = 6, showLoadMore = false }) => {
   }
 
   const formatDate = (timestamp) => {
-    const theme = useContext(ThemeContext) || {}
-    const locale = theme.locale || "en-US"
-    return new Date(timestamp).toLocaleDateString(locale, {
+    return new Date(timestamp).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
     })

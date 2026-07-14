@@ -1,13 +1,132 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
 const { getGatsbyImageResolver } = require("gatsby-plugin-image/graphql-utils")
-const webpackConfig = require("./webpack.config")
-
-// Import webpack configuration to handle CSS chunk ordering issues
-exports.onCreateWebpackConfig = webpackConfig.onCreateWebpackConfig
 
 exports.createSchemaCustomization = async ({ actions }) => {
   const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
 
+  // Defensive GraphQL types for optional WordPress content types.
+  // These use `JSON` nodes so queries like `allWpBeat`/`allWpMix` still
+  // exist on the schema even if the WP source plugin doesn't expose them yet.
+  // This prevents build-time "Cannot query field 'allWpBeat' on type 'Query'" errors.
+  actions.createTypes(/* GraphQL */ `
+    type WpBeatConnection {
+      nodes: [WpBeat]
+    }
+    type WpMixConnection {
+      nodes: [WpMix]
+    }
+    type WpVideoConnection {
+      nodes: [WpVideo]
+    }
+    # Minimal connection type for featured image links used by templates
+    # Only define the concrete type, not the interfaces (WordPress provides those)
+    type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
+      node: WpMediaItem!
+    }
+    # Minimal WpTutorial placeholder to avoid schema errors when the
+    # remote WordPress instance does not expose the type. This mirrors
+    # the fuller definition added in BYPASS_WORDPRESS mode but keeps
+    # the schema valid in preview environments.
+    type WpTutorial implements Node {
+      id: ID!
+      title: String
+      slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      formattedDate: String
+    }
+
+    type WpTutorialAcfTutorials {
+      videoUrl: String
+      difficulty: String
+      duration: String
+      topic: String
+      software: String
+      tags: [String]
+    }
+
+    # Minimal placeholders for optional WordPress types that may be absent
+    # in preview environments. These keep the schema stable when the remote
+    # WPGraphQL doesn't expose these nodes. Fields mirror those queried in
+    # templates/components so extraction succeeds.
+    type WpBeat implements Node {
+      id: ID!
+      title: String
+      slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      formattedDate: String
+    }
+
+    type WpMix implements Node {
+      id: ID!
+      title: String
+      slug: String
+      content: String
+      date: Date
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      formattedDate: String
+    }
+
+    type WpVideo implements Node {
+      id: ID!
+      title: String
+      slug: String
+      excerpt: String
+      content: String
+      date: Date
+      formattedDate: String
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+      videoDetails: WpContentNode_Videodetails
+    }
+
+    # Video details type referenced by WpVideo — kept minimal so the
+    # schema is valid in preview/bypass environments where WPGraphQL
+    # doesn't expose the full ACF-generated type.
+    type WpContentNode_Videodetails {
+      videoViews: String
+      videoDuration: String
+      videoPublishedAt: Date
+      youtubeUrl: String
+      youtubeVideoId: String
+    }
+
+    type WpPost implements Node {
+      id: ID!
+      title: String
+      slug: String
+      excerpt: String
+      content: String
+      date: Date
+      formattedDate: String
+      featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
+    }
+
+    # Sort input types used in queries — include date so queries that sort
+    # by date compile when WP types don't expose full schema in preview.
+    # Note: do not declare custom types ending with FilterInput/SortInput —
+    # Gatsby reserves those suffixes for internal schema generation. Sorting
+    # will use whatever the source plugin exposes at runtime.
+    type WpTutorialConnection {
+      nodes: [WpTutorial]
+    }
+
+    extend type Query {
+      allWpBeat: WpBeatConnection
+      allWpMix: WpMixConnection
+      allWpVideo: WpVideoConnection
+      allWpTutorial: WpTutorialConnection
+    }
+  `)
+  // Ensure `layout` query exists in the schema in all modes so layout
+  // static queries (header/footer) work regardless of BYPASS_WORDPRESS.
+  actions.createTypes(/* GraphQL */ `
+    extend type Query {
+      layout: ContentfulLayout
+    }
+  `)
   actions.createFieldExtension({
     name: "blocktype",
     extend(options) {
@@ -103,6 +222,32 @@ exports.createSchemaCustomization = async ({ actions }) => {
     },
   })
 
+  // Fallback navItem field extension — some environments/plugins
+  // may not register a specialized `@navItem` extension. Provide
+  // a safe default so schema build doesn't fail when Contentful
+  // types reference `@navItem(from: "...")`.
+  actions.createFieldExtension({
+    name: "navItem",
+    args: {
+      from: {
+        type: "String!",
+      },
+    },
+    extend(options) {
+      return {
+        resolve(source) {
+          // Prefer the explicit source field, then some common fallbacks
+          return (
+            (options && options.from && source[options.from]) ||
+            source.href ||
+            source.url ||
+            null
+          )
+        },
+      }
+    },
+  })
+
   // abstract interfaces
   actions.createTypes(/* GraphQL */ `
     interface HomepageBlock implements Node {
@@ -178,7 +323,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface HomepageHero implements Node & HomepageBlock {
       id: ID!
       blocktype: String
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: HomepageImage
@@ -198,7 +343,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface BeatsHero implements Node & BeatsBlock {
       id: ID!
       blocktype: String
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: BeatsImage
@@ -280,6 +425,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface HomepageLogoList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
+      name: String
       text: String
       logos: [HomepageLogo]
     }
@@ -308,16 +454,12 @@ exports.createSchemaCustomization = async ({ actions }) => {
     interface HomepageTestimonialList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
-      kicker: String
-      heading: String
       content: [HomepageTestimonial]
     }
 
     interface BeatsTestimonialList implements Node & BeatsBlock {
       id: ID!
       blocktype: String
-      kicker: String
-      heading: String
       content: [BeatsTestimonial]
     }
 
@@ -355,38 +497,26 @@ exports.createSchemaCustomization = async ({ actions }) => {
       id: ID!
       value: String
       label: String
-      heading: String
     }
 
     interface BeatsStat implements Node {
       id: ID!
       value: String
       label: String
-      heading: String
     }
 
     interface HomepageStatList implements Node & HomepageBlock {
       id: ID!
       blocktype: String
-      kicker: String
       heading: String
-      text: String
-      image: HomepageImage
-      icon: HomepageImage
       content: [HomepageStat]
-      links: [HomepageLink]
     }
 
     interface BeatsStatList implements Node & BeatsBlock {
       id: ID!
       blocktype: String
-      kicker: String
       heading: String
-      text: String
-      image: BeatsImage
-      icon: BeatsImage
       content: [BeatsStat]
-      links: [BeatsLink]
     }
 
     interface HomepageProduct implements Node {
@@ -587,7 +717,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       navItemType: String @navItemType(name: "Link")
-      href: String @linkField(from: "url")
+      href: String @navItem(from: "href")
       text: String
       name: String
       description: String
@@ -621,7 +751,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       blocktype: String @blocktype
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: HomepageImage @link(from: "image___NODE")
@@ -633,7 +763,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       blocktype: String @blocktype
-      heading: String!
+      heading: String
       kicker: String
       subhead: String
       image: BeatsImage @link(from: "image___NODE")
@@ -721,6 +851,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       @dontInfer {
       id: ID!
       blocktype: String @blocktype
+      name: String
       text: String
       logos: [HomepageLogo] @link(from: "logos___NODE")
     }
@@ -1016,17 +1147,14 @@ exports.createSchemaCustomization = async ({ actions }) => {
     }
   `)
 
+  // Note: VideoDetails types are auto-generated by WPGraphQL from ACF field groups.
+  // Do not manually define them here as it causes interface/type conflicts.
+  // ACF creates: GraphQL Type "VideoDetails" with interface "VideoDetails_Fields"
+
   // Create comprehensive WordPress mock types when BYPASS_WORDPRESS is true
   if (process.env.BYPASS_WORDPRESS === "true") {
     console.log("📝 Creating WordPress mock types for BYPASS_WORDPRESS mode")
     actions.createTypes(`
-      type WpContentNode_Videodetails {
-        videoViews: String
-        videoDuration: String
-        videoPublishedAt: Date
-        youtubeUrl: String
-        youtubeVideoId: String
-      }
       
       # Core WordPress Types
       type WpMediaItem implements Node @dontInfer {
@@ -1046,7 +1174,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         formattedDate: String
         slug: String
         uri: String
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         categories: WpPostToCategoryConnection
         tags: WpPostToTagConnection
         author: WpNodeWithAuthorToUserConnectionEdge
@@ -1060,7 +1188,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         uri: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         databaseId: Int
       }
 
@@ -1071,7 +1199,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfBeats: WpBeatAcfBeats
         beatFields: WpBeatAcfBeats
         databaseId: Int
@@ -1095,7 +1223,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfMixes: WpMixAcfMixes
         mixFields: WpMixAcfMixes
         databaseId: Int
@@ -1126,7 +1254,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
         content: String
         date: Date @dateformat
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         acfTutorials: WpTutorialAcfTutorials
         databaseId: Int
       }
@@ -1149,13 +1277,16 @@ exports.createSchemaCustomization = async ({ actions }) => {
         formattedDate: String
         slug: String
         uri: String
-        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdge
+        featuredImage: WpNodeWithFeaturedImageToMediaItemConnectionEdgeType
         videoCategories: WpVideoToVideoCategoryConnection
+        videoDetails: WpContentNode_Videodetails
         databaseId: Int
       }
       
-      type WpNodeWithFeaturedImageToMediaItemConnectionEdge {
-        node: WpMediaItem
+      # Minimal connection type for featured image in BYPASS_WORDPRESS mode
+      # Don't redefine WordPress interfaces - just the concrete type
+      type WpNodeWithFeaturedImageToMediaItemConnectionEdgeType implements WpOneToOneConnectionType & WpEdgeType & WpMediaItemConnectionEdgeType {
+        node: WpMediaItem!
       }
       
       type WpPostToCategoryConnection {
@@ -1271,6 +1402,21 @@ exports.createSchemaCustomization = async ({ actions }) => {
         slug: String
       }
       
+      # Connection interfaces referenced by featuredImage edge types.
+      # In live mode these are provided by gatsby-source-wordpress; in
+      # bypass mode we declare minimal versions so the schema compiles.
+      interface WpOneToOneConnectionType {
+        node: Node
+      }
+      
+      interface WpEdgeType {
+        node: Node
+      }
+      
+      interface WpMediaItemConnectionEdgeType {
+        node: WpMediaItem
+      }
+      
       # Add connections for collection queries
       type WpPostConnection {
         nodes: [WpPost]
@@ -1312,42 +1458,6 @@ exports.createSchemaCustomization = async ({ actions }) => {
       extend type SitePage {
         slug: String
       }
-
-      # Define interfaces for navigation items
-      interface NavItem {
-        id: ID!
-        navItemType: String
-        href: String
-        text: String
-      }
-
-      interface NavItemGroup {
-        id: ID!
-        navItemType: String
-        name: String
-        navItems: [NavItem]
-      }
-
-      # Make ContentfulNavItem implement both interfaces
-      type ContentfulNavItem implements NavItem & NavItemGroup {
-        id: ID!
-        navItemType: String
-        href: String
-        text: String
-        name: String
-        navItems: [NavItem]
-        description: String
-        icon: ContentfulAsset
-      }
-
-      # Add allWpVideoCategory to Query
-      extend type Query {
-        allWpVideoCategory(filter: WpCategoryFilter): WpVideoCategoryConnection
-      }
-
-      type WpVideoCategoryConnection {
-        nodes: [WpCategory]
-      }
     `)
 
     // Add type extensions for query root fields
@@ -1387,905 +1497,3 @@ exports.createSchemaCustomization = async ({ actions }) => {
   }
 }
 
-// Add resolvers for fields that can't be handled by gatsby-transformer-sharp
-exports.createResolvers = ({ createResolvers }) => {
-  // Always add resolvers, but conditionally return real or mock data
-  const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
-
-  // Log mode for debugging
-  console.log(
-    bypassWordpress
-      ? "📝 Adding mock data resolvers for BYPASS_WORDPRESS mode"
-      : "📝 Adding essential resolvers for WordPress mode"
-  )
-
-  // Create a base resolver set that works in both modes
-  const baseResolvers = {
-    // Add field resolvers for navigation items
-    ContentfulNavItem: {
-      name: {
-        resolve: (source) => source.text || source.name || "",
-      },
-      submenu: {
-        resolve: () => [],
-      },
-    },
-    ContentfulNavItemGroup: {
-      href: {
-        resolve: () => "#",
-      },
-      text: {
-        resolve: (source) => source.name || "",
-      },
-      description: {
-        resolve: () => "",
-      },
-      submenu: {
-        resolve: (source) => source.navItems || [],
-      },
-    },
-
-    // The Query type resolvers (like allPage) work in both modes
-    Query: {
-      // allPage resolver for both bypass mode and live mode
-      allPage: {
-        type: "SitePageConnection",
-        resolve(source, args, context) {
-          if (bypassWordpress) {
-            // Return mock pages in bypass mode
-            return {
-              nodes: [
-                { id: "page-1", path: "/", slug: "home", title: "Home" },
-                { id: "page-2", path: "/about", slug: "about", title: "About" },
-                {
-                  id: "page-3",
-                  path: "/contact",
-                  slug: "contact",
-                  title: "Contact",
-                },
-              ],
-            }
-          } else {
-            // In live mode, delegate to regular SitePage resolver
-            return context.nodeModel.getAllNodes({ type: "SitePage" })
-          }
-        },
-      },
-
-      // Add layout resolver for both modes
-      layout: {
-        type: "ContentfulLayout",
-        resolve() {
-          return {
-            header: {
-              id: "header-1",
-              navItems: [
-                { id: "nav-1", navItemType: "LINK", text: "Home", url: "/" },
-                {
-                  id: "nav-2",
-                  navItemType: "LINK",
-                  text: "Blog",
-                  url: "/blog",
-                },
-                {
-                  id: "nav-3",
-                  navItemType: "LINK",
-                  text: "Music",
-                  url: "/music",
-                },
-                {
-                  id: "nav-4",
-                  navItemType: "LINK",
-                  text: "Videos",
-                  url: "/videos",
-                },
-                {
-                  id: "nav-5",
-                  navItemType: "LINK",
-                  text: "Contact",
-                  url: "/contact",
-                },
-              ],
-            },
-            footer: {
-              id: "footer-1",
-              links: [
-                {
-                  id: "social-1",
-                  navItemType: "SOCIAL",
-                  text: "YouTube",
-                  url: "https://youtube.com",
-                  username: "jeldonmusic",
-                  service: "youtube",
-                },
-                {
-                  id: "social-2",
-                  navItemType: "SOCIAL",
-                  text: "Instagram",
-                  url: "https://instagram.com",
-                  username: "jeldonmusic",
-                  service: "instagram",
-                },
-              ],
-            },
-          }
-        },
-      },
-    },
-
-    // File resolvers work in both modes
-    File: {
-      publicURL: {
-        resolve(source) {
-          return source.publicURL || source.url || "/static/fallback-file.pdf"
-        },
-      },
-    },
-
-    // ContentfulAsset works in both modes
-    ContentfulAsset: {
-      id: {
-        type: "ID!",
-        resolve: (source) =>
-          source.id ||
-          `mock-contentful-asset-${Math.random().toString(36).substring(2, 9)}`,
-      },
-      alt: {
-        type: "String",
-        resolve: (source) => source.alt || source.title || "Asset image",
-      },
-      gatsbyImageData: {
-        type: "GatsbyImageData",
-        resolve: (source) => {
-          // Return mock GatsbyImageData structure if actual data is not available
-          return (
-            source.gatsbyImageData || {
-              layout: "constrained",
-              width: 800,
-              height: 600,
-              images: {
-                sources: [],
-                fallback: {
-                  src: source.url || `/static/fallback-image.jpg`,
-                  srcSet: "",
-                  sizes: "",
-                },
-              },
-            }
-          )
-        },
-      },
-      url: {
-        type: "String",
-        resolve: (source) =>
-          source.url || source.file?.url || `/static/fallback-image.jpg`,
-      },
-    },
-  }
-
-  // Only add WordPress-specific resolvers in bypass mode
-  if (bypassWordpress) {
-    // Add all the WordPress mock resolvers
-    const wpResolvers = {
-      WpPost: {
-        formattedDate: {
-          type: "String",
-          resolve(source) {
-            if (!source.date) return ""
-
-            const dateObj = new Date(source.date)
-            const months = [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",
-            ]
-
-            const month = months[dateObj.getMonth()]
-            const day = dateObj.getDate()
-            const year = dateObj.getFullYear()
-
-            return `${month} ${day < 10 ? "0" + day : day}, ${year}`
-          },
-        },
-        featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
-          resolve() {
-            // Return a mock featuredImage structure in bypass mode
-            return {
-              node: {
-                sourceUrl: "/static/images/demo-cover-1.jpg",
-                altText: "Demo featured image",
-                localFile: {
-                  childImageSharp: {
-                    gatsbyImageData: {},
-                  },
-                },
-              },
-            }
-          },
-        },
-        categories: {
-          type: "WpPostToCategoryConnection",
-          resolve() {
-            // Return mock categories in bypass mode
-            return {
-              nodes: [
-                { id: "cat-1", name: "Music", slug: "music" },
-                { id: "cat-2", name: "Production", slug: "production" },
-              ],
-            }
-          },
-        },
-        tags: {
-          type: "WpPostToTagConnection",
-          resolve() {
-            return {
-              nodes: [
-                { id: "tag-1", name: "Tutorial", slug: "tutorial" },
-                { id: "tag-2", name: "Tips", slug: "tips" },
-              ],
-            }
-          },
-        },
-        author: {
-          type: "WpPostToUserConnectionEdge",
-          resolve() {
-            return {
-              node: {
-                id: "author-1",
-                name: "Jeldon",
-                slug: "jeldon",
-              },
-            }
-          },
-        },
-      },
-      // Add WpVideo resolvers
-      WpVideo: {
-        formattedDate: {
-          type: "String",
-          resolve(source) {
-            if (!source.date) return ""
-
-            const dateObj = new Date(source.date)
-            const months = [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",
-            ]
-
-            const month = months[dateObj.getMonth()]
-            const day = dateObj.getDate()
-            const year = dateObj.getFullYear()
-
-            return `${month} ${day < 10 ? "0" + day : day}, ${year}`
-          },
-        },
-        featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
-          resolve() {
-            // Return a mock featuredImage structure in bypass mode
-            return {
-              node: {
-                sourceUrl: "/static/images/demo-cover-1.jpg",
-                altText: "Demo video thumbnail",
-                localFile: {
-                  childImageSharp: {
-                    gatsbyImageData: {},
-                  },
-                },
-              },
-            }
-          },
-        },
-        videoCategories: {
-          type: "WpVideoToVideoCategoryConnection",
-          resolve() {
-            // Return mock categories in bypass mode
-            return {
-              nodes: [
-                { id: "vcat-1", name: "Tutorials", slug: "tutorials" },
-                {
-                  id: "vcat-2",
-                  name: "Behind the Scenes",
-                  slug: "behind-the-scenes",
-                },
-              ],
-            }
-          },
-        },
-        videoDetails: {
-          type: "WpContentNode_Videodetails",
-          resolve() {
-            return {
-              videoViews: "12,345",
-              videoDuration: "10:30",
-              videoPublishedAt: new Date().toISOString(),
-              youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-              youtubeVideoId: "dQw4w9WgXcQ",
-            }
-          },
-        },
-      },
-      // Enhance WpBeat resolvers
-      WpBeat: {
-        featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
-          resolve() {
-            // Return a mock featuredImage structure in bypass mode
-            return {
-              node: {
-                sourceUrl: "/static/images/demo-cover-1.jpg",
-                altText: "Demo beat cover",
-                localFile: {
-                  childImageSharp: {
-                    gatsbyImageData: {},
-                  },
-                },
-              },
-            }
-          },
-        },
-        // Add mock acfBeats fields
-        acfBeats: {
-          type: "WpBeatAcfBeats",
-          resolve() {
-            return {
-              audioFile: {
-                localFile: {
-                  publicURL: "/static/audio/demo-track-1.mp3",
-                  url: "/static/audio/demo-track-1.mp3",
-                },
-              },
-              price: 29.99,
-              genre: "Hip-Hop",
-              bpm: 95,
-              audioUrl: "/static/audio/demo-track-1.mp3",
-              soundcloudUrl: "#",
-              keySignature: "C Minor",
-              musicalKey: "C Minor",
-            }
-          },
-        },
-        beatFields: {
-          type: "WpBeatAcfBeats",
-          resolve(source) {
-            // Simply pass through or delegate to the acfBeats resolver
-            return {
-              audioFile: {
-                localFile: {
-                  publicURL: "/static/audio/demo-track-1.mp3",
-                  url: "/static/audio/demo-track-1.mp3",
-                },
-              },
-              price: 29.99,
-              genre: "Hip-Hop",
-              bpm: 95,
-              audioUrl: "/static/audio/demo-track-1.mp3",
-              soundcloudUrl: "#",
-              keySignature: "C Minor",
-              musicalKey: "C Minor",
-              purchaseUrl: "https://example.com/buy",
-            }
-          },
-        },
-      },
-      // Enhance WpMix resolvers
-      WpMix: {
-        featuredImage: {
-          type: "WpNodeWithFeaturedImageToMediaItemConnectionEdge",
-          resolve() {
-            // Return a mock featuredImage structure in bypass mode
-            return {
-              node: {
-                sourceUrl: "/static/images/demo-cover-1.jpg",
-                altText: "Demo mix cover",
-                localFile: {
-                  childImageSharp: {
-                    gatsbyImageData: {},
-                  },
-                },
-              },
-            }
-          },
-        },
-        mixFields: {
-          type: "WpMixAcfMixes",
-          resolve(source) {
-            // Only use this resolver in bypass mode
-            const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
-
-            if (!bypassWordpress && source.acfMixes) {
-              // In WordPress mode, delegate to the actual ACF field
-              return source.acfMixes
-            }
-
-            // In bypass mode or if acfMixes is missing, return mock data
-            return {
-              audioFile: {
-                localFile: {
-                  publicURL: "/static/audio/demo-track-2.mp3",
-                  url: "/static/audio/demo-track-2.mp3",
-                },
-              },
-              genre: "Hip-Hop",
-              tracklist: "1. Track One\n2. Track Two\n3. Track Three",
-              audioUrl: "/static/audio/demo-track-2.mp3",
-              soundcloudUrl: "#",
-              spotifyUrl: "https://spotify.com/track",
-              mixDuration: "45:30",
-              mixType: "DJ Mix",
-            }
-          },
-        },
-      },
-    }
-
-    // Merge the base resolvers with the WordPress resolvers
-    const resolvers = { ...baseResolvers, ...wpResolvers }
-    createResolvers(resolvers)
-  } else {
-    // In WordPress mode, only use the base resolvers to avoid conflicts
-    createResolvers(baseResolvers)
-  }
-}
-
-exports.createPages = async ({ graphql, actions }) => {
-  const { createPage, createSlice } = actions
-
-  // Skip WordPress queries if BYPASS_WORDPRESS is true
-  if (process.env.BYPASS_WORDPRESS === "true") {
-    console.log(
-      "WordPress data fetch bypassed by BYPASS_WORDPRESS environment variable"
-    )
-
-    // Create slices
-    createSlice({
-      id: "header",
-      component: require.resolve("./src/components/header.js"),
-    })
-
-    createSlice({
-      id: "footer",
-      component: require.resolve("./src/components/footer.js"),
-    })
-
-    return
-  }
-
-  // Create WordPress pages
-  let result
-  try {
-    result = await graphql(`
-      {
-        allWpPage {
-          nodes {
-            id
-            slug
-            title
-            content
-          }
-        }
-        allWpPost {
-          nodes {
-            id
-            slug
-            title
-          }
-        }
-        allWpBeat {
-          nodes {
-            id
-            slug
-            title
-          }
-        }
-        allWpTutorial {
-          nodes {
-            id
-            slug
-            title
-          }
-        }
-        allWpMix {
-          nodes {
-            id
-            slug
-            title
-          }
-        }
-        allWpVideo {
-          nodes {
-            id
-            slug
-            title
-          }
-        }
-      }
-    `)
-
-    if (result.errors) {
-      console.error("GraphQL errors:", result.errors)
-      console.warn("Continuing build despite GraphQL errors")
-    }
-  } catch (error) {
-    console.error("Error fetching WordPress data:", error)
-    console.warn("Continuing build despite fetch error")
-    // Create empty result object to allow the build to continue
-    result = { data: {} }
-  }
-
-  // Safely access data with fallbacks
-  const pages = result.data?.allWpPage?.nodes || []
-  const posts = result.data?.allWpPost?.nodes || []
-  const beats = result.data?.allWpBeat?.nodes || []
-  const tutorials = result.data?.allWpTutorial?.nodes || []
-  const mixes = result.data?.allWpMix?.nodes || []
-  const videos = result.data?.allWpVideo?.nodes || []
-
-  // Debug logging
-  console.log(`Creating ${pages.length} WordPress pages`)
-  console.log(`Creating ${posts.length} blog posts`)
-  console.log(`Creating ${beats.length} beats`)
-  console.log(`Creating ${tutorials.length} tutorials`)
-  console.log(`Creating ${mixes.length} mixes`)
-  console.log(`Creating ${videos.length} videos`)
-
-  // Check for WordPress connection
-  if (posts.length === 0) {
-    console.warn(
-      "⚠️  No WordPress posts found. Check WordPress connection at:",
-      process.env.WPGRAPHQL_URL
-    )
-  }
-
-  // Create WordPress pages
-  pages.forEach((page) => {
-    createPage({
-      path: `/${page.slug}/`,
-      component: require.resolve("./src/templates/wp-page.js"),
-      context: {
-        id: page.id,
-        slug: page.slug,
-      },
-    })
-  })
-
-  // Create Blog post pages with next/previous navigation
-  posts.forEach((post, index) => {
-    console.log(`Creating blog post page: /blog/${post.slug}/`)
-    const previousPost = index === 0 ? null : posts[index - 1]
-    const nextPost = index === posts.length - 1 ? null : posts[index + 1]
-
-    createPage({
-      path: `/blog/${post.slug}/`,
-      component: require.resolve("./src/templates/blog-post.js"),
-      context: {
-        id: post.id,
-        slug: post.slug,
-        previousPost: previousPost
-          ? {
-              slug: previousPost.slug,
-              title: previousPost.title,
-            }
-          : null,
-        nextPost: nextPost
-          ? {
-              slug: nextPost.slug,
-              title: nextPost.title,
-            }
-          : null,
-      },
-    })
-  })
-
-  // Create Beat pages
-  beats.forEach((beat) => {
-    createPage({
-      path: `/beats/${beat.slug}/`,
-      component: require.resolve("./src/templates/beat.tsx"),
-      context: {
-        id: beat.id,
-        slug: beat.slug,
-      },
-    })
-  })
-
-  // Create Tutorial pages
-  tutorials.forEach((tutorial) => {
-    createPage({
-      path: `/tutorials/${tutorial.slug}/`,
-      component: require.resolve("./src/templates/tutorial.tsx"),
-      context: {
-        id: tutorial.id,
-        slug: tutorial.slug,
-      },
-    })
-  })
-
-  // Create Mix pages
-  mixes.forEach((mix) => {
-    createPage({
-      path: `/mixes/${mix.slug}/`,
-      component: require.resolve("./src/templates/mix.tsx"),
-      context: {
-        id: mix.id,
-        slug: mix.slug,
-      },
-    })
-  })
-
-  // Create Video pages with next/previous navigation
-  videos.forEach((video, index) => {
-    console.log(`Creating video page: /videos/${video.slug}/`)
-    const previousVideo = index === 0 ? null : videos[index - 1]
-    const nextVideo = index === videos.length - 1 ? null : videos[index + 1]
-
-    createPage({
-      path: `/videos/${video.slug}/`,
-      component: require.resolve("./src/templates/video.js"),
-      context: {
-        id: video.id,
-        slug: video.slug,
-        previousVideo: previousVideo
-          ? {
-              slug: previousVideo.slug,
-              title: previousVideo.title,
-            }
-          : null,
-        nextVideo: nextVideo
-          ? {
-              slug: nextVideo.slug,
-              title: nextVideo.title,
-            }
-          : null,
-      },
-    })
-  })
-
-  // Create slices
-  createSlice({
-    id: "header",
-    component: require.resolve("./src/components/header.js"),
-  })
-
-  createSlice({
-    id: "footer",
-    component: require.resolve("./src/components/footer.js"),
-  })
-}
-
-// Force client-only routes for development in bypass mode
-exports.onCreatePage = ({ page, actions }) => {
-  const { createPage, deletePage } = actions
-
-  // Only apply these changes in bypass mode
-  if (process.env.BYPASS_WORDPRESS === "true") {
-    // Skip if the page is already marked as client-only
-    if (
-      page.mode === "SSR" &&
-      page.path.match(/^\/(music|videos|blog|beats|mixes)/)
-    ) {
-      deletePage(page)
-      createPage({
-        ...page,
-        mode: "SSG", // Switch to static site generation mode
-      })
-    }
-  }
-}
-
-// Add slug field to SitePage nodes
-exports.onCreateNode = ({ node, actions }) => {
-  const { createNodeField } = actions
-
-  // Only process SitePage nodes
-  if (node.internal.type === "SitePage") {
-    // Extract slug from path (remove leading and trailing slashes)
-    const slug = node.path.replace(/^\/|\/$/g, "")
-
-    // Add slug as a field on the node
-    createNodeField({
-      node,
-      name: "slug",
-      value: slug || "home", // Default to 'home' for the root path
-    })
-  }
-}
-
-// Create mock data files for static queries in bypass mode
-exports.onPostBuild = ({ store }) => {
-  const { program } = store.getState()
-  const fs = require("fs")
-  const path = require("path")
-
-  if (process.env.BYPASS_WORDPRESS === "true") {
-    const publicPath = path.join(program.directory, "public")
-    const dataPath = path.join(publicPath, "page-data", "sq", "d")
-
-    // Ensure the directory exists
-    if (!fs.existsSync(dataPath)) {
-      fs.mkdirSync(dataPath, { recursive: true })
-    }
-
-    // Mock data for layout query used in header (ID: 860043902)
-    const headerData = {
-      data: {
-        layout: {
-          header: {
-            id: "header-mock",
-            navItems: [
-              { id: "home", navItemType: "LINK", href: "/", text: "Home" },
-              {
-                id: "music",
-                navItemType: "LINK",
-                href: "/music",
-                text: "Music",
-              },
-              {
-                id: "videos",
-                navItemType: "LINK",
-                href: "/videos",
-                text: "Videos",
-              },
-              { id: "blog", navItemType: "LINK", href: "/blog", text: "Blog" },
-              {
-                id: "contact",
-                navItemType: "LINK",
-                href: "/contact",
-                text: "Contact",
-              },
-            ],
-          },
-        },
-      },
-    }
-
-    // Mock data for layout query used in footer
-    const footerData = {
-      data: {
-        layout: {
-          footer: {
-            id: "footer-mock",
-            copyright: "© 2025 J. Eldon Music",
-            links: [
-              { id: "home", href: "/", text: "Home" },
-              { id: "about", href: "/about", text: "About" },
-              { id: "contact", href: "/contact", text: "Contact" },
-            ],
-            meta: [
-              { id: "privacy", href: "/privacy", text: "Privacy Policy" },
-              { id: "terms", href: "/terms", text: "Terms of Service" },
-            ],
-            socialLinks: [
-              { id: "yt", service: "YOUTUBE", username: "jeldonmusic" },
-              { id: "ig", service: "INSTAGRAM", username: "jeldonmusic" },
-              { id: "tw", service: "TWITTER", username: "jeldonmusic" },
-              { id: "sc", service: "SOUNDCLOUD", username: "jeldonmusic" },
-            ],
-          },
-        },
-      },
-    }
-
-    // Hero banner data
-    const { getDemoBlogPosts } = require("./src/utils/fallback-data")
-    const heroBannerData = {
-      data: {
-        allWpPost: { nodes: getDemoBlogPosts(5) },
-        allWpVideo: {
-          nodes: [
-            {
-              id: "video-1",
-              title: "Beat Making Tutorial",
-              excerpt:
-                "<p>Learn how to create beats with industry standard tools</p>",
-              slug: "beat-making-tutorial",
-              date: "2025-06-10",
-              videoDetails: {
-                youtubeVideoId: "dQw4w9WgXcQ",
-                videoViews: "12345",
-              },
-              featuredImage: {
-                node: {
-                  altText: "Beat Making",
-                  localFile: {
-                    childImageSharp: {
-                      gatsbyImageData: {},
-                    },
-                  },
-                },
-              },
-            },
-            {
-              id: "video-2",
-              title: "Mixing Vocals",
-              excerpt: "<p>Professional vocal mixing techniques</p>",
-              slug: "mixing-vocals",
-              date: "2025-05-20",
-              videoDetails: {
-                youtubeVideoId: "dQw4w9WgXcQ",
-                videoViews: "5432",
-              },
-              featuredImage: {
-                node: {
-                  altText: "Vocal Mixing",
-                  localFile: {
-                    childImageSharp: {
-                      gatsbyImageData: {},
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        allWpBeat: { nodes: [] },
-        allWpMix: { nodes: [] },
-        allContentfulHomepageHero: {
-          nodes: [
-            {
-              heading: "J. Eldon Music",
-              subheading: "Music Producer | Artist | Engineer",
-              image: {
-                gatsbyImageData: {},
-                alt: "J. Eldon Music",
-              },
-              links: [
-                { href: "/music", text: "Explore Music" },
-                { href: "/videos", text: "Watch Videos" },
-              ],
-            },
-          ],
-        },
-      },
-    }
-
-    // Mock data for related posts
-    const relatedPostsData = {
-      data: {
-        allWpPost: {
-          nodes: getDemoBlogPosts(10), // Use the same helper function to get mock blog posts
-        },
-      },
-    }
-
-    // Write the mock data files
-    fs.writeFileSync(
-      path.join(dataPath, "860043902.json"),
-      JSON.stringify(headerData)
-    )
-    fs.writeFileSync(
-      path.join(dataPath, "3235098977.json"),
-      JSON.stringify(footerData)
-    )
-    fs.writeFileSync(
-      path.join(dataPath, "3265857146.json"),
-      JSON.stringify(heroBannerData)
-    )
-    fs.writeFileSync(
-      path.join(dataPath, "2141841991.json"),
-      JSON.stringify(relatedPostsData)
-    )
-
-    console.log("📝 Created mock static query data files for bypass mode")
-  }
-}

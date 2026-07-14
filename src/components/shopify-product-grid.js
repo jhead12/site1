@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useContext } from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import {
@@ -15,13 +14,11 @@ import {
   IconLink,
 } from "./ui"
 import * as styles from "./shopify-product-grid.css"
-import { ThemeContext } from "../contexts/ThemeContext"
 import { formatPrice } from "../utils/shopify-helpers"
 
 function ShopifyProductCard(props) {
   const { product } = props
-  const theme = useContext(ThemeContext) || {}
-  const locale = theme.locale || "en-US"
+  const locale = "en-US"
 
   // Safety check for product data
   if (!product) return null

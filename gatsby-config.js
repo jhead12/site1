@@ -1,10 +1,14 @@
 require("dotenv").config()
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.jeldonmusic.com",
     title: "Jeldon Music| Beats | Tutorials | Mix",
     author: `j-eldon`,
-    description: "beats, tutorials",
+    description:
+      "Jeldon Music — original beats, production tutorials, mixes, and videos. Explore instrumentals for lease, in-depth tutorials, and live DJ mixes from producer and audio engineer J. Eldon.",
   },
   plugins: [
     {
@@ -121,37 +125,57 @@ module.exports = {
         icon: "src/favicon.png",
       },
     },
-    {
-      resolve: `gatsby-plugin-google-gtag`,
-      options: {
-        trackingIds: [process.env.GATSBY_GA_TRACKING_ID],
-        pluginConfig: {
-          head: true,
-          respectDNT: true,
-          exclude: ["/preview/**", "/do-not-track/me/too/"],
-        },
-      },
-    },
-    {
-      resolve: `gatsby-plugin-gdpr-cookies`,
-      options: {
-        googleAnalytics: {
-          trackingId: process.env.GATSBY_GA_TRACKING_ID,
-          cookieName: 'gatsby-gdpr-google-analytics',
-          anonymize: true,
-          allowAdFeatures: false
-        },
-        googleTagManager: {
-          trackingId: process.env.GATSBY_GA_TAG_MANAGER_TRACKING_ID,
-          cookieName: 'gatsby-gdpr-google-tagmanager',
-          dataLayerName: 'dataLayer',
-        },
-        facebookPixel: {
-          pixelId: process.env.GATSBY_FACEBOOK_PIXEL_ID,
-          cookieName: 'gatsby-gdpr-facebook-pixel',
-        },
-        environments: ['production', 'development']
-      },
-    },
+    // Google gtag — only included if a tracking ID is configured
+    ...(process.env.GATSBY_GA_TRACKING_ID
+      ? [
+          {
+            resolve: `gatsby-plugin-google-gtag`,
+            options: {
+              trackingIds: [process.env.GATSBY_GA_TRACKING_ID],
+              pluginConfig: {
+                head: true,
+                respectDNT: true,
+                exclude: ["/preview/**", "/do-not-track/me/too/"],
+              },
+            },
+          },
+        ]
+      : []),
+    // GDPR cookies — only included if at least one tracking ID/pixel is configured
+    ...(process.env.GATSBY_GA_TRACKING_ID ||
+    process.env.GATSBY_GA_TAG_MANAGER_TRACKING_ID ||
+    process.env.GATSBY_FACEBOOK_PIXEL_ID
+      ? [
+          {
+            resolve: `gatsby-plugin-gdpr-cookies`,
+            options: {
+              googleAnalytics: {
+                trackingId: process.env.GATSBY_GA_TRACKING_ID,
+                cookieName: "gatsby-gdpr-google-analytics",
+                anonymize: true,
+                allowAdFeatures: false,
+              },
+              googleTagManager: {
+                trackingId: process.env.GATSBY_GA_TAG_MANAGER_TRACKING_ID,
+                cookieName: "gatsby-gdpr-google-tagmanager",
+                dataLayerName: "dataLayer",
+              },
+              facebookPixel: {
+                pixelId: process.env.GATSBY_FACEBOOK_PIXEL_ID,
+                cookieName: "gatsby-gdpr-facebook-pixel",
+              },
+              tikTokPixel: {
+                pixelId: process.env.GATSBY_GA_TIKTOK_PIXEL_ID,
+                cookieName: "gatsby-gdpr-tiktok-pixel",
+              },
+              linkedin: {
+                trackingId: process.env.GATSBY_LINKEDIN_TRACKING_ID,
+                cookieName: "gatsby-gdpr-linked-in",
+              },
+              environments: ["production", "development"],
+            },
+          },
+        ]
+      : []),
   ],
 }
