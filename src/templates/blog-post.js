@@ -180,8 +180,7 @@ export const query = graphql`
       categories {
         id
         name
-          slug
-        }
+        slug
       }
       tags {
         id
