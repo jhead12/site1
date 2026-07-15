@@ -124,6 +124,28 @@ const VideoPostTemplate = ({ data: { post } }) => {
             )}
           </Box>
 
+          {/* Watch on YouTube (external, always works even if embed is blocked) */}
+          {post.youtubeVideoId && (
+            <Box marginY={3} style={{ textAlign: "center" }}>
+              <a
+                href={`https://www.youtube.com/watch?v=${post.youtubeVideoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-block",
+                  padding: "0.6rem 1.4rem",
+                  backgroundColor: "#ff0000",
+                  color: "#fff",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                }}
+              >
+                Watch on YouTube ↗
+              </a>
+            </Box>
+          )}
+
           {/* Video info bar */}
           <Box
             style={{
