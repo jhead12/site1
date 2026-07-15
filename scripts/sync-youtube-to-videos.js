@@ -121,10 +121,16 @@ function richText(description, videoUrl, title) {
     content: [
       { nodeType: "text", value: "Watch on ", marks: [], data: {} },
       {
-        nodeType: "text",
-        value: "YouTube",
-        marks: [{ type: "underline", object: "mark" }],
-        data: {},
+        nodeType: "hyperlink",
+        data: { uri: videoUrl },
+        content: [
+          {
+            nodeType: "text",
+            value: "YouTube",
+            marks: [{ type: "underline", object: "mark" }],
+            data: {},
+          },
+        ],
       },
       { nodeType: "text", value: " →", marks: [], data: {} },
     ],
