@@ -156,7 +156,7 @@ After creating the content types, verify they exist:
 ```bash
 # Check if content types are available
 curl -s "https://cdn.contentful.com/spaces/esrzm688xldd/environments/master/content_types" \
-  -H "Authorization: Bearer 8SjzhspjJ_yogjktpLrJAeTmKomvxxbsUpKK488XP70" \
+  -H "Authorization: Bearer XXX" \
   | jq -r '.items[].sys.id'
 ```
 
