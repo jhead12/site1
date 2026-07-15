@@ -1,0 +1,101 @@
+# Sync YouTube uploads → Contentful Blog Posts on a schedule.
+#
+# Runs scripts/sync-youtube-to-contentful.js (idempotent — upserts by
+# youtubeVideoId). Sibling to sync-youtube-videos.yml; both share the same
+# repository secrets (same YouTube channel + Contentful space). Scheduled
+# 20 minutes after the video sync so the two never overlap.
+#
+# Required GitHub secrets:
+#   YOUTUBE_API_KEY            Google API key (YouTube Data API v3 enabled)
+#   YOUTUBE_CHANNEL_ID          e.g. UCxxxxxxxxxxxxxxxxxxxxxxxxx
+#   CONTENTFUL_SPACE_ID
+#   CONTENTFUL_MANAGEMENT_TOKEN
+#   NETLIFY_BUILD_HOOK_URL     optional — set to enable auto-rebuild on change
+#
+# Optional GitHub variables (Settings → Secrets and variables → Actions → Variables):
+#   CONTENTFUL_ENV             default "master"
+#   YOUTUBE_SYNC_LIMIT         default "10" (max 50)
+#   YOUTUBE_AUTHOR             default "Jeldon"
+#   YOUTUBE_CATEGORY_SLUG      links each post to this blogCategory (must exist)
+#   YOUTUBE_SKIP_IMAGE         "true" to skip thumbnail upload (faster)
+#
+# Trigger manually any time from the Actions tab ("Run workflow"), with an
+# optional dry-run toggle.
+
+name: Sync YouTube → Contentful Blog
+
+on:
+  schedule:
+    # 08:37 UTC daily — 20 min after the video sync so they don't collide.
+    - cron: "37 8 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (preview, no writes to Contentful)"
+        required: false
+        type: boolean
+        default: false
+
+# Never run two blog syncs concurrently.
+concurrency:
+  group: youtube-blog-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Sync YouTube → Contentful Blog Posts
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_MANAGEMENT_TOKEN: ${{ secrets.CONTENTFUL_MANAGEMENT_TOKEN }}
+          CONTENTFUL_ENV: ${{ vars.CONTENTFUL_ENV }}
+          YOUTUBE_SYNC_LIMIT: ${{ vars.YOUTUBE_SYNC_LIMIT }}
+          YOUTUBE_AUTHOR: ${{ vars.YOUTUBE_AUTHOR }}
+          # Note: resolves to a blogCategory here (the blog script queries
+          # content_type=blogCategory), distinct from the video sync's category.
+          YOUTUBE_CATEGORY_SLUG: ${{ vars.YOUTUBE_BLOG_CATEGORY_SLUG }}
+          YOUTUBE_SKIP_IMAGE: ${{ vars.YOUTUBE_SKIP_IMAGE }}
+          # Pass --dry-run through the shell so an empty value adds no arg.
+          DRY_RUN_FLAG: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          echo "::group::Sync output"
+          node ./scripts/sync-youtube-to-contentful.js $DRY_RUN_FLAG 2>&1 | tee /tmp/sync.log
+          echo "::endgroup::"
+
+      - name: Trigger Netlify rebuild (only if entries changed)
+        if: ${{ github.event.inputs.dry_run != 'true' && secrets.NETLIFY_BUILD_HOOK_URL != '' }}
+        env:
+          NETLIFY_BUILD_HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
+        run: |
+          # The script prints: "Sync complete: N created, M updated, K failed."
+          line=$(grep 'Sync complete:' /tmp/sync.log | tail -1)
+          created=$(printf '%s' "$line" | grep -oE '[0-9]+ created'   | grep -oE '^[0-9]+')
+          updated=$(printf '%s' "$line" | grep -oE '[0-9]+ updated'   | grep -oE '^[0-9]+')
+          created=${created:-0}
+          updated=${updated:-0}
+          echo "created=$created updated=$updated"
+          if [ "$created" -gt 0 ] || [ "$updated" -gt 0 ]; then
+            echo "Changes detected — triggering Netlify build hook."
+            curl -sS -X POST "$NETLIFY_BUILD_HOOK_URL" -o /dev/null -w "build hook HTTP %{http_code}\n"
+          else
+            echo "No created/updated entries — skipping rebuild."
+          fi

@@ -29,7 +29,18 @@
 .hero-banner-image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: center;
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1), filter 0.8s ease;
+}
+
+/* Ensure the inner <img> inside gatsby-plugin-image's wrapper also covers
+   so images crop-to-fill instead of stretching (works for portrait sources). */
+.hero-banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero-banner-link {
