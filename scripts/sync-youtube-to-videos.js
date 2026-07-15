@@ -12,7 +12,7 @@
  *   CONTENTFUL_MANAGEMENT_TOKEN
  * Optional env:
  *   CONTENTFUL_ENV              default "master"
- *   YOUTUBE_SYNC_LIMIT          how many recent uploads to pull (default 10, max 50)
+ *   YOUTUBE_SYNC_LIMIT          how many recent uploads to pull (default 10; paginated, no hard cap)
  *   YOUTUBE_AUTHOR              author string written to each post (default "Jeldon")
  *   YOUTUBE_CATEGORY_SLUG       if set, links each post to this videoCategory (must exist)
  *   YOUTUBE_SKIP_IMAGE          "true" to skip thumbnail asset upload (faster)
@@ -32,7 +32,9 @@ const ENV = process.env.CONTENTFUL_ENV || "master"
 const TOKEN = process.env.CONTENTFUL_MANAGEMENT_TOKEN
 const YT_KEY = process.env.YOUTUBE_API_KEY
 const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID
-const LIMIT = Math.min(Number(process.env.YOUTUBE_SYNC_LIMIT) || 10, 50)
+// How many of the most recent uploads to sync. Paginated (50/page), so this
+// can exceed 50 to backfill a larger channel history.
+const LIMIT = Number(process.env.YOUTUBE_SYNC_LIMIT) || 10
 const AUTHOR = process.env.YOUTUBE_AUTHOR || "Jeldon"
 const CATEGORY_SLUG = process.env.YOUTUBE_CATEGORY_SLUG || ""
 const SKIP_IMAGE = process.env.YOUTUBE_SKIP_IMAGE === "true"
@@ -264,29 +266,51 @@ async function fetchUploads() {
   const uploadsPlaylist = chan.items?.[0]?.contentDetails?.relatedPlaylists?.uploads
   if (!uploadsPlaylist) throw new Error("Could not resolve channel uploads playlist — check YOUTUBE_CHANNEL_ID")
 
-  // First get playlist items to get video IDs
-  const itemsRes = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${uploadsPlaylist}&maxResults=${LIMIT}&key=${YT_KEY}`
-  )
-  if (!itemsRes.ok) throw new Error(`YouTube playlistItems API failed (${itemsRes.status}): ${await itemsRes.text()}`)
-  const items = await itemsRes.json()
+  // Page through the uploads playlist (newest-first) until we have LIMIT
+  // items or run out of pages. The API caps maxResults at 50 per page, so
+  // LIMIT > 50 is satisfied across multiple pages.
+  const allItems = []
+  let pageToken = ""
+  let pages = 0
+  do {
+    const remaining = LIMIT - allItems.length
+    if (remaining <= 0) break
+    const pageSize = Math.min(50, remaining)
+    const pageUrl =
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails` +
+      `&playlistId=${uploadsPlaylist}&maxResults=${pageSize}&key=${YT_KEY}` +
+      (pageToken ? `&pageToken=${pageToken}` : "")
+    const itemsRes = await fetch(pageUrl)
+    if (!itemsRes.ok) throw new Error(`YouTube playlistItems API failed (${itemsRes.status}): ${await itemsRes.text()}`)
+    const items = await itemsRes.json()
+    allItems.push(...items.items)
+    pageToken = items.nextPageToken || ""
+  } while (pageToken && allItems.length < LIMIT && ++pages < 50) // 50 pages ≈ 2500 items safety cap
 
-  // Get video details including duration from videos endpoint
-  const videoIds = items.items.map(item => item.contentDetails.videoId).join(',')
-  const videosRes = await fetch(
-    `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${YT_KEY}`
-  )
-  if (!videosRes.ok) throw new Error(`YouTube videos API failed (${videosRes.status}): ${await videosRes.text()}`)
-  const videos = await videosRes.json()
+  // Fetch video details (duration) in chunks of 50 (videos endpoint limit).
+  const videoDetailsMap = new Map()
+  for (let i = 0; i < allItems.length; i += 50) {
+    const chunk = allItems
+      .slice(i, i + 50)
+      .map((item) => item.contentDetails.videoId)
+      .filter(Boolean)
+      .join(",")
+    if (!chunk) continue
+    const videosRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${chunk}&key=${YT_KEY}`
+    )
+    if (!videosRes.ok) throw new Error(`YouTube videos API failed (${videosRes.status}): ${await videosRes.text()}`)
+    const videos = await videosRes.json()
+    videos.items.forEach((v) => videoDetailsMap.set(v.id, v.contentDetails))
+  }
 
   // Merge duration from videos API into playlist items
-  const videoDetailsMap = new Map(videos.items.map(v => [v.id, v.contentDetails]))
-  return items.items.map(item => ({
+  return allItems.map((item) => ({
     ...item,
     contentDetails: {
       ...item.contentDetails,
       duration: videoDetailsMap.get(item.contentDetails.videoId)?.duration || null,
-    }
+    },
   }))
 }
 
@@ -309,6 +333,12 @@ async function upsertVideo(video, existing, categoryEntry) {
   // Extract duration from video (ISO 8601 format from YouTube API, e.g., "PT3M45S")
   const isoDuration = video.contentDetails?.duration
   const duration = isoDuration ? parseYouTubeDuration(isoDuration) : null
+
+  // Bail before any writes (including thumbnail uploads) in dry-run mode.
+  if (DRY_RUN) {
+    console.log(`   [dry-run] ${match ? "would update" : "would create"} "${title}" → /videos/${slug}/ (yt:${videoId})`)
+    return
+  }
 
   // Featured image (best-effort)
   let featuredImageLink = undefined
@@ -333,11 +363,6 @@ async function upsertVideo(video, existing, categoryEntry) {
   }
   if (featuredImageLink) fields.featuredImage = loc(featuredImageLink)
   if (categoryEntry) fields.categories = loc([{ sys: { type: "Link", linkType: "Entry", id: categoryEntry.sys.id } }])
-
-  if (DRY_RUN) {
-    console.log(`   [dry-run] ${match ? "would update" : "would create"} "${title}" → /videos/${slug}/ (yt:${videoId})`)
-    return
-  }
 
   if (match) {
     // Update
