@@ -25,3 +25,18 @@
   # Use bypass mode for Deploy Previews so previews match local development
   # (local dev often uses BYPASS_WORDPRESS=true to use mock/demo content)
   BYPASS_WORDPRESS = "true"
+
+# Security headers. The CSP is deliberately permissive enough for a default
+# Gatsby build (inline scripts/styles via 'unsafe-inline', all https images,
+# the Samply facade iframe) while still satisfying Lighthouse's CSP check and
+# blocking mixed content / object-src / foreign frame-ancestors. Tighten the
+# img-src/connect-src https: wildcards once the full set of first-party
+# third-party domains is confirmed.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://googletagmanager.com https://embed.tawk.to; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https: wss:; frame-src 'self' https://samply.app; media-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

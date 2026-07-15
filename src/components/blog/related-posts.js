@@ -1,4 +1,5 @@
 import React from "react"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import { Link } from "../ui"
 import {
   Box,
@@ -29,29 +30,51 @@ const RelatedPosts = ({ posts, currentPostSlug }) => {
               borderRadius: "8px"
             }}
           >
-            {post.featuredImage?.url && (
+            {post.featuredImage?.gatsbyImageData ? (
+              <Box marginY={2}>
+                <div className="blog-image-wrapper">
+                  <Link to={`/blog/${post.slug}/`}>
+                    <GatsbyImage
+                      image={getImage(post.featuredImage.gatsbyImageData)}
+                      alt={
+                        post.featuredImage.description ||
+                        post.featuredImage.alt ||
+                        post.title
+                      }
+                      loading="lazy"
+                      style={{
+                        width: "100%",
+                        height: "150px",
+                        borderRadius: "4px",
+                      }}
+                      imgStyle={{ objectFit: "cover" }}
+                    />
+                  </Link>
+                </div>
+              </Box>
+            ) : post.featuredImage?.url ? (
               <Box marginY={2}>
                 <div className="blog-image-wrapper">
                   <Link to={`/blog/${post.slug}/`}>
                     <img
                       src={post.featuredImage.url}
-                      alt={post.featuredImage.description || post.featuredImage.alt || post.title}
+                      alt={
+                        post.featuredImage.description ||
+                        post.featuredImage.alt ||
+                        post.title
+                      }
                       loading="lazy"
-                      onLoad={(e) => (e.target.style.opacity = "1")}
-                      onError={(e) => (e.target.style.display = "none")}
                       style={{
                         width: "100%",
                         height: "150px",
                         objectFit: "cover",
                         borderRadius: "4px",
-                        opacity: 0,
-                        transition: "opacity 0.3s ease",
                       }}
                     />
                   </Link>
                 </div>
               </Box>
-            )}
+            ) : null}
 
             {/* Date hidden per user request */}
             {/* <Text variant="kicker" marginY={1}>

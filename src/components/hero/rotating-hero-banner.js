@@ -257,7 +257,6 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           const assets = data?.allContentfulAsset?.nodes || []
 
           if (assets.length === 0) {
-            console.log("No Contentful assets found")
             return null
           }
 
@@ -269,7 +268,6 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
               asset.title?.toLowerCase().includes(keyword.toLowerCase())
             )
             if (asset && asset.gatsbyImageData) {
-              console.log(`Using welcome slide image: ${asset.title}`)
               return asset.gatsbyImageData
             }
           }
@@ -277,38 +275,19 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           // Fallback: use first available asset with valid image data
           const validAsset = assets.find((asset) => asset.gatsbyImageData)
           if (validAsset) {
-            console.log(`Using first available asset: ${validAsset.title}`)
             return validAsset.gatsbyImageData
           }
 
-          console.log("No valid Contentful assets with image data found")
           return null
         } catch (error) {
-          console.error("Error loading Contentful assets:", error)
           return null
         }
       }
 
       const welcomeSlideImage = getWelcomeSlideImage()
 
-      // Debug logging for Contentful assets
-      console.log(
-        "Available Contentful assets:",
-        data?.allContentfulAsset?.nodes?.map((asset) => asset.title) || []
-      )
-      console.log("Welcome slide image found:", !!welcomeSlideImage)
-
       // If we have WordPress content with images, use it
       if (wpContent.length > 0) {
-        console.log(
-          `Found ${wpContent.length} filtered WordPress content items:`
-        )
-        wpContent.forEach((item) => {
-          console.log(
-            `- ${item.type}: "${item.title}" (${item.category}, priority: ${item.priority})`
-          )
-        })
-
         // Add a welcome slide as the first slide
         heroItems = [
           {
@@ -328,9 +307,6 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
         ]
       } else {
         // Fallback content when no WordPress content with images is available
-        console.log(
-          "No WordPress content with images found, using fallback slides"
-        )
         heroItems = [
           {
             id: "welcome",
@@ -399,7 +375,6 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
 
       setHeroData(heroItems)
     } catch (error) {
-      console.error("Error processing hero data:", error)
       // Set minimal fallback data on error
       setHeroData([
         {

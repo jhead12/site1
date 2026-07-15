@@ -1,5 +1,6 @@
 import * as React from "react"
 import { graphql } from "gatsby"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import { Link } from "../components/ui"
 
 import { Container, Section, Flex, Box, Subhead, Kicker, Text } from "./ui"
@@ -72,27 +73,32 @@ export default function BlogFeature(props) {
             <Box key={post.id} className="blog-post-item">
               <div className="blog-image-wrapper">
                 <Link to={`/blog/${post.slug}/`}>
-                  <img
-                    src={
-                      post.featuredImage?.url ||
-                      "https://via.placeholder.com/300x180/f0f0f0/666666/?text=Jeldon+Music"
-                    }
-                    alt={post.featuredImage?.description || post.featuredImage?.alt || post.title}
-                    className="blog-feature-image"
-                    loading="lazy"
-                    onLoad={(e) => {
-                      e.target.style.opacity = "1"
-                      e.target.style.zIndex = "1"
-                      e.target.style.position = "relative"
-                    }}
-                    onError={(e) => {
-                      // If image fails, show a placeholder
-                      e.target.src =
+                  {post.featuredImage?.gatsbyImageData ? (
+                    <GatsbyImage
+                      image={getImage(post.featuredImage.gatsbyImageData)}
+                      alt={
+                        post.featuredImage?.description ||
+                        post.featuredImage?.alt ||
+                        post.title
+                      }
+                      className="blog-feature-image"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <img
+                      src={
+                        post.featuredImage?.url ||
                         "https://via.placeholder.com/300x180/f0f0f0/666666/?text=Jeldon+Music"
-                      e.target.style.opacity = "1"
-                    }}
-                    style={{ opacity: 1, position: "relative", zIndex: 1 }}
-                  />
+                      }
+                      alt={
+                        post.featuredImage?.description ||
+                        post.featuredImage?.alt ||
+                        post.title
+                      }
+                      className="blog-feature-image"
+                      loading="lazy"
+                    />
+                  )}
                 </Link>
               </div>
               <Kicker>

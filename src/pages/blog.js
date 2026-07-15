@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react"
 import { graphql } from "gatsby"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import Layout from "../components/layout"
 import { Link } from "../components/ui"
 import CategoryFilter from "../components/blog/category-filter"
@@ -153,22 +154,16 @@ const BlogPage = ({ data, location }) => {
                 {finalFilteredPosts.map((post) => (
                   <Box key={post.id} paddingY={4} style={{ borderBottom: "1px solid #eee" }}>
                     <Flex gap={4}>
-                      {post.featuredImage?.url && (
+                      {post.featuredImage?.gatsbyImageData && (
                         <Box style={{ minWidth: "200px" }}>
                           <div className="blog-image-wrapper">
                             <Link to={`/blog/${post.slug}/`}>
-                              <img
-                                src={post.featuredImage.url}
+                              <GatsbyImage
+                                image={getImage(post.featuredImage.gatsbyImageData)}
                                 alt={post.featuredImage.description || post.featuredImage.alt || post.title}
                                 loading="lazy"
-                                onLoad={(e) => (e.target.style.opacity = "1")}
-                                onError={(e) => (e.target.style.display = "none")}
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "8px",
-                                  opacity: 0,
-                                  transition: "opacity 0.3s ease",
-                                }}
+                                style={{ borderRadius: "8px" }}
+                                imgStyle={{ objectFit: "cover" }}
                               />
                             </Link>
                           </div>
@@ -220,6 +215,7 @@ export const query = graphql`
           url
           alt
           description
+          gatsbyImageData(width: 400, placeholder: BLURRED, formats: [AUTO, WEBP, AVIF])
         }
         categories {
           id

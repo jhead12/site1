@@ -123,6 +123,20 @@ module.exports = {
         background_color: "#ffe491",
         theme_color: "#004ca3",
         icon: "src/favicon.png",
+        icons: [
+          {
+            src: "src/favicon.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any maskable",
+          },
+          {
+            src: "src/favicon.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable",
+          },
+        ],
       },
     },
     // Google gtag — only included if a tracking ID is configured

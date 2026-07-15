@@ -215,26 +215,15 @@ exports.createResolvers = ({ createResolvers }) => {
         type: "String",
         resolve: (source) => source.alt || source.title || "Asset image",
       },
-      gatsbyImageData: {
-        type: "GatsbyImageData",
-        resolve: (source) => {
-          return (
-            source.gatsbyImageData || {
-              layout: "constrained",
-              width: 800,
-              height: 600,
-              images: {
-                sources: [],
-                fallback: {
-                  src: source.url || `/static/fallback-image.jpg`,
-                  srcSet: "",
-                  sizes: "",
-                },
-              },
-            }
-          )
-        },
-      },
+      // NOTE: gatsbyImageData is intentionally NOT overridden here.
+      // gatsby-source-contentful registers a native resolver (via
+      // setFieldsOnGraphQLNodeType) that builds responsive Contentful CDN
+      // images with next-gen formats (webp/avif). A previous override
+      // returned source.gatsbyImageData (undefined on real nodes) and fell
+      // back to a mock with empty sources + the raw ctfassets URL, which
+      // served multi-MB PNGs with no resizing — the root cause of the
+      // "Serve images in next-gen formats" / "Properly size images"
+      // Lighthouse findings. Let the plugin's resolver handle it.
       url: {
         type: "String",
         resolve: (source) =>

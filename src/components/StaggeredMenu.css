@@ -52,6 +52,19 @@
   object-fit: contain;
 }
 
+.sm-logo-wordmark {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.12em;
+  line-height: 32px;
+  color: #fff;
+}
+
+.staggered-menu-wrapper[data-open] .sm-logo-wordmark {
+  color: #000;
+}
+
 .sm-toggle {
   position: absolute;
   top: 1rem;

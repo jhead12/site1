@@ -25,7 +25,9 @@ export const onClientEntry = () => {
   const tawkToPropertyId = process.env.GATSBY_TAWKTO_PROPERTY_ID
   const tawkToWidgetId = process.env.GATSBY_TAWKTO_WIDGET_ID || "default"
 
-  if (typeof window !== "undefined" && tawkToPropertyId) {
+  if (typeof window === "undefined" || !tawkToPropertyId) return
+
+  const inject = () => {
     try {
       window.Tawk_API = window.Tawk_API || {}
       const s1 = document.createElement("script")
@@ -36,10 +38,18 @@ export const onClientEntry = () => {
       const s0 = document.getElementsByTagName("script")[0]
       s0.parentNode.insertBefore(s1, s0)
     } catch (err) {
-      // Fail silently in environments where DOM isn't available
-      // (shouldn't happen because of the typeof check)
       // eslint-disable-next-line no-console
       console.warn("Tawk.to injection failed", err)
     }
+  }
+
+  // Defer chat widget injection off the critical first-paint path. Wait until
+  // the browser is idle (or a short fallback timeout), then inject. This keeps
+  // Tawk.to's ~25KB + beacons off the main thread during LCP.
+  const ric = window.requestIdleCallback
+  if (ric) {
+    ric(() => setTimeout(inject, 3000), { timeout: 6000 })
+  } else {
+    setTimeout(inject, 5000)
   }
 }

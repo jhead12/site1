@@ -385,14 +385,20 @@ const StaggeredMenu = ({
       </div>
       <header className="staggered-menu-header" aria-label="Main navigation header">
         <div className="sm-logo" aria-label="Logo">
-          <img
-            src={logoUrl || '/src/assets/logos/reactbits-gh-white.svg'}
-            alt="Logo"
-            className="sm-logo-img"
-            draggable={false}
-            width={110}
-            height={24}
-          />
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="sm-logo-img"
+              draggable={false}
+              width={110}
+              height={24}
+            />
+          ) : (
+            <span className="sm-logo-wordmark" aria-label="Jeldon Music">
+              JELDON
+            </span>
+          )}
         </div>
         <button
           ref={toggleBtnRef}

@@ -146,6 +146,7 @@ export const query = graphql`
           url
           description
           alt
+          gatsbyImageData(width: 600, placeholder: BLURRED, formats: [AUTO, WEBP, AVIF])
         }
       }
     }
