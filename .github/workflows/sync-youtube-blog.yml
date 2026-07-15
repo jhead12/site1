@@ -82,7 +82,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Trigger Netlify rebuild (only if entries changed)
-        if: ${{ github.event.inputs.dry_run != 'true' && secrets.NETLIFY_BUILD_HOOK_URL != '' }}
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           NETLIFY_BUILD_HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
         run: |
@@ -93,6 +93,11 @@ jobs:
           created=${created:-0}
           updated=${updated:-0}
           echo "created=$created updated=$updated"
+          # `secrets` can't be read in a step `if`, so guard the hook here.
+          if [ -z "$NETLIFY_BUILD_HOOK_URL" ]; then
+            echo "NETLIFY_BUILD_HOOK_URL not set — skipping rebuild."
+            exit 0
+          fi
           if [ "$created" -gt 0 ] || [ "$updated" -gt 0 ]; then
             echo "Changes detected — triggering Netlify build hook."
             curl -sS -X POST "$NETLIFY_BUILD_HOOK_URL" -o /dev/null -w "build hook HTTP %{http_code}\n"
