@@ -709,7 +709,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       slug: String!
       title: String
       description: String
-      image: HomepageImage @link(from: "image___NODE")
+      image: ContentfulAsset @link(from: "image___NODE")
       html: String! @richText
     }
   `)
