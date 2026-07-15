@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css"
+import { style, globalStyle } from "@vanilla-extract/css"
 import { theme } from "../theme.css"
 import { media } from "./media.css"
 
@@ -90,18 +90,28 @@ export const imageWrapper = style({
   },
 })
 
-// Hero image styling
+// Hero image styling — fills the wrapper with a fixed height so any source
+// aspect ratio (e.g. a 400x400 asset) crops to cover instead of stretching.
 export const heroImage = style({
   width: "100%",
-  height: "auto",
+  height: "320px",
   objectFit: "cover",
-  aspectRatio: "4/3", // Good proportions for hero images
-  
+  objectPosition: "center",
+
   "@media": {
     [media.medium]: {
-      aspectRatio: "3/2", // Slightly wider on desktop
+      height: "460px", // Taller hero image on desktop
     },
   },
+})
+
+// Force gatsby-plugin-image's inner <img> to cover the wrapper too, so the
+// image never distorts regardless of its native dimensions.
+globalStyle(`${heroImage} img`, {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  objectPosition: "center",
 })
 
 // Typography styles

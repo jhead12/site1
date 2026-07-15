@@ -61,7 +61,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   const data = useStaticQuery(graphql`
     query HeroBannerContent {
       # Get Contentful Video Posts (YouTube sync)
-      allContentfulVideoPost(sort: { publishDate: DESC }, limit: 2) {
+      allContentfulVideoPost(sort: { publishDate: DESC }, limit: 10) {
         nodes {
           id
           title
@@ -164,15 +164,17 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           return "latest-blog" // Blog posts from last 30 days
         } else if (daysDiff <= 90) {
           return "popular" // Assume older content that's still being shown is popular
+        } else if (daysDiff <= 365) {
+          return "recent" // Content from the last 12 months
         }
-        return null // Don't show content older than 90 days
+        return null // Don't show content older than 12 months
       }
 
       // Transform Contentful video posts with images and filter by category
       const videoItems = videoPosts
         .filter(
           (video) =>
-            video.featuredImage?.gatsbyImageData
+            video.featuredImage?.gatsbyImageData || video.youtubeVideoId
         )
         .map((video) => {
           const category = getContentCategory(video.publishDate, "video")
@@ -182,11 +184,19 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           let kicker = "Latest Video"
           if (category === "new-upload") kicker = "New Upload"
           else if (category === "popular") kicker = "Popular Video"
+          else if (category === "recent") kicker = "Recent Video"
 
           // Determine priority based on category
           let priority = 3
           if (category === "new-upload") priority = 1
           else if (category === "popular") priority = 2
+
+          // Fall back to a YouTube thumbnail when no Contentful featured image
+          const hasGatsbyImage = !!video.featuredImage?.gatsbyImageData
+          const imageUrl =
+            !hasGatsbyImage && video.youtubeVideoId
+              ? `https://img.youtube.com/vi/${video.youtubeVideoId}/maxresdefault.jpg`
+              : null
 
           return {
             id: `video-${video.id}`,
@@ -194,7 +204,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             description:
               truncateToFirstSentence(video.excerpt) ||
               "Watch our latest video content",
-            image: video.featuredImage.gatsbyImageData,
+            image: hasGatsbyImage ? video.featuredImage.gatsbyImageData : null,
+            imageUrl: imageUrl,
             slug: `/videos/${video.slug}`,
             date: video.publishDate,
             type: "video",
@@ -216,6 +227,7 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           let kicker = "New Post"
           if (category === "latest-blog") kicker = "Latest Blog"
           else if (category === "popular") kicker = "Popular Post"
+          else if (category === "recent") kicker = "Recent Post"
 
           // Determine priority based on category
           let priority = 3
@@ -286,6 +298,14 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
 
       const welcomeSlideImage = getWelcomeSlideImage()
 
+      // If the welcome asset is missing, fall back to the newest video's image
+      // so the welcome slide always has an image and never breaks the carousel.
+      const firstVideoWithImage = videoItems.find((v) => v.image || v.imageUrl)
+      const welcomeImage = welcomeSlideImage || firstVideoWithImage?.image || null
+      const welcomeImageUrl = welcomeSlideImage
+        ? null
+        : firstVideoWithImage?.imageUrl || null
+
       // If we have WordPress content with images, use it
       if (wpContent.length > 0) {
         // Add a welcome slide as the first slide
@@ -296,7 +316,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             description:
               data?.site?.siteMetadata?.description ||
               "Discover music content, beats, and tutorials. Professional music production and audio engineering services.",
-            image: welcomeSlideImage, // Use Contentful welcome slide image
+            image: welcomeImage, // Use Contentful welcome slide image
+            imageUrl: welcomeImageUrl,
             slug: "/about",
             date: new Date().toISOString(),
             type: "hero",
@@ -315,7 +336,8 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             description:
               data?.site?.siteMetadata?.description ||
               "Discover amazing music content, beats, and tutorials. Professional music production and audio engineering services.",
-            image: welcomeSlideImage, // Use Contentful welcome slide image
+            image: welcomeImage, // Use Contentful welcome slide image
+            imageUrl: welcomeImageUrl,
             slug: "/about",
             date: new Date().toISOString(),
             type: "hero",
@@ -441,8 +463,12 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
 
   const currentContent = heroData[currentSlide]
 
-  // Fallback for items without images
-  if (!currentContent.image && currentContent.type !== "fallback") {
+  // Fallback for items without any image (neither gatsby image nor URL)
+  if (
+    !currentContent.image &&
+    !currentContent.imageUrl &&
+    currentContent.type !== "fallback"
+  ) {
     return (
       <div className="hero-banner-container hero-banner-fallback">
         <div className="hero-banner-slide fade-in">
@@ -501,6 +527,15 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
               image={currentContent.image}
               alt={currentContent.title}
               className="hero-banner-image"
+            />
+          )}
+
+          {!currentContent.image && currentContent.imageUrl && (
+            <img
+              src={currentContent.imageUrl}
+              alt={currentContent.title}
+              className="hero-banner-image"
+              loading="eager"
             />
           )}
 

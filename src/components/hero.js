@@ -12,6 +12,7 @@ import {
   Subhead,
   Text,
 } from "./ui"
+import { heroImage, imageWrapper } from "./hero-section.css"
 
 export default function Hero(props) {
   return (
@@ -20,10 +21,13 @@ export default function Hero(props) {
         <Flex gap={4} variant="responsive">
           <Box width="half">
             {props.image && (
-              <GatsbyImage
-                alt={props.image.alt}
-                image={getImage(props.image.gatsbyImageData)}
-              />
+              <div className={imageWrapper}>
+                <GatsbyImage
+                  alt={props.image.alt}
+                  image={getImage(props.image.gatsbyImageData)}
+                  className={heroImage}
+                />
+              </div>
             )}
           </Box>
           <Box width="half">
