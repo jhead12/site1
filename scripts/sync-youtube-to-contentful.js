@@ -32,7 +32,9 @@ const ENV = process.env.CONTENTFUL_ENV || "master"
 const TOKEN = process.env.CONTENTFUL_MANAGEMENT_TOKEN
 const YT_KEY = process.env.YOUTUBE_API_KEY
 const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID
-const LIMIT = Math.min(Number(process.env.YOUTUBE_SYNC_LIMIT) || 10, 50)
+// How many of the most recent uploads to sync. Paginated (50/page), so this
+// can exceed 50 to backfill a larger channel history.
+const LIMIT = Number(process.env.YOUTUBE_SYNC_LIMIT) || 50
 const AUTHOR = process.env.YOUTUBE_AUTHOR || "Jeldon"
 const CATEGORY_SLUG = process.env.YOUTUBE_CATEGORY_SLUG || ""
 const SKIP_IMAGE = process.env.YOUTUBE_SKIP_IMAGE === "true"
@@ -250,13 +252,29 @@ async function fetchUploads() {
   const uploadsPlaylist = chan.items?.[0]?.contentDetails?.relatedPlaylists?.uploads
   if (!uploadsPlaylist) throw new Error("Could not resolve channel uploads playlist — check YOUTUBE_CHANNEL_ID")
 
-  // 2. list recent uploads
-  const itemsRes = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${uploadsPlaylist}&maxResults=${LIMIT}&key=${YT_KEY}`
-  )
-  if (!itemsRes.ok) throw new Error(`YouTube playlistItems API failed (${itemsRes.status}): ${await itemsRes.text()}`)
-  const items = await itemsRes.json()
-  return items.items || []
+  // 2. page through the uploads playlist (newest-first) until we have LIMIT
+  // items or run out of pages. The API caps maxResults at 50 per page, so
+  // LIMIT > 50 is satisfied across multiple pages.
+  const allItems = []
+  let pageToken = ""
+  let pages = 0
+  do {
+    const remaining = LIMIT - allItems.length
+    if (remaining <= 0) break
+    const pageSize = Math.min(50, remaining)
+    const pageUrl =
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails` +
+      `&playlistId=${uploadsPlaylist}&maxResults=${pageSize}&key=${YT_KEY}` +
+      (pageToken ? `&pageToken=${pageToken}` : "")
+    console.log(`   📄 fetching playlist page ${pages + 1} (pageSize=${pageSize}, remaining=${remaining})`)
+    const itemsRes = await fetch(pageUrl)
+    if (!itemsRes.ok) throw new Error(`YouTube playlistItems API failed (${itemsRes.status}): ${await itemsRes.text()}`)
+    const items = await itemsRes.json()
+    allItems.push(...items.items)
+    pageToken = items.nextPageToken || ""
+  } while (pageToken && allItems.length < LIMIT && ++pages < 50) // 50 pages ≈ 2500 items safety cap
+
+  return allItems
 }
 
 async function upsertVideo(video, existing, categoryEntry) {
@@ -341,7 +359,7 @@ async function main() {
   console.log(`📥 Found ${existing.length} existing Blog Post entries in Contentful.`)
 
   const videos = await fetchUploads()
-  console.log(`📺 Found ${videos.length} recent upload(s) on YouTube.`)
+  console.log(`📺 Found ${videos.length} recent upload(s) on YouTube (limit was ${LIMIT}).`)
 
   let created = 0,
     updated = 0,

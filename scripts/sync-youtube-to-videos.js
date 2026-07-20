@@ -34,7 +34,7 @@ const YT_KEY = process.env.YOUTUBE_API_KEY
 const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID
 // How many of the most recent uploads to sync. Paginated (50/page), so this
 // can exceed 50 to backfill a larger channel history.
-const LIMIT = Number(process.env.YOUTUBE_SYNC_LIMIT) || 10
+const LIMIT = Number(process.env.YOUTUBE_SYNC_LIMIT) || 50
 const AUTHOR = process.env.YOUTUBE_AUTHOR || "Jeldon"
 const CATEGORY_SLUG = process.env.YOUTUBE_CATEGORY_SLUG || ""
 const SKIP_IMAGE = process.env.YOUTUBE_SKIP_IMAGE === "true"
@@ -286,6 +286,7 @@ async function fetchUploads() {
       `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails` +
       `&playlistId=${uploadsPlaylist}&maxResults=${pageSize}&key=${YT_KEY}` +
       (pageToken ? `&pageToken=${pageToken}` : "")
+    console.log(`   📄 fetching playlist page ${pages + 1} (pageSize=${pageSize}, remaining=${remaining})`)
     const itemsRes = await fetch(pageUrl)
     if (!itemsRes.ok) throw new Error(`YouTube playlistItems API failed (${itemsRes.status}): ${await itemsRes.text()}`)
     const items = await itemsRes.json()
@@ -408,7 +409,7 @@ async function main() {
   console.log(`📥 Found ${existing.length} existing Video Post entries in Contentful.`)
 
   const videos = await fetchUploads()
-  console.log(`📺 Found ${videos.length} recent upload(s) on YouTube.`)
+  console.log(`📺 Found ${videos.length} recent upload(s) on YouTube (limit was ${LIMIT}).`)
 
   let created = 0,
     updated = 0,

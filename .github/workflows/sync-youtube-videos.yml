@@ -14,7 +14,7 @@
 #
 # Optional GitHub variables (Repository → Settings → Secrets and variables → Actions → Variables):
 #   CONTENTFUL_ENV             default "master"
-#   YOUTUBE_SYNC_LIMIT         default "10" (max 50)
+#   YOUTUBE_SYNC_LIMIT         default "50" (paginated, no hard cap)
 #   YOUTUBE_AUTHOR             default "Jeldon"
 #   YOUTUBE_CATEGORY_SLUG      links each video to this videoCategory (must exist)
 #   YOUTUBE_SKIP_IMAGE         "true" to skip thumbnail upload (faster)
@@ -80,7 +80,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Trigger Netlify rebuild (only if entries changed)
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ !inputs.dry_run }}
         env:
           NETLIFY_BUILD_HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
         run: |
