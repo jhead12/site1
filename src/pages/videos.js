@@ -1,15 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react"
-import { graphql, Link } from "gatsby"
-import { GatsbyImage, getImage } from "gatsby-plugin-image"
+import { graphql } from "gatsby"
 import Layout from "../components/layout"
+import VideoSearch from "../components/video/video-search"
+import VideoCard from "../components/video/video-card"
 import {
   Container,
   Section,
   Box,
   Heading,
   Text,
-  Subhead,
-  Flex,
 } from "../components/ui"
 
 const VideosPage = ({ data, location }) => {
@@ -30,19 +29,45 @@ const VideosPage = ({ data, location }) => {
       if (categoryParam) {
         setSelectedCategory(categoryParam)
       }
+      const searchParam = urlParams.get("q")
+      if (searchParam != null) {
+        setSearchTerm(searchParam)
+      }
     }
   }, [location.search])
 
-  // Filter videos based on selected category
-  const filteredVideos = useMemo(() => {
-    if (selectedCategory === "all") return allVideos
+  // Search term for the video search input
+  const [searchTerm, setSearchTerm] = useState("")
 
-    return allVideos.filter((video) =>
-      video.categories?.some(
-        (category) => category.slug === selectedCategory
+  // Apply both search and category filters
+  const filteredVideos = useMemo(() => {
+    let results = allVideos
+
+    // Category filter
+    if (selectedCategory !== "all") {
+      results = results.filter((video) =>
+        video.categories?.some(
+          (category) => category.slug === selectedCategory
+        )
       )
-    )
-  }, [allVideos, selectedCategory])
+    }
+
+    // Search filter
+    const term = searchTerm.trim().toLowerCase()
+    if (term) {
+      results = results.filter((video) => {
+        const titleMatch = video.title?.toLowerCase().includes(term)
+        const excerptMatch = video.excerpt?.toLowerCase().includes(term)
+        const categoryMatch = (video.categories || []).some((category) =>
+          category.name?.toLowerCase().includes(term)
+        )
+
+        return titleMatch || excerptMatch || categoryMatch
+      })
+    }
+
+    return results
+  }, [allVideos, selectedCategory, searchTerm])
 
   // Add video counts to categories
   const categoriesWithCounts = useMemo(() => {
@@ -57,6 +82,26 @@ const VideosPage = ({ data, location }) => {
       }))
       .filter((category) => category.count > 0)
   }, [allCategories, allVideos])
+
+  const selectedCategoryName =
+    categoriesWithCounts.find((c) => c.slug === selectedCategory)?.name ||
+    selectedCategory
+
+  // Keep the search term in sync with the URL query param
+  const handleSearchTermChange = (value) => {
+    setSearchTerm(value)
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location)
+      const term = value.trim()
+      if (term) {
+        url.searchParams.set("q", term)
+      } else {
+        url.searchParams.delete("q")
+      }
+      window.history.replaceState({}, "", url)
+    }
+  }
 
   const handleCategoryChange = (categorySlug) => {
     setSelectedCategory(categorySlug)
@@ -83,6 +128,15 @@ const VideosPage = ({ data, location }) => {
           <Text center variant="lead">
             Latest video tutorials, production tips, and music content.
           </Text>
+
+          <VideoSearch
+            searchTerm={searchTerm}
+            onSearchTermChange={handleSearchTermChange}
+            resultCount={filteredVideos.length}
+            selectedCategoryName={
+              selectedCategory === "all" ? null : selectedCategoryName
+            }
+          />
 
           {/* Category Filter */}
           {categoriesWithCounts.length > 0 && (
@@ -141,12 +195,19 @@ const VideosPage = ({ data, location }) => {
           <Text
             style={{ color: "#666", marginBottom: "2rem", textAlign: "center" }}
           >
-            {selectedCategory === "all"
-              ? `Showing all ${filteredVideos.length} videos`
-              : `Showing ${filteredVideos.length} videos in "${
-                  categoriesWithCounts.find((c) => c.slug === selectedCategory)
-                    ?.name || selectedCategory
-                }"`}
+            {(() => {
+              const term = searchTerm.trim()
+              if (term) {
+                if (selectedCategory === "all") {
+                  return `Showing ${filteredVideos.length} of ${allVideos.length} videos matching "${term}"`
+                }
+                return `Showing ${filteredVideos.length} of ${allVideos.length} videos matching "${term}" in "${selectedCategoryName}"`
+              }
+              if (selectedCategory === "all") {
+                return `Showing all ${filteredVideos.length} videos`
+              }
+              return `Showing ${filteredVideos.length} videos in "${selectedCategoryName}"`
+            })()}
           </Text>
 
           {/* Videos Grid */}
@@ -159,203 +220,26 @@ const VideosPage = ({ data, location }) => {
                   gap: "2rem",
                 }}
               >
-                {filteredVideos.map((video) => {
-                  // Get YouTube thumbnail
-                  const thumbUrl = video.youtubeVideoId
-                    ? `https://img.youtube.com/vi/${video.youtubeVideoId}/mqdefault.jpg`
-                    : null
-                  const featuredImage = video.featuredImage
-                    ? getImage(video.featuredImage)
-                    : null
-
-                  return (
-                    <Box
-                      key={video.id}
-                      style={{
-                        border: "1px solid #eee",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-5px)"
-                        e.currentTarget.style.boxShadow =
-                          "0 10px 25px rgba(0,0,0,0.1)"
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)"
-                        e.currentTarget.style.boxShadow = "none"
-                      }}
-                    >
-                      {/* Video Thumbnail */}
-                      <Link to={`/videos/${video.slug}/`}>
-                        <Box style={{ position: "relative" }}>
-                          {featuredImage ? (
-                            <GatsbyImage
-                              image={featuredImage}
-                              alt={video.featuredImage?.alt || video.title}
-                              style={{ width: "100%", height: "200px" }}
-                            />
-                          ) : thumbUrl ? (
-                            <img
-                              src={thumbUrl}
-                              alt={video.title}
-                              style={{
-                                width: "100%",
-                                height: "200px",
-                                objectFit: "cover",
-                                display: "block",
-                              }}
-                            />
-                          ) : (
-                            <div
-                              style={{
-                                width: "100%",
-                                height: "200px",
-                                backgroundColor: "#f0f0f0",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <Text>No thumbnail</Text>
-                            </div>
-                          )}
-
-                          {/* Duration overlay */}
-                          {video.duration && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                bottom: "8px",
-                                right: "8px",
-                                backgroundColor: "rgba(0,0,0,0.8)",
-                                color: "white",
-                                padding: "4px 8px",
-                                borderRadius: "4px",
-                                fontSize: "12px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {video.duration}
-                            </div>
-                          )}
-
-                          {/* Play button overlay */}
-                          <div
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              width: "60px",
-                              height: "60px",
-                              backgroundColor: "rgba(255, 0, 0, 0.8)",
-                              borderRadius: "50%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              opacity: 0.9,
-                              transition: "opacity 0.2s ease",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: 0,
-                                height: 0,
-                                borderLeft: "20px solid white",
-                                borderTop: "12px solid transparent",
-                                borderBottom: "12px solid transparent",
-                                marginLeft: "4px",
-                              }}
-                            />
-                          </div>
-                        </Box>
-                      </Link>
-
-                      {/* Video Info */}
-                      <Box style={{ padding: "16px" }}>
-                        <Text
-                          variant="kicker"
-                          marginY={1}
-                          style={{ color: "#666" }}
-                        >
-                          {new Date(video.publishDate).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "short",
-                          })}
-                        </Text>
-
-                        <Subhead marginY={2}>
-                          <Link
-                            to={`/videos/${video.slug}/`}
-                            style={{ textDecoration: "none" }}
-                          >
-                            {video.title}
-                          </Link>
-                        </Subhead>
-
-                        {video.excerpt && (
-                          <Text
-                            style={{
-                              color: "#666",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                            }}
-                          >
-                            {video.excerpt}
-                          </Text>
-                        )}
-
-                        {/* Categories */}
-                        {video.categories?.length > 0 && (
-                          <Box marginY={3}>
-                            <Flex gap={1} style={{ flexWrap: "wrap" }}>
-                              {video.categories
-                                .slice(0, 3)
-                                .map((category) => (
-                                  <span
-                                    key={category.name}
-                                    style={{
-                                      fontSize: "0.8rem",
-                                      backgroundColor: "#f0f0f0",
-                                      color: "#666",
-                                      padding: "4px 8px",
-                                      borderRadius: "12px",
-                                      display: "inline-block",
-                                    }}
-                                  >
-                                    {category.name}
-                                  </span>
-                                ))}
-                            </Flex>
-                          </Box>
-                        )}
-
-                        <Box marginY={3}>
-                          <Link
-                            to={`/videos/${video.slug}/`}
-                            style={{
-                              color: "#004ca3",
-                              textDecoration: "none",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Watch Video →
-                          </Link>
-                        </Box>
-                      </Box>
-                    </Box>
-                  )
-                })}
+                {filteredVideos.map((video) => (
+                  <VideoCard key={video.id} video={video} />
+                ))}
               </div>
             ) : (
               <Box center marginY={5}>
                 <Text>
-                  No videos found
-                  {selectedCategory !== "all" ? " in this category" : ""}.
+                  {(() => {
+                    const term = searchTerm.trim()
+                    if (term && selectedCategory !== "all") {
+                      return `No videos found matching "${term}" in "${selectedCategoryName}".`
+                    }
+                    if (term) {
+                      return `No videos found matching "${term}".`
+                    }
+                    if (selectedCategory !== "all") {
+                      return `No videos found in "${selectedCategoryName}".`
+                    }
+                    return "No videos found."
+                  })()}
                 </Text>
                 {allVideos.length === 0 && (
                   <Box
@@ -397,7 +281,13 @@ export const query = graphql`
         duration
         featuredImage {
           alt
-          gatsbyImageData(width: 300, height: 200, placeholder: BLURRED)
+          gatsbyImageData(
+            width: 600
+            height: 400
+            quality: 85
+            placeholder: BLURRED
+            formats: [AUTO, WEBP, AVIF]
+          )
         }
         categories {
           name

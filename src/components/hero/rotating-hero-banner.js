@@ -15,6 +15,9 @@ const truncateToFirstSentence = (text) => {
 const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPlaying, setIsPlaying] = useState(!disableAutoRotate)
+  const [isPausedByUser, setIsPausedByUser] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const [fadeClass, setFadeClass] = useState("fade-in")
   const [heroData, setHeroData] = useState([])
   const locale = "en-US"
@@ -72,7 +75,14 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           featuredImage {
             alt
             description
-            gatsbyImageData(width: 1200, height: 600)
+            gatsbyImageData(
+              layout: FULL_WIDTH
+              width: 1920
+              height: 960
+              quality: 90
+              placeholder: BLURRED
+              formats: [AUTO, WEBP, AVIF]
+            )
           }
         }
       }
@@ -88,7 +98,14 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           featuredImage {
             alt
             description
-            gatsbyImageData(width: 1200, height: 600)
+            gatsbyImageData(
+              layout: FULL_WIDTH
+              width: 1920
+              height: 960
+              quality: 90
+              placeholder: BLURRED
+              formats: [AUTO, WEBP, AVIF]
+            )
           }
         }
       }
@@ -103,8 +120,10 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
           title
           description
           gatsbyImageData(
+            layout: FULL_WIDTH
             width: 1920
             height: 800
+            quality: 90
             placeholder: BLURRED
             formats: [AUTO, WEBP, AVIF]
           )
@@ -416,14 +435,24 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
 
   // Consolidated auto-rotation effect (single useEffect)
   useEffect(() => {
-    if (!isPlaying || heroData.length <= 1 || disableAutoRotate) return
+    const shouldPlay =
+      isPlaying && !isPausedByUser && !isHovered && !isFocused
+    if (!shouldPlay || heroData.length <= 1 || disableAutoRotate) return
 
     const interval = setInterval(() => {
       navigateToSlide("next")
     }, 6000) // 6 seconds interval
 
     return () => clearInterval(interval)
-  }, [isPlaying, heroData.length, disableAutoRotate, navigateToSlide])
+  }, [
+    isPlaying,
+    isPausedByUser,
+    isHovered,
+    isFocused,
+    heroData.length,
+    disableAutoRotate,
+    navigateToSlide,
+  ])
 
   // Keyboard navigation
   useEffect(() => {
@@ -500,7 +529,13 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
     : { to: currentContent.slug }
 
   return (
-    <div className="hero-banner-container">
+    <div
+      className="hero-banner-container"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    >
       <div
         className={`hero-banner-slide ${fadeClass}`}
         data-content-type={currentContent.type}
@@ -536,6 +571,15 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
               alt={currentContent.title}
               className="hero-banner-image"
               loading="eager"
+              onError={(e) => {
+                const src = e.currentTarget.src
+                if (src.includes("/maxresdefault.jpg")) {
+                  e.currentTarget.src = src.replace(
+                    "/maxresdefault.jpg",
+                    "/mqdefault.jpg"
+                  )
+                }
+              }}
             />
           )}
 
@@ -591,11 +635,14 @@ const RotatingHeroBanner = ({ disableAutoRotate = false }) => {
             ›
           </button>
           <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className={`play-pause ${isPlaying ? "playing" : ""}`}
-            aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+            onClick={() => {
+              setIsPausedByUser(!isPausedByUser)
+              setIsPlaying((prev) => !prev)
+            }}
+            className={`play-pause ${!isPausedByUser && isPlaying ? "playing" : ""}`}
+            aria-label={!isPausedByUser ? "Pause slideshow" : "Play slideshow"}
           >
-            {isPlaying ? "⏸" : "▶"}
+            {!isPausedByUser ? "⏸" : "▶"}
           </button>
         </div>
       )}
