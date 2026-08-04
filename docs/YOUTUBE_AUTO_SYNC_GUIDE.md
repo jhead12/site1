@@ -42,8 +42,8 @@ This system automatically syncs new videos from your YouTube channel to your Wor
 2. **Add to WordPress** `functions.php`:
    ```php
    // Update these with your actual values
-   define('YOUTUBE_API_KEY', 'AIzaSyC1234567890abcdefghijklmnop');
-   define('YOUTUBE_CHANNEL_ID', 'UC1234567890abcdefghijk');
+   define('YOUTUBE_API_KEY', '');
+   define('YOUTUBE_CHANNEL_ID', '');
    
    // Then paste the entire auto-sync code below
    ```
