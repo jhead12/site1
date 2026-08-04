@@ -1,0 +1,285 @@
+{
+  "sampler": {
+    "id": "sampler",
+    "path": "/sampler",
+    "offerType": "tripwire",
+    "seoTitle": "MPC Sample Flip Toolkit — $7",
+    "seoDescription": "The exact chop-and-flip workflow from the MPC Quickstart Kit, expanded into a full walkthrough with source loops included.",
+    "kicker": "For MPC Quickstart Kit graduates",
+    "headline": "Turn Any Loop Into a Beat in 20 Minutes — the MPC Sample Flip Toolkit",
+    "subheadline": "The exact chop, chain, and swing workflow from the free Quickstart Kit — expanded into a full walkthrough, with the source loops included so you can follow along note for note.",
+    "price": "$7",
+    "priceNote": "one-time, instant access",
+    "cta": {
+      "type": "thrivecart",
+      "label": "Get Instant Access — $7",
+      "productIdEnvVar": "GATSBY_THRIVECART_SAMPLER_ID",
+      "productSlug": "mpc-sampler-toolkit"
+    },
+    "painPoints": [
+      "You finished the Quickstart Kit and now you're staring at a blank pad bank again.",
+      "You know the theory of chopping a sample but your flips still sound stiff.",
+      "You don't know how much swing, gain-staging, or chain layering is \"too much.\""
+    ],
+    "includes": [
+      "45-minute screen-capture walkthrough of 3 full sample flips, start to finish",
+      "The 6 source loops used in the walkthrough (WAV, tagged and ready to drag into your MPC)",
+      "My personal chop-and-chain preset bank",
+      "A one-page swing & gain-staging cheat sheet"
+    ],
+    "faq": [
+      {
+        "q": "Do I need the free Quickstart Kit first?",
+        "a": "No — it helps, but this toolkit stands on its own. If you already know your way around pads and chop mode, you can jump straight in."
+      },
+      {
+        "q": "What MPC/hardware do I need?",
+        "a": "Anything running MPC software 2.x (standalone or controller mode) works. The workflow also translates to Maschine and most pad-based samplers."
+      },
+      {
+        "q": "Is this a subscription?",
+        "a": "No — one-time $7 payment, instant download, yours forever."
+      }
+    ],
+    "utmWelcomeDefault": "Nice — you made it from the free kit. Ready to go deeper?"
+  },
+  "coaching": {
+    "id": "coaching",
+    "path": "/coaching",
+    "offerType": "coaching",
+    "seoTitle": "1-on-1 Music Production Coaching",
+    "seoDescription": "Book a 1-on-1 session to fix the specific thing that's stalling your beats, mixes, or workflow.",
+    "kicker": "1-on-1 Coaching",
+    "headline": "Get Unstuck on the One Thing That's Actually Holding Your Music Back",
+    "subheadline": "A focused 1-on-1 session over screen-share — we look at your project, your workflow, or your mix and fix the specific thing that's costing you the most.",
+    "price": "Custom",
+    "priceNote": "see available times and rates on the booking calendar",
+    "cta": {
+      "type": "calendly",
+      "label": "See Available Times",
+      "calendlyUrlEnvVar": "GATSBY_CALENDLY_COACHING_URL",
+      "calendlyUrlFallback": "https://calendly.com/jeldonmusic/coaching-call"
+    },
+    "painPoints": [
+      "You've watched dozens of tutorials but can't tell which advice actually applies to your beats.",
+      "Your mixes sound fine in isolation and muddy next to reference tracks.",
+      "You're stuck between gear/plugins and don't know what will actually move the needle."
+    ],
+    "includes": [
+      "A live screen-share session focused on your project, not a generic curriculum",
+      "Direct feedback on your workflow, arrangement, or mix",
+      "A short written action plan after the call",
+      "Follow-up message access for quick questions that week"
+    ],
+    "faq": [
+      {
+        "q": "What should I bring to the call?",
+        "a": "Your project file open and ready to screen-share, and 1-2 specific questions or problem areas you want to tackle."
+      },
+      {
+        "q": "How long is a session?",
+        "a": "Session lengths and pricing are shown when you pick a time on the calendar."
+      },
+      {
+        "q": "What if I need to reschedule?",
+        "a": "You can reschedule directly from your Calendly confirmation email up until 24 hours before the call."
+      }
+    ],
+    "utmWelcomeDefault": "Ready to fix the thing that's actually stalling your music?"
+  },
+  "mixing-mastering": {
+    "id": "mixing-mastering",
+    "path": "/mixing-mastering",
+    "offerType": "service-inquiry",
+    "seoTitle": "Mixing & Mastering Services",
+    "seoDescription": "Professional mixing and mastering for your beats and songs. Send an inquiry with your project details.",
+    "kicker": "Mixing & Mastering",
+    "headline": "Mixes That Translate — On Earbuds, Car Speakers, and Club Systems",
+    "subheadline": "Send over your session and I'll mix and master it to sit clean next to commercial reference tracks, in whatever genre you're working in.",
+    "price": "Custom",
+    "priceNote": "priced per project — send your details for a quote",
+    "cta": {
+      "type": "inquiry",
+      "label": "Send Project Inquiry",
+      "formName": "mixing-mastering-inquiry"
+    },
+    "painPoints": [
+      "Your mix sounds good on your monitors and falls apart everywhere else.",
+      "You've bounced the same song a dozen times and it still isn't \"there.\"",
+      "You don't have the time (or the ears, yet) to get it release-ready yourself."
+    ],
+    "includes": [
+      "Detailed mix from your stems or session file",
+      "Mastering pass for streaming loudness targets",
+      "Up to 2 rounds of revisions",
+      "Delivery in WAV + streaming-ready MP3"
+    ],
+    "faq": [
+      {
+        "q": "What do you need from me to start?",
+        "a": "Stems or a bounced session (WAV, 24-bit if possible), plus 1-2 reference tracks that capture the sound you're going for."
+      },
+      {
+        "q": "How long does a project take?",
+        "a": "Typical turnaround is discussed after I see the project scope — I'll confirm a timeline when I reply to your inquiry."
+      },
+      {
+        "q": "Do you master singles, EPs, or full albums?",
+        "a": "All of the above. Tell me the scope in the form and I'll quote accordingly."
+      }
+    ],
+    "formFields": [
+      { "name": "name", "label": "Your name", "type": "text", "required": true },
+      { "name": "email", "label": "Email", "type": "email", "required": true },
+      { "name": "projectType", "label": "Project type (single, EP, album...)", "type": "text", "required": false },
+      { "name": "message", "label": "Tell me about the project", "type": "textarea", "required": true }
+    ],
+    "utmWelcomeDefault": "Let's get your mix sitting right, everywhere it's played."
+  },
+  "production": {
+    "id": "production",
+    "path": "/production",
+    "offerType": "service-inquiry",
+    "seoTitle": "Production & Songwriting Services",
+    "seoDescription": "Custom production and songwriting collaboration. Send an inquiry with your project details.",
+    "kicker": "Production & Songwriting",
+    "headline": "Custom Production, Built Around the Song You're Trying to Make",
+    "subheadline": "From a beat built to spec to full songwriting collaboration — tell me what you're working on and where it's stuck.",
+    "price": "Custom",
+    "priceNote": "priced per project — send your details for a quote",
+    "cta": {
+      "type": "inquiry",
+      "label": "Send Project Inquiry",
+      "formName": "production-inquiry"
+    },
+    "painPoints": [
+      "You have a concept or a topline idea but no track underneath it that fits.",
+      "Your current beats all start to sound the same and you need a fresh direction.",
+      "You need a collaborator who can finish a song, not just start one."
+    ],
+    "includes": [
+      "Custom instrumental built to your reference and vision",
+      "Songwriting/topline collaboration where needed",
+      "Session files (stems) on completion",
+      "Revision rounds until it fits the song"
+    ],
+    "faq": [
+      {
+        "q": "Do you write lyrics/topline or just produce?",
+        "a": "Both — tell me what kind of collaboration you're looking for in the form and I'll scope it accordingly."
+      },
+      {
+        "q": "Can I hear examples first?",
+        "a": "Yes, mention that in your inquiry and I'll point you to relevant portfolio pieces for your genre."
+      },
+      {
+        "q": "What genres do you work in?",
+        "a": "Primarily hip-hop, R&B, and pop, but tell me your reference tracks and I'll let you know if it's a fit."
+      }
+    ],
+    "formFields": [
+      { "name": "name", "label": "Your name", "type": "text", "required": true },
+      { "name": "email", "label": "Email", "type": "email", "required": true },
+      { "name": "genre", "label": "Genre / reference artists", "type": "text", "required": false },
+      { "name": "message", "label": "Tell me about the project", "type": "textarea", "required": true }
+    ],
+    "utmWelcomeDefault": "Let's build the track this song actually needs."
+  },
+  "retainer": {
+    "id": "retainer",
+    "path": "/retainer",
+    "offerType": "application",
+    "seoTitle": "Producer Retainer — Apply",
+    "seoDescription": "Ongoing monthly production support for artists and labels. Apply to check availability.",
+    "kicker": "Producer Retainer",
+    "headline": "A Producer On Call, Every Month — Not Just for One Song",
+    "subheadline": "For artists and labels who need consistent production output, not a one-off session. A limited number of retainer slots are open at any time — apply to check current availability.",
+    "price": "Custom",
+    "priceNote": "monthly retainer — scope and rate confirmed after application",
+    "cta": {
+      "type": "application",
+      "label": "Apply for a Retainer Slot",
+      "formName": "retainer-application"
+    },
+    "painPoints": [
+      "You need a steady release schedule but production is the bottleneck.",
+      "One-off sessions keep starting over instead of building momentum.",
+      "You want a producer who knows your sound well enough to stop explaining it every time."
+    ],
+    "includes": [
+      "A set number of beats/mixes delivered per month, scoped to your plan",
+      "Priority turnaround over one-off project requests",
+      "Direct async access for quick creative check-ins",
+      "Monthly planning call to align on release goals"
+    ],
+    "faq": [
+      {
+        "q": "Why an application instead of instant checkout?",
+        "a": "Retainer slots are limited so I can actually deliver consistent quality. The application makes sure it's a good fit on both sides before we commit to a monthly plan."
+      },
+      {
+        "q": "How fast will I hear back?",
+        "a": "Applications are reviewed within a few business days. If it looks like a fit, I'll follow up to schedule a call."
+      },
+      {
+        "q": "What's the minimum commitment?",
+        "a": "This is discussed on the follow-up call once I understand your release schedule and goals."
+      }
+    ],
+    "formFields": [
+      { "name": "name", "label": "Your name", "type": "text", "required": true },
+      { "name": "email", "label": "Email", "type": "email", "required": true },
+      { "name": "artistOrLabel", "label": "Artist / label name", "type": "text", "required": false },
+      { "name": "releaseFrequency", "label": "How often are you releasing music?", "type": "text", "required": false },
+      { "name": "message", "label": "What are you looking for from a retainer producer?", "type": "textarea", "required": true }
+    ],
+    "utmWelcomeDefault": "Let's see if a retainer slot is the right fit for your release schedule."
+  },
+  "cohort": {
+    "id": "cohort",
+    "path": "/cohort",
+    "offerType": "waitlist",
+    "seoTitle": "MPC Workflow Cohort — Join the Waitlist",
+    "seoDescription": "A small-group, cohort-based deep dive into building a fast, repeatable MPC workflow. Join the waitlist to get notified when enrollment opens.",
+    "kicker": "MPC Workflow Cohort",
+    "headline": "Build a Fast, Repeatable MPC Workflow — With a Small Group, Not Alone",
+    "subheadline": "A cohort-based deep dive that takes you from the Quickstart Kit basics to a full, repeatable production workflow — with weekly feedback from me and the group. Enrollment is limited and opens periodically. Join the waitlist to get first access.",
+    "price": "TBD",
+    "priceNote": "pricing announced when enrollment opens",
+    "cta": {
+      "type": "waitlist",
+      "label": "Join the Waitlist",
+      "formName": "cohort-waitlist"
+    },
+    "painPoints": [
+      "You've collected tutorials, presets, and toolkits but nothing sticks into a repeatable workflow.",
+      "You work better with deadlines and other people to stay accountable, not another solo course.",
+      "You want direct feedback on your actual beats, not generic lessons."
+    ],
+    "includes": [
+      "Multi-week, small-group format with weekly live sessions",
+      "Direct feedback on your beats from me and the cohort",
+      "A structured path from sample flipping to a finished, repeatable workflow",
+      "Private group access for the duration of the cohort"
+    ],
+    "faq": [
+      {
+        "q": "When does the next cohort start?",
+        "a": "Dates aren't set yet — waitlist members get first access and early-bird pricing as soon as they're announced."
+      },
+      {
+        "q": "Do I need the Quickstart Kit or Sampler Toolkit first?",
+        "a": "They help build the foundation, but they aren't required to join the waitlist."
+      },
+      {
+        "q": "Is there a cost to join the waitlist?",
+        "a": "No — joining the waitlist is free and only reserves your spot for early access when enrollment opens."
+      }
+    ],
+    "formFields": [
+      { "name": "name", "label": "Your name", "type": "text", "required": true },
+      { "name": "email", "label": "Email", "type": "email", "required": true }
+    ],
+    "utmWelcomeDefault": "Get first access when the next cohort opens."
+  }
+}
