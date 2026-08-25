@@ -184,10 +184,16 @@ exports.createSchemaCustomization = async ({ actions }) => {
 
   actions.createFieldExtension({
     name: "richText",
+    args: {
+      field: {
+        type: "String",
+      },
+    },
     extend(options) {
       return {
         resolve(source, args, context, info) {
-          const body = source.body
+          const sourceFieldName = options.field || info.fieldName
+          const body = source[sourceFieldName]
           if (!body || !body.raw) return null
           const doc = JSON.parse(body.raw)
           const html = documentToHtmlString(doc)
@@ -710,7 +716,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
       title: String
       description: String
       image: ContentfulAsset @link(from: "image___NODE")
-      html: String! @richText
+      html: String! @richText(field: "body")
     }
   `)
 
