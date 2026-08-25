@@ -35,7 +35,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://googletagmanager.com https://embed.tawk.to https://www.youtube.com https://www.youtube-nocookie.com https://assets.calendly.com; style-src 'self' 'unsafe-inline' https://assets.calendly.com; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https: wss:; frame-src 'self' https://samply.app https://www.youtube.com https://www.youtube-nocookie.com https://calendly.com; media-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://googletagmanager.com https://embed.tawk.to https://www.youtube.com https://www.youtube-nocookie.com https://assets.calendly.com https://tinder.thrivecart.com https://nomoneyblanks.thrivecart.com; style-src 'self' 'unsafe-inline' https://assets.calendly.com https://tinder.thrivecart.com https://nomoneyblanks.thrivecart.com; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https: wss:; frame-src 'self' https://samply.app https://www.youtube.com https://www.youtube-nocookie.com https://calendly.com https://nomoneyblanks.thrivecart.com; media-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"

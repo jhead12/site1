@@ -116,7 +116,7 @@
   <div class="container">
     <div class="checkmark"></div>
     <h1>Thank You!</h1>
-    <p class="subtitle">Your free MPC Starter Kit is ready</p>
+    <p class="subtitle" id="subtitle">Your free MPC Starter Kit is ready</p>
     
     <div id="status">
       <div class="spinner"></div>
@@ -124,7 +124,7 @@
     </div>
 
     <div id="download-section" style="display: none;">
-      <a id="download-link" href="#" class="download-btn">Download MPC Starter Kit</a>
+      <a id="download-link" href="#" class="download-btn">Download <span id="download-btn-label">MPC Starter Kit</span></a>
       <p class="info" id="expiration-info">Link expires in 15 minutes • 53 MB</p>
     </div>
 
@@ -143,12 +143,22 @@
     const productId = urlParams.get('product_id') || 'free-mpc-kit';
     const orderRef = urlParams.get('order_ref') || '';
     const expirationDays = urlParams.get('expiration_days') || '0.0104';  // Default 15 minutes
-    
+    const productTagline = urlParams.get('product_tagline') || 'free MPC Starter Kit';
+    const productLabel = urlParams.get('product_name') || 'MPC Starter Kit';
+    const fileSize = urlParams.get('file_size') || '53 MB';
+
+    document.getElementById('subtitle').textContent = 'Your ' + productTagline + ' is ready';
+    document.getElementById('download-btn-label').textContent = productLabel;
+
     // Lambda Function URL
     const LAMBDA_URL = 'https://2lan4ghtlylexojben5lmpc22a0hraqo.lambda-url.us-west-2.on.aws/';
 
     async function getDownloadLink() {
       try {
+        // Forward ThriveCart's signed order query data (thrivecart[...]=...&thrivecart_hash=...)
+        // to the Lambda untouched, so it can verify the purchase server-side.
+        const rawQuery = window.location.search.replace(/^\?/, '');
+
         const response = await fetch(LAMBDA_URL + '?product_id=' + encodeURIComponent(productId), {
           method: 'POST',
           headers: {
@@ -158,6 +168,7 @@
             product_id: productId,
             order_ref: orderRef,
             expiration_days: expirationDays,
+            raw_thrivecart_query: rawQuery,
             source: 'thank-you-page'
           })
         });
@@ -173,7 +184,16 @@
           document.getElementById('status').style.display = 'none';
           document.getElementById('download-section').style.display = 'block';
           document.getElementById('download-link').href = data.url;
-          
+
+          // Prefer product details the Lambda resolved from the verified
+          // order (sourced from Contentful) over the query-string guesses,
+          // so a single Success URL works for every paid product.
+          if (data.product_name) {
+            document.getElementById('subtitle').textContent = 'Your ' + data.product_name + ' is ready';
+            document.getElementById('download-btn-label').textContent = data.product_name;
+          }
+          const resolvedFileSize = data.file_size || fileSize;
+
           // Update expiration message dynamically
           const expiresInSeconds = data.expires_in || 900;
           const expiresInDays = data.expires_in_days || 0.01;
@@ -184,7 +204,7 @@
             const minutes = Math.round(expiresInSeconds / 60);
             expirationText = `Link expires in ${minutes} minute${minutes > 1 ? 's' : ''}`;
           }
-          document.getElementById('expiration-info').textContent = expirationText + ' • 53 MB';
+          document.getElementById('expiration-info').textContent = expirationText + ' • ' + resolvedFileSize;
           
           // Optional: Auto-start download after 2 seconds
           setTimeout(() => {

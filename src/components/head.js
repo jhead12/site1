@@ -27,7 +27,11 @@ export default function Head({ title, description, image, pathname }) {
       <meta name="twitter:title" content={pageTitle} />
       {description && <meta name="twitter:description" content={description} />}
       {image && <meta name="twitter:image" content={image.url} />}
-        
+      {/* tinder.thrivecart.com is ThriveCart's shared embed-script CDN for every
+          account, not a per-account subdomain - do not swap this for the
+          account's own subdomain. Account/product are set via data attributes
+          on each ThriveCartButton instead (see ThriveCartButton.tsx). */}
+      <script async src="//tinder.thrivecart.com/embed/v1/thrivecart.js"></script>
     </>
   )
 }

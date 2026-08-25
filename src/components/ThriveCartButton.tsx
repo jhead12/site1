@@ -9,12 +9,14 @@ interface ThriveCartButtonProps {
 }
 
 /**
- * Links out to a hosted ThriveCart checkout page.
- * Account name comes from GATSBY_THRIVECART_ACCOUNT (already configured for
- * the beats store). Until a real product is created in ThriveCart for this
- * offer, GATSBY_THRIVECART_ACCOUNT falling back to "nomoneyblanks" plus the
- * placeholder productSlug will 404 — swap productIdEnvVar/productSlug once
- * the product exists.
+ * Triggers ThriveCart's popup checkout so the buyer stays on this domain
+ * instead of being redirected to a hosted checkout page. Requires the
+ * ThriveCart embed script to be loaded on the page (see head.js).
+ * Account name comes from GATSBY_THRIVECART_ACCOUNT, defaulting to the
+ * real "nomoneyblanks" subdomain. productIdEnvVar should hold ThriveCart's
+ * numeric product ID (e.g. GATSBY_THRIVECART_WONDERKIT_ID=20); productSlug
+ * is used as a fallback only for offers that don't have a real ID wired up
+ * yet, and will 404 in the popup until they do.
  */
 export default function ThriveCartButton({
   label,
@@ -23,18 +25,16 @@ export default function ThriveCartButton({
   className,
 }: ThriveCartButtonProps) {
   const account = process.env.GATSBY_THRIVECART_ACCOUNT || "nomoneyblanks"
-  const productOverride = productIdEnvVar ? process.env[productIdEnvVar] : undefined
-  const checkoutUrl = productOverride
-    ? `https://${account}.thrivecart.com/${productOverride}/`
-    : `https://${account}.thrivecart.com/${productSlug}/`
+  const productId = (productIdEnvVar ? process.env[productIdEnvVar] : undefined) || productSlug
 
   return (
     <Button
-      href={checkoutUrl}
+      href="#"
+      onClick={(e: React.MouseEvent) => e.preventDefault()}
       variant="primary"
-      className={className}
-      target="_blank"
-      rel="noopener noreferrer"
+      className={`thrivecart-button ${className || ""}`.trim()}
+      data-thrivecart-account={account}
+      data-thrivecart-product={productId}
     >
       {label}
     </Button>
