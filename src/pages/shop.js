@@ -151,15 +151,17 @@ export default function ShopPage({ data = {} }) {
           )}
 
           {!hasShopifyData ? (
-            <Box padding={5} textAlign="center">
-              <Subhead>Shopify Store Coming Soon</Subhead>
-              <Space size={3} />
-              <Text variant="lead">The rest of our catalog will be available here soon.</Text>
-              <Space size={3} />
-              <Text>
-                This section will automatically populate once our Shopify store is connected.
-              </Text>
-            </Box>
+            process.env.NODE_ENV === "development" && (
+              <Box padding={5} textAlign="center">
+                <Subhead>Shopify Store Coming Soon</Subhead>
+                <Space size={3} />
+                <Text variant="lead">The rest of our catalog will be available here soon.</Text>
+                <Space size={3} />
+                <Text>
+                  This section will automatically populate once our Shopify store is connected.
+                </Text>
+              </Box>
+            )
           ) : (
             <Flex gap={5} flexDirection={["column", "column", "row"]}>
               {/* Sidebar Filters */}

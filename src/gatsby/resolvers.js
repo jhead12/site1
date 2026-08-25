@@ -1,3 +1,33 @@
+// Applies the { sort, limit } args from our custom allContentful* Query
+// fields, since @dontInfer types don't get Gatsby's auto-generated
+// sort/limit handling and our resolvers below call findAll() directly.
+function applySortAndLimit(nodes, args) {
+  let result = nodes
+
+  if (args.sort) {
+    const [field, direction] = Object.entries(args.sort)[0] || []
+    if (field) {
+      const dir = String(direction).toUpperCase() === "ASC" ? 1 : -1
+      result = [...result].sort((a, b) => {
+        const aVal = a[field]
+        const bVal = b[field]
+        if (aVal == null && bVal == null) return 0
+        if (aVal == null) return 1
+        if (bVal == null) return -1
+        if (aVal > bVal) return dir
+        if (aVal < bVal) return -dir
+        return 0
+      })
+    }
+  }
+
+  if (typeof args.limit === "number") {
+    result = result.slice(0, args.limit)
+  }
+
+  return result
+}
+
 exports.createResolvers = ({ createResolvers }) => {
   // Always add resolvers, but conditionally return real or mock data
   const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
@@ -70,8 +100,9 @@ exports.createResolvers = ({ createResolvers }) => {
             const realPosts = Array.from(entries) || []
 
             if (realPosts.length > 0) {
+              const sortedPosts = applySortAndLimit(realPosts, args)
               return {
-                nodes: realPosts,
+                nodes: sortedPosts,
                 totalCount: realPosts.length,
               }
             }
@@ -95,8 +126,9 @@ exports.createResolvers = ({ createResolvers }) => {
             const realVideos = Array.from(entries) || []
 
             if (realVideos.length > 0) {
+              const sortedVideos = applySortAndLimit(realVideos, args)
               return {
-                nodes: realVideos,
+                nodes: sortedVideos,
                 totalCount: realVideos.length,
               }
             }
