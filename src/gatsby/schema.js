@@ -1,5 +1,49 @@
 const { documentToHtmlString } = require("@contentful/rich-text-html-renderer")
+const { BLOCKS } = require("@contentful/rich-text-types")
 const { getGatsbyImageResolver } = require("gatsby-plugin-image/graphql-utils")
+
+// Contentful's rich text field can't store raw HTML, so editors sometimes
+// paste a YouTube "Share > Embed" <iframe> snippet (or a bare video URL) as
+// plain paragraph text. The default renderer escapes that text, so it shows
+// up on the page as literal `<iframe ...>` code instead of a working embed.
+// Detect those two cases and swap in a real, responsive iframe instead.
+// Restricted to youtube.com/youtu.be to avoid unescaping arbitrary pasted HTML.
+const YOUTUBE_IFRAME_SRC_RE =
+  /<iframe[^>]*\ssrc=["']([^"']*(?:youtube\.com|youtu\.be)[^"']*)["'][^>]*>[\s\S]*?<\/iframe>/i
+const YOUTUBE_URL_RE =
+  /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)([\w-]+)|youtu\.be\/([\w-]+))(?:\S*)?$/i
+
+function getPlainText(node) {
+  if (!node) return ""
+  if (node.nodeType === "text") return node.value || ""
+  if (node.content) return node.content.map(getPlainText).join("")
+  return ""
+}
+
+function youTubeEmbedHtml(src) {
+  return `<div class="video-embed" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;"><iframe src="${src}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe></div>`
+}
+
+const richTextRenderOptions = {
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (node, next) => {
+      const text = getPlainText(node).trim()
+
+      const iframeMatch = text.match(YOUTUBE_IFRAME_SRC_RE)
+      if (iframeMatch) {
+        return youTubeEmbedHtml(iframeMatch[1])
+      }
+
+      const urlMatch = text.match(YOUTUBE_URL_RE)
+      if (urlMatch) {
+        const videoId = urlMatch[1] || urlMatch[2]
+        return youTubeEmbedHtml(`https://www.youtube.com/embed/${videoId}`)
+      }
+
+      return `<p>${next(node.content)}</p>`
+    },
+  },
+}
 
 exports.createSchemaCustomization = async ({ actions }) => {
   const bypassWordpress = process.env.BYPASS_WORDPRESS === "true"
@@ -196,7 +240,7 @@ exports.createSchemaCustomization = async ({ actions }) => {
           const body = source[sourceFieldName]
           if (!body || !body.raw) return null
           const doc = JSON.parse(body.raw)
-          const html = documentToHtmlString(doc)
+          const html = documentToHtmlString(doc, richTextRenderOptions)
           return html
         },
       }
