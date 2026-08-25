@@ -155,7 +155,7 @@ const BlogPage = ({ data, location }) => {
                   <Box key={post.id} paddingY={4} style={{ borderBottom: "1px solid #eee" }}>
                     <Flex gap={4}>
                       {post.featuredImage?.gatsbyImageData && (
-                        <Box style={{ minWidth: "200px" }}>
+                        <Box width="fitContent" style={{ minWidth: "200px", flexShrink: 0 }}>
                           <div className="blog-image-wrapper">
                             <Link to={`/blog/${post.slug}/`}>
                               <GatsbyImage

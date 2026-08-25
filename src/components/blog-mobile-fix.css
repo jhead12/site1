@@ -178,6 +178,11 @@
     height: 100%;
   }
 
+  .blog-image-wrapper .gatsby-image-wrapper,
+  .blog-image-wrapper .gatsby-image-wrapper > div {
+    height: 100%;
+  }
+
   .blog-image-wrapper img {
     position: absolute;
     top: 0;
