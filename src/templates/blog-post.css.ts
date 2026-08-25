@@ -5,7 +5,7 @@ export const blogPost = style({
   fontSize: theme.fontSizes[3],
   // Force consistent styling to override WordPress inline styles
   color: `${theme.colors.text} !important`,
-  backgroundColor: `${theme.colors.background} !important`,
+  backgroundColor: `transparent !important`,
 })
 
 // Reset WordPress styles and ensure readability
