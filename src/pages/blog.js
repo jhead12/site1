@@ -153,7 +153,7 @@ const BlogPage = ({ data, location }) => {
               <Flex gap={4} variant="column">
                 {finalFilteredPosts.map((post) => (
                   <Box key={post.id} paddingY={4} style={{ borderBottom: "1px solid #eee" }}>
-                    <Flex gap={4}>
+                    <Flex gap={4} alignItems="start">
                       {post.featuredImage?.gatsbyImageData && (
                         <Box width="fitContent" style={{ minWidth: "200px", flexShrink: 0 }}>
                           <div className="blog-image-wrapper">

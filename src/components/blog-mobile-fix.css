@@ -209,10 +209,7 @@
   }
 
   .blog-image-wrapper img {
-    position: relative;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+    object-fit: contain !important;
     border-radius: 8px;
     max-height: 220px;
   }

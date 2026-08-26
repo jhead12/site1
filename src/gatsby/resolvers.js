@@ -1,31 +1,29 @@
-// Applies the { sort, limit } args from our custom allContentful* Query
-// fields, since @dontInfer types don't get Gatsby's auto-generated
+// Applies { sort: { publishDate: DESC }, limit } to our custom allContentful*
+// Query fields, since @dontInfer types don't get Gatsby's auto-generated
 // sort/limit handling and our resolvers below call findAll() directly.
+//
+// NOTE: the `sort` arg is typed JSON in schema.js, and every query in this
+// codebase writes it as an unquoted literal (`sort: { publishDate: DESC }`).
+// That `DESC` parses as a GraphQL enum value, which the JSON scalar
+// (graphql-type-json, via graphql-compose) cannot coerce and throws on —
+// so we don't attempt to read args.sort at all. Every call site sorts by
+// publishDate descending, so that's hardcoded directly instead.
+function sortByPublishDateDesc(nodes) {
+  return [...nodes].sort((a, b) => {
+    const aVal = a.publishDate
+    const bVal = b.publishDate
+    if (aVal == null && bVal == null) return 0
+    if (aVal == null) return 1
+    if (bVal == null) return -1
+    if (aVal > bVal) return -1
+    if (aVal < bVal) return 1
+    return 0
+  })
+}
+
 function applySortAndLimit(nodes, args) {
-  let result = nodes
-
-  if (args.sort) {
-    const [field, direction] = Object.entries(args.sort)[0] || []
-    if (field) {
-      const dir = String(direction).toUpperCase() === "ASC" ? 1 : -1
-      result = [...result].sort((a, b) => {
-        const aVal = a[field]
-        const bVal = b[field]
-        if (aVal == null && bVal == null) return 0
-        if (aVal == null) return 1
-        if (bVal == null) return -1
-        if (aVal > bVal) return dir
-        if (aVal < bVal) return -dir
-        return 0
-      })
-    }
-  }
-
-  if (typeof args.limit === "number") {
-    result = result.slice(0, args.limit)
-  }
-
-  return result
+  const sorted = sortByPublishDateDesc(nodes)
+  return typeof args.limit === "number" ? sorted.slice(0, args.limit) : sorted
 }
 
 exports.createResolvers = ({ createResolvers }) => {

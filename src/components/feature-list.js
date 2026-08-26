@@ -10,6 +10,24 @@ export default function FeatureList(props) {
       allContentfulHomepageFeatureList {
         nodes {
           id
+          kicker
+          heading
+          text
+          content {
+            id
+            heading
+            kicker
+            text
+            image {
+              alt
+              gatsbyImageData(width: 600)
+            }
+            links {
+              id
+              href
+              text
+            }
+          }
         }
       }
     }
