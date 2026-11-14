@@ -5,10 +5,10 @@ require("dotenv").config({
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.jeldonmusic.com",
-    title: "Jeldon Music| Beats | Tutorials | Mix",
+    title: "J. Eldon Music | MPC Tutorials, DAW Integration & Mixing",
     author: `j-eldon`,
     description:
-      "Jeldon Music — original beats, production tutorials, mixes, and videos. Explore instrumentals for lease, in-depth tutorials, and live DJ mixes from producer and audio engineer J. Eldon.",
+      "Make your Akai MPC work with your DAW. Step-by-step MPC tutorials for FL Studio, Pro Tools, Ableton and Reason, plus mixing, mastering and 1-on-1 coaching from producer and audio engineer J. Eldon.",
   },
   plugins: [
     {

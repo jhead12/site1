@@ -63,6 +63,10 @@ const socialMedia = {
 const getSocialURL = ({ service, username }) => {
   const domain = socialMedia[service]?.url
   if (!domain) return false
+  // YouTube handles live at youtube.com/@handle; the bare path doesn't resolve
+  if (service === "YOUTUBE" && !username.startsWith("@")) {
+    return `https://www.youtube.com/@${username}`
+  }
   return `${domain}/${username}`
 }
 

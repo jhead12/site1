@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Puck visual editor at `/edit/` (GitHub login; publishing commits page JSON and triggers a Netlify build). Editor can now edit any page via `?page=<slug>`. See `docs/PUCK_EDITOR_GUIDE.md`
+- "Email Signup" Puck block + `netlify/functions/subscribe.js` (MailerLite API) for on-site MPC Quickstart Kit opt-ins
+- `MAILERLITE_API_KEY` / `MAILERLITE_GROUP_ID` and Puck/GitHub OAuth vars documented in `.env.EXAMPLE`
+
+### Changed
+
+- Homepage top section is now Puck-driven from `static/puck-content/home.json`, repositioned around MPC + DAW integration with the Quickstart Kit opt-in above the fold. Removed the rotating hero banner, Contentful homepage blocks, feature list and beats stat list from the homepage (components kept)
+- Site title and meta description retargeted to MPC tutorials, DAW integration and mixing
+
 ### Fixed
+
+- Footer YouTube link now points to `youtube.com/@jeldonmusic` (bare path didn't resolve)
+
+### Fixed (earlier)
 
 - Blog post images now display properly on homepage blog section
 - Added missing `featuredImage` field to GraphQL query in homepage

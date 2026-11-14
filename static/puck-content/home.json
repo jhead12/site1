@@ -1,0 +1,94 @@
+{
+  "root": {
+    "props": {
+      "title": "J. Eldon Music | MPC Tutorials, DAW Integration & Mixing",
+      "description": "Make your Akai MPC work with your DAW. Step-by-step MPC tutorials for FL Studio, Pro Tools, Ableton and Reason, plus mixing, mastering and 1-on-1 coaching."
+    }
+  },
+  "content": [
+    {
+      "type": "Hero",
+      "props": {
+        "id": "Hero-home-1",
+        "kicker": "MPC + DAW workflows",
+        "heading": "Make your MPC and your DAW work together",
+        "subhead": "Step-by-step setups for FL Studio, Pro Tools, Ableton & Reason",
+        "text": "I'm J. Eldon, a producer and audio engineer. I show you how to sync, route and record between your MPC and your DAW, then how to mix your beats so they sound finished.",
+        "imageUrl": "https://i.ytimg.com/vi/7jIAygfCuhc/maxresdefault.jpg",
+        "imageAlt": "Controlling FL Studio from an Akai MPC Live",
+        "links": [
+          { "text": "Get the free MPC Quickstart Kit", "href": "#quickstart-kit" },
+          { "text": "Watch the tutorials", "href": "/videos" }
+        ]
+      }
+    },
+    {
+      "type": "EmailSignup",
+      "props": {
+        "id": "EmailSignup-home-1",
+        "kicker": "Free download",
+        "heading": "Get the MPC Quickstart Kit",
+        "text": "Everything you need to start a beat on your MPC tonight instead of fighting the setup.",
+        "bullets": [
+          { "text": "6 custom MPC drum kits, ready to load" },
+          { "text": "Project templates so every session starts organized" },
+          { "text": "Quickstart PDF + mini video walkthroughs" }
+        ],
+        "buttonLabel": "Send me the kit",
+        "successMessage": "You're in! Check your inbox for the download link.",
+        "groupId": "",
+        "source": "home-quickstart",
+        "fallbackUrl": "https://winning.jeldonmusic.com/mpc-quickstart-kit/",
+        "anchor": "quickstart-kit"
+      }
+    },
+    {
+      "type": "FeatureGrid",
+      "props": {
+        "id": "FeatureGrid-home-1",
+        "kicker": "What you'll learn",
+        "heading": "Built for MPC producers who also use a DAW",
+        "text": "",
+        "items": [
+          {
+            "icon": "🔌",
+            "heading": "MPC + DAW integration",
+            "text": "Transport sync, Network MIDI, USB audio and routing for FL Studio, Pro Tools, Ableton and Reason."
+          },
+          {
+            "icon": "🥁",
+            "heading": "MPC workflow",
+            "text": "Kits, sequences, sampling and arranging, so ideas turn into finished songs."
+          },
+          {
+            "icon": "🎚️",
+            "heading": "Mixing MPC beats",
+            "text": "Stems out of the MPC and into a real mix: gain staging, bus processing and loudness for streaming."
+          }
+        ]
+      }
+    },
+    {
+      "type": "VideoEmbed",
+      "props": {
+        "id": "VideoEmbed-home-1",
+        "url": "https://www.youtube.com/watch?v=7jIAygfCuhc",
+        "caption": "Control FL Studio from your MPC Live: the full setup."
+      }
+    },
+    {
+      "type": "CtaBanner",
+      "props": {
+        "id": "CtaBanner-home-1",
+        "kicker": "Still stuck?",
+        "heading": "Get your setup working, or get your beat mixed",
+        "text": "Book a 1-on-1 screen-share session to fix your MPC + DAW setup, or send me your stems for a mix and master.",
+        "links": [
+          { "text": "Book a coaching session", "href": "/coaching" },
+          { "text": "Mixing & mastering", "href": "/mixing-mastering" }
+        ],
+        "style": "gradient"
+      }
+    }
+  ]
+}
