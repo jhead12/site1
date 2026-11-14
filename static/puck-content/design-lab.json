@@ -1,0 +1,112 @@
+{
+  "root": {
+    "props": {
+      "title": "Design Lab | Jeldon Music",
+      "description": "A visually composed page built with the Puck editor, showcasing the site's design system."
+    }
+  },
+  "content": [
+    {
+      "type": "Hero",
+      "props": {
+        "id": "Hero-design-lab-1",
+        "kicker": "Design Lab",
+        "heading": "Build pages visually, in your own design system",
+        "subhead": "Drag, drop, and edit copy without touching code",
+        "text": "This page is composed entirely from reusable blocks powered by Puck. Open /edit to rearrange it live.",
+        "imageUrl": "",
+        "imageAlt": "",
+        "links": [
+          { "text": "Open the editor", "href": "/edit/" },
+          { "text": "Book a call", "href": "/coaching" }
+        ]
+      }
+    },
+    {
+      "type": "FeatureGrid",
+      "props": {
+        "id": "FeatureGrid-design-lab-1",
+        "kicker": "Blocks",
+        "heading": "Everything is a draggable block",
+        "text": "Each section on this page is editable independently.",
+        "items": [
+          { "icon": "🧱", "heading": "Composable blocks", "text": "Hero, CTA, stats, testimonials, video, and more." },
+          { "icon": "✍️", "heading": "Editable copy", "text": "Every heading and paragraph is a real field, not hardcoded text." },
+          { "icon": "⚡", "heading": "On-brand by default", "text": "Blocks reuse the site's existing typography, spacing, and color tokens." }
+        ]
+      }
+    },
+    {
+      "type": "MatrixSection",
+      "props": {
+        "id": "MatrixSection-design-lab-1",
+        "heading": "The signature effect, contained",
+        "text": "The site's matrix-rain effect, scoped to a section instead of the full viewport.",
+        "height": "large",
+        "links": [{ "text": "See it in the editor", "href": "/edit/" }]
+      }
+    },
+    {
+      "type": "StatBanner",
+      "props": {
+        "id": "StatBanner-design-lab-1",
+        "kicker": "Proof",
+        "heading": "Numbers that back it up",
+        "text": "",
+        "stats": [
+          { "value": "500+", "label": "Producers coached" },
+          { "value": "10k+", "label": "Beats sold" },
+          { "value": "4.9/5", "label": "Average rating" }
+        ],
+        "links": []
+      }
+    },
+    {
+      "type": "Testimonials",
+      "props": {
+        "id": "Testimonials-design-lab-1",
+        "kicker": "Feedback",
+        "heading": "What producers are saying",
+        "items": [
+          {
+            "quote": "This completely changed how I finish tracks.",
+            "source": "A. Producer",
+            "avatarUrl": "https://placehold.co/96x96?text=AP"
+          },
+          {
+            "quote": "Worth every session — I actually ship music now.",
+            "source": "J. Beatmaker",
+            "avatarUrl": "https://placehold.co/96x96?text=JB"
+          }
+        ]
+      }
+    },
+    {
+      "type": "LogoMarquee",
+      "props": {
+        "id": "LogoMarquee-design-lab-1",
+        "kicker": "",
+        "heading": "As featured / trusted by",
+        "speed": "medium",
+        "logos": [
+          { "imageUrl": "https://placehold.co/160x64?text=Studio+A", "alt": "Studio A", "href": "" },
+          { "imageUrl": "https://placehold.co/160x64?text=Label+B", "alt": "Label B", "href": "" },
+          { "imageUrl": "https://placehold.co/160x64?text=Press+C", "alt": "Press C", "href": "" },
+          { "imageUrl": "https://placehold.co/160x64?text=Platform+D", "alt": "Platform D", "href": "" }
+        ]
+      }
+    },
+    {
+      "type": "CtaBanner",
+      "props": {
+        "id": "CtaBanner-design-lab-1",
+        "kicker": "",
+        "heading": "Ready to build your own page?",
+        "text": "Open the editor and start dragging blocks around.",
+        "links": [{ "text": "Open /edit", "href": "/edit/" }],
+        "style": "gradient"
+      }
+    }
+  ],
+  "zones": {}
+}

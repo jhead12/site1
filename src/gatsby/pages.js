@@ -1,3 +1,48 @@
+const fs = require("fs")
+const path = require("path")
+
+// Puck-authored pages: each JSON file in static/puck-content/<slug>.json
+// becomes /<slug>/, rendered at build time from src/templates/puck-page.tsx.
+// The same file is also served as a static asset at /puck-content/<slug>.json
+// so the /edit page can fetch the current content client-side — one file,
+// used both at build time and at runtime, so there's nothing to keep in sync.
+function createPuckPages({ createPage }) {
+  const puckContentDir = path.join(__dirname, "../../static/puck-content")
+
+  let files = []
+  try {
+    files = fs.readdirSync(puckContentDir).filter((f) => f.endsWith(".json"))
+  } catch (error) {
+    console.warn("No static/puck-content directory found, skipping Puck pages")
+    return
+  }
+
+  files.forEach((file) => {
+    const slug = file.replace(/\.json$/, "")
+    // home.json is rendered at "/" by src/pages/index.js, not at /home/
+    if (slug === "home") return
+    const fullPath = path.join(puckContentDir, file)
+
+    let puckData
+    try {
+      puckData = JSON.parse(fs.readFileSync(fullPath, "utf8"))
+    } catch (error) {
+      console.error(`Failed to parse Puck content file ${file}:`, error)
+      return
+    }
+
+    console.log(`Creating Puck page: /${slug}/`)
+    createPage({
+      path: `/${slug}/`,
+      component: require.resolve("../templates/puck-page.tsx"),
+      context: {
+        slug,
+        puckData,
+      },
+    })
+  })
+}
+
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage, createSlice } = actions
 
@@ -13,6 +58,8 @@ exports.createPages = async ({ graphql, actions }) => {
     id: "footer",
     component: require.resolve("../components/footer.js"),
   })
+
+  createPuckPages({ createPage })
 
   // Fetch Contentful data (always needed for blog posts and video posts)
   let result

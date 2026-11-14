@@ -62,6 +62,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.632.0",
     "@contentful/rich-text-html-renderer": "^15.11.1",
+    "@measured/puck": "^0.20.2",
     "@fontsource/dm-mono": "^4.5.9",
     "@fontsource/dm-sans": "^4.5.8",
     "@vanilla-extract/babel-plugin": "^1.2.0",

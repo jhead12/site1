@@ -1,7 +1,7 @@
 import * as React from "react"
 
 export default function Head({ title, description, image, pathname }) {
-  const pageTitle = title || "Jeldon Music | Beats | Tutorials | Mix"
+  const pageTitle = title || "J. Eldon Music | MPC Tutorials, DAW Integration & Mixing"
   const canonicalUrl = pathname
     ? `https://www.jeldonmusic.com${pathname}`
     : "https://www.jeldonmusic.com"
