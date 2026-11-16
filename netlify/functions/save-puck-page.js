@@ -4,11 +4,13 @@ const {
   requireEnv,
   getGithubLogin,
   isAllowedLogin,
+  githubRepo,
+  withConfigErrors,
 } = require("./_shared")
 
 const SLUG_RE = /^[a-z0-9-]+$/
 
-exports.handler = async (event) => {
+exports.handler = withConfigErrors(async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) }
   }
@@ -40,7 +42,7 @@ exports.handler = async (event) => {
   }
 
   const owner = requireEnv("GITHUB_OWNER")
-  const repo = requireEnv("GITHUB_REPO")
+  const repo = githubRepo()
   const branch = process.env.GITHUB_BRANCH || "master"
   const filePath = `static/puck-content/${slug}.json`
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`
@@ -95,4 +97,4 @@ exports.handler = async (event) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ commitUrl: putBody.commit && putBody.commit.html_url }),
   }
-}
+})

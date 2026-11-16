@@ -40,7 +40,36 @@ function requireEnv(name) {
 }
 
 function siteUrl() {
-  return requireEnv("SITE_URL").replace(/\/$/, "")
+  const raw = requireEnv("SITE_URL").trim().replace(/\/$/, "")
+  // Tolerate "jeldonmusic.com" without a scheme — a bare host would
+  // otherwise produce a relative Location header and a broken redirect.
+  return /^https?:\/\//.test(raw) ? raw : `https://${raw}`
+}
+
+// GITHUB_REPO is the repo name ("site1"), but accept "owner/site1" too.
+function githubRepo() {
+  return requireEnv("GITHUB_REPO").trim().split("/").pop()
+}
+
+// Wrap a handler so a missing env var returns a readable 500 naming the
+// variable, instead of an uncaught throw (which Netlify/Cloudflare surface
+// as an opaque 502 Bad Gateway).
+function withConfigErrors(handler) {
+  return async (event, context) => {
+    try {
+      return await handler(event, context)
+    } catch (error) {
+      console.error(error)
+      const isConfig = /Missing required environment variable/.test(error.message)
+      return {
+        statusCode: 500,
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+        body: isConfig
+          ? `Editor login is not configured: ${error.message}. Set it in Netlify > Site configuration > Environment variables, then redeploy.`
+          : "Something went wrong. Check the Netlify function logs.",
+      }
+    }
+  }
 }
 
 async function getGithubLogin(token) {
@@ -72,6 +101,8 @@ module.exports = {
   serializeCookie,
   requireEnv,
   siteUrl,
+  githubRepo,
+  withConfigErrors,
   getGithubLogin,
   isAllowedLogin,
 }

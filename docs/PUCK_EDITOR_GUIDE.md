@@ -12,7 +12,7 @@ and mixes (WordPress).
 
 ## Editing a page
 
-1. Go to **`https://www.jeldonmusic.com/edit/`** and log in with GitHub.
+1. Go to **`https://jeldonmusic.com/edit/`** and log in with GitHub.
 2. Pick the page from the dropdown in the top bar (it defaults to the homepage).
 3. Drag blocks in from the left panel, click a block to edit its fields, and
    reorder blocks by dragging.
@@ -67,9 +67,9 @@ Puck content. Those come from Contentful/Shopify, not the editor.
 | Variable | Purpose |
 |---|---|
 | `GITHUB_OAUTH_CLIENT_ID` / `GITHUB_OAUTH_CLIENT_SECRET` | GitHub OAuth App dedicated to this site |
-| `GITHUB_OAUTH_REDIRECT_URI` | `https://www.jeldonmusic.com/.netlify/functions/callback` (must match the OAuth App) |
-| `SITE_URL` | `https://www.jeldonmusic.com` |
-| `GITHUB_OWNER` / `GITHUB_REPO` / `GITHUB_BRANCH` | Repo that page JSON is committed to (branch defaults to `master`) |
+| `GITHUB_OAUTH_REDIRECT_URI` | `https://jeldonmusic.com/.netlify/functions/callback` (must match the OAuth App exactly; use the bare domain, since `www` redirects to it) |
+| `SITE_URL` | `https://jeldonmusic.com` |
+| `GITHUB_OWNER` / `GITHUB_REPO` / `GITHUB_BRANCH` | `jhead12` / `site1` / `master`: the repo that page JSON is committed to |
 | `ALLOWED_GITHUB_LOGINS` | **Set this.** Comma-separated GitHub usernames allowed to publish. If blank, any GitHub account can publish. |
 | `MAILERLITE_API_KEY` | MailerLite > Integrations > API |
 | `MAILERLITE_GROUP_ID` | Default group for signups. That group's automation delivers the MPC Quickstart Kit |

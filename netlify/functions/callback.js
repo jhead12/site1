@@ -5,9 +5,10 @@ const {
   serializeCookie,
   requireEnv,
   siteUrl,
+  withConfigErrors,
 } = require("./_shared")
 
-exports.handler = async (event) => {
+exports.handler = withConfigErrors(async (event) => {
   const cookies = parseCookies(event.headers.cookie)
   const { code, state } = event.queryStringParameters || {}
 
@@ -61,4 +62,4 @@ exports.handler = async (event) => {
     },
     body: "",
   }
-}
+})
