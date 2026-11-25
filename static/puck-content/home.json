@@ -17,8 +17,14 @@
         "imageUrl": "https://i.ytimg.com/vi/7jIAygfCuhc/maxresdefault.jpg",
         "imageAlt": "Controlling FL Studio from an Akai MPC Live",
         "links": [
-          { "text": "Get the free MPC Quickstart Kit", "href": "#quickstart-kit" },
-          { "text": "Watch the tutorials", "href": "/videos" }
+          {
+            "text": "Get the free MPC Quickstart Kit",
+            "href": "#quickstart-kit"
+          },
+          {
+            "text": "Watch the tutorials",
+            "href": "/videos"
+          }
         ]
       }
     },
@@ -30,9 +36,15 @@
         "heading": "Get the MPC Quickstart Kit",
         "text": "Everything you need to start a beat on your MPC tonight instead of fighting the setup.",
         "bullets": [
-          { "text": "6 custom MPC drum kits, ready to load" },
-          { "text": "Project templates so every session starts organized" },
-          { "text": "Quickstart PDF + mini video walkthroughs" }
+          {
+            "text": "6 custom MPC drum kits, ready to load"
+          },
+          {
+            "text": "Project templates so every session starts organized"
+          },
+          {
+            "text": "Quickstart PDF + mini video walkthroughs"
+          }
         ],
         "buttonLabel": "Send me the kit",
         "successMessage": "You're in! Check your inbox for the download link.",
@@ -72,8 +84,8 @@
       "type": "VideoEmbed",
       "props": {
         "id": "VideoEmbed-home-1",
-        "url": "https://www.youtube.com/watch?v=7jIAygfCuhc",
-        "caption": "Control FL Studio from your MPC Live: the full setup."
+        "url": "https://youtu.be/f_s-jVQU_pI?si=czaSy8lHIxMDwC7o",
+        "caption": "Synchronizing MPC X with Protools"
       }
     },
     {
@@ -84,11 +96,18 @@
         "heading": "Get your setup working, or get your beat mixed",
         "text": "Book a 1-on-1 screen-share session to fix your MPC + DAW setup, or send me your stems for a mix and master.",
         "links": [
-          { "text": "Book a coaching session", "href": "/coaching" },
-          { "text": "Mixing & mastering", "href": "/mixing-mastering" }
+          {
+            "text": "Book a coaching session",
+            "href": "/coaching"
+          },
+          {
+            "text": "Mixing & mastering",
+            "href": "/mixing-mastering"
+          }
         ],
         "style": "gradient"
       }
     }
-  ]
+  ],
+  "zones": {}
 }
