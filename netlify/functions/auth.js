@@ -1,11 +1,11 @@
 const crypto = require("crypto")
-const { STATE_COOKIE, serializeCookie, requireEnv } = require("./_shared")
+const { STATE_COOKIE, serializeCookie, requireEnv, withConfigErrors } = require("./_shared")
 
 // Full-page redirect flow (no popup / postMessage) — GitHub's own consent
 // screen takes the user out of the tab regardless, and a popup adds a class
 // of "opened in a new tab / incognito" failures that a same-tab redirect
 // avoids entirely.
-exports.handler = async () => {
+exports.handler = withConfigErrors(async () => {
   const state = crypto.randomBytes(24).toString("hex")
   const clientId = requireEnv("GITHUB_OAUTH_CLIENT_ID")
   const redirectUri = requireEnv("GITHUB_OAUTH_REDIRECT_URI")
@@ -30,4 +30,4 @@ exports.handler = async () => {
     },
     body: "",
   }
-}
+})
